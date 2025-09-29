@@ -1,0 +1,44 @@
+### AI Roleplay Backend API 测试
+
+### 1. 基本健康检查
+GET http://localhost:18080/test
+
+### 2. 简单聊天测试 (需要有效的API Key)
+GET http://localhost:18080/api/chat/simple?message=你好&userId=test-user-001
+
+### 3. POST方式聊天测试
+POST http://localhost:18080/api/chat/message
+Content-Type: application/json
+
+{
+  "message": "你好，我是新用户",
+  "userId": "user-001"
+}
+
+### 4. 带角色的聊天测试
+POST http://localhost:18080/api/chat/message
+Content-Type: application/json
+
+{
+  "message": "介绍一下你自己",
+  "userId": "user-001",
+  "characterId": 1
+}
+
+### 5. 获取会话历史记录
+GET http://localhost:18080/api/chat/history/user_user-001_general
+
+### 6. 获取带角色的会话历史记录
+GET http://localhost:18080/api/chat/history/user_user-001_char_1
+
+### 7. 清除会话历史记录
+DELETE http://localhost:18080/api/chat/history/user_user-001_general
+
+### 8. 流式聊天测试 (需要有效的API Key)
+POST http://localhost:18080/api/chat/stream
+Content-Type: application/json
+
+{
+  "message": "请用流式方式回答：什么是人工智能？",
+  "userId": "user-002"
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音频格式支持测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .format-test {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .supported {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .not-supported {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>音频格式支持测试</h1>
+    
+    <h2>浏览器MediaRecorder支持的格式</h2>
+    <div id="format-support"></div>
+    
+    <h2>录音测试</h2>
+    <button id="startRecord" class="btn-primary">开始录音</button>
+    <button id="stopRecord" class="btn-danger" disabled>停止录音</button>
+    <button id="playRecord" class="btn-success" disabled>播放录音</button>
+    
+    <div class="test-result">
+        <h3>测试结果</h3>
+        <div id="testResult">点击开始录音进行测试</div>
+    </div>
+    
+    <audio id="audioPlayer" controls style="width: 100%; margin-top: 10px;"></audio>
+
+    <script>
+        // 测试格式支持
+        function testFormatSupport() {
+            const formats = [
+                'audio/ogg;codecs=opus',
+                'audio/webm;codecs=opus',
+                'audio/wav',
+                'audio/mp3',
+                'audio/mp4',
+                'audio/aac'
+            ];
+            
+            const container = document.getElementById('format-support');
+            
+            formats.forEach(format => {
+                const div = document.createElement('div');
+                div.className = 'format-test';
+                
+                const supported = MediaRecorder.isTypeSupported(format);
+                div.classList.add(supported ? 'supported' : 'not-supported');
+                
+                div.innerHTML = `
+                    <strong>${format}</strong>: 
+                    ${supported ? '✅ 支持' : '❌ 不支持'}
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+        
+        // 录音功能
+        let mediaRecorder;
+        let audioChunks = [];
+        let stream;
+        
+        // 获取推荐格式
+        function getRecommendedFormat() {
+            const formats = [
+                'audio/ogg;codecs=opus',
+                'audio/mp4',
+                'audio/wav',
+                'audio/mp3'
+            ];
+            
+            for (const format of formats) {
+                if (MediaRecorder.isTypeSupported(format)) {
+                    return format;
+                }
+            }
+            
+            return 'audio/wav'; // 默认
+        }
+        
+        document.getElementById('startRecord').addEventListener('click', async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                const format = getRecommendedFormat();
+                mediaRecorder = new MediaRecorder(stream, { mimeType: format });
+                
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: format });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    
+                    document.getElementById('audioPlayer').src = audioUrl;
+                    document.getElementById('playRecord').disabled = false;
+                    
+                    // 显示测试结果
+                    document.getElementById('testResult').innerHTML = `
+                        <p><strong>录音格式:</strong> ${format}</p>
+                        <p><strong>文件大小:</strong> ${audioBlob.size} bytes</p>
+                        <p><strong>文件类型:</strong> ${audioBlob.type}</p>
+                        <p><strong>状态:</strong> 录音成功！</p>
+                    `;
+                    
+                    // 停止所有音频轨道
+                    stream.getTracks().forEach(track => track.stop());
+                };
+                
+                mediaRecorder.start();
+                
+                document.getElementById('startRecord').disabled = true;
+                document.getElementById('stopRecord').disabled = false;
+                document.getElementById('testResult').innerHTML = '正在录音...';
+                
+            } catch (error) {
+                console.error('录音失败:', error);
+                document.getElementById('testResult').innerHTML = `
+                    <p style="color: red;"><strong>错误:</strong> ${error.message}</p>
+                `;
+            }
+        });
+        
+        document.getElementById('stopRecord').addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                
+                document.getElementById('startRecord').disabled = false;
+                document.getElementById('stopRecord').disabled = true;
+            }
+        });
+        
+        document.getElementById('playRecord').addEventListener('click', () => {
+            const audio = document.getElementById('audioPlayer');
+            audio.play();
+        });
+        
+        // 页面加载时测试格式支持
+        window.addEventListener('load', testFormatSupport);
+    </script>
+</body>
+</html>

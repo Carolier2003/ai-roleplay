@@ -1,0 +1,40 @@
+# 开发环境配置
+server:
+  port: 18080
+
+spring:
+  application:
+    name: ai-roleplay-backend-dev
+  
+  # 开发环境数据库配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/ai_roleplay?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&autoReconnect=true
+    username: roleplay
+    password: roleplay123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+  # 开发环境Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      
+  # 通义千问AI配置 - 兜底配置
+  ai:
+    dashscope:
+      # 优先使用环境变量，如果没有则使用默认值
+      api-key: ${AI_DASHSCOPE_API_KEY}
+      chat:
+        enabled: true
+        options:
+          model: qwen-plus
+          temperature: 0.7
+
+# 日志配置
+logging:
+  level:
+    com.carol.backend: DEBUG
+    com.alibaba.dashscope: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"

@@ -1,0 +1,13 @@
+{
+  "merge_date": "2025-09-24T18:22:19.817453",
+  "total_records": 227,
+  "source_statistics": {
+    "comprehensive": 96,
+    "expanded": 131,
+    "expanded_individual": 0
+  },
+  "merged_files": [
+    "conan_comprehensive",
+    "conan_expanded"
+  ]
+}

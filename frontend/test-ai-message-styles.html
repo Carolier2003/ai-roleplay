@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI消息样式测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .test-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        .message-bubble {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            border-bottom-left-radius: 6px;
+            padding: 12px 16px;
+            margin: 16px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            max-width: 70%;
+        }
+        .test-content {
+            max-width: none;
+            break-words: break-words;
+            font-size: 16px;
+            line-height: 1.75;
+            color: #1f2937;
+            font-family: system-ui, sans-serif;
+        }
+        .instructions {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .test-button {
+            background: #1677ff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-right: 12px;
+            transition: background-color 0.2s ease;
+        }
+        .test-button:hover {
+            background: #1366d9;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🎨 AI消息样式测试</h1>
+        
+        <div class="instructions">
+            <h3 style="color: #1e40af; margin: 0 0 12px 0;">📋 新的AI消息样式特性：</h3>
+            <ul style="margin: 0; padding-left: 20px; color: #1e40af;">
+                <li><strong>基础排版</strong>：16px字体，1.75行高，system-ui字体族</li>
+                <li><strong>段落间距</strong>：段落间有空行 (mb-4)</li>
+                <li><strong>行内格式</strong>：粗体、斜体、行内代码精确样式</li>
+                <li><strong>代码块</strong>：深色主题 + 悬停显示复制按钮</li>
+                <li><strong>列表</strong>：有序/无序列表，正确的缩进和间距</li>
+                <li><strong>引用</strong>：左边框 + 斜体样式</li>
+                <li><strong>链接</strong>：蓝色 + 悬停下划线 + 新窗口打开</li>
+                <li><strong>深色模式</strong>：所有元素支持 dark: 变体</li>
+            </ul>
+        </div>
+
+        <button class="test-button" onclick="window.open('http://localhost:5173', '_blank')">
+            🚀 测试实际效果
+        </button>
+
+        <button class="test-button" onclick="toggleDarkMode()">
+            🌙 切换深色模式
+        </button>
+
+        <h2 style="margin-top: 32px; margin-bottom: 16px; color: #1f2937;">样式预览：</h2>
+
+        <div class="message-bubble">
+            <div class="test-content" id="test-markdown">
+                <!-- 这里会动态插入渲染的Markdown内容 -->
+            </div>
+        </div>
+
+        <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 8px; padding: 16px; margin-top: 20px;">
+            <h3 style="color: #15803d; margin: 0 0 12px 0;">✅ 实现的精确样式：</h3>
+            <div style="font-family: monospace; font-size: 12px; background: #1f2937; color: #f9fafb; padding: 12px; border-radius: 6px; overflow-x: auto;">
+                <div>• 段落: &lt;p class="mb-4 last:mb-0"&gt;</div>
+                <div>• 粗体: &lt;strong class="font-semibold text-gray-800 dark:text-gray-100"&gt;</div>
+                <div>• 斜体: &lt;em class="italic text-gray-700 dark:text-gray-300"&gt;</div>
+                <div>• 行内代码: &lt;code class="px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-sm font-mono text-indigo-600 dark:text-indigo-400"&gt;</div>
+                <div>• 代码块: &lt;pre class="language-xxx block p-4 rounded-lg bg-gray-900 text-gray-100 overflow-x-auto"&gt;</div>
+                <div>• 无序列表: &lt;ul class="list-disc pl-6 space-y-2"&gt;</div>
+                <div>• 有序列表: &lt;ol class="list-decimal pl-6 space-y-2"&gt;</div>
+                <div>• 引用: &lt;blockquote class="border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-600 dark:text-gray-400"&gt;</div>
+                <div>• 链接: &lt;a class="text-indigo-600 dark:text-indigo-400 hover:underline" target="_blank"&gt;</div>
+                <div>• 分割线: &lt;hr class="my-6 border-gray-200 dark:border-gray-700"&gt;</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 测试用的Markdown内容
+        const testMarkdown = `这是一个段落。每个段落之间会有适当的间距。
+
+这是第二个段落。支持 **粗体文本** 和 *斜体文本* 以及 \`行内代码\`。
+
+## 标题示例
+
+### 代码块示例
+
+\`\`\`javascript
+function greet(name) {
+    console.log('Hello, ' + name + '!');
+    return true;
+}
+\`\`\`
+
+### 列表示例
+
+无序列表：
+- 第一项
+- 第二项
+- 第三项
+
+有序列表：
+1. 首先
+2. 然后
+3. 最后
+
+### 引用示例
+
+> 这是一个引用块。它看起来应该是斜体，并且有左边框。
+
+### 链接示例
+
+[访问GitHub](https://github.com) 或者查看 [文档](https://docs.example.com)。
+
+---
+
+这是一条水平分割线上方的内容。`
+
+        // 简单的Markdown渲染器（用于预览）
+        function simpleMarkdownRender(markdown) {
+            let html = markdown
+                // 段落
+                .split('\n\n')
+                .map(para => {
+                    if (para.trim().startsWith('#')) {
+                        const level = para.match(/^#+/)[0].length;
+                        const text = para.replace(/^#+\s*/, '');
+                        const headingClasses = {
+                            1: 'text-2xl font-bold text-gray-900 dark:text-gray-100 mt-6 mb-4 first:mt-0',
+                            2: 'text-xl font-semibold text-gray-900 dark:text-gray-100 mt-5 mb-3 first:mt-0',
+                            3: 'text-lg font-semibold text-gray-900 dark:text-gray-100 mt-4 mb-2 first:mt-0'
+                        };
+                        const className = headingClasses[level] || headingClasses[3];
+                        return `<h${level} class="${className}">${text}</h${level}>`;
+                    } else if (para.trim().startsWith('```')) {
+                        const lines = para.split('\n');
+                        const language = lines[0].replace('```', '');
+                        const code = lines.slice(1, -1).join('\n');
+                        return `
+                            <div class="relative group my-4">
+                                <pre class="language-${language} block p-4 rounded-lg bg-gray-900 text-gray-100 overflow-x-auto">
+                                    <code>${code}</code>
+                                </pre>
+                                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-700 hover:bg-gray-600 text-gray-200 px-2 py-1 rounded text-xs font-medium">
+                                    Copy
+                                </button>
+                            </div>
+                        `;
+                    } else if (para.trim().startsWith('> ')) {
+                        const text = para.replace(/^>\s*/, '');
+                        return `<blockquote class="border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-600 dark:text-gray-400 my-4">${text}</blockquote>`;
+                    } else if (para.trim().startsWith('- ') || para.trim().match(/^\d+\.\s/)) {
+                        const items = para.split('\n').map(line => {
+                            const text = line.replace(/^[-\d+\.]\s*/, '');
+                            return `<li class="leading-7">${text}</li>`;
+                        }).join('');
+                        const isOrdered = para.trim().match(/^\d+\.\s/);
+                        const tag = isOrdered ? 'ol' : 'ul';
+                        const listClass = isOrdered ? 'list-decimal pl-6 space-y-2 my-4' : 'list-disc pl-6 space-y-2 my-4';
+                        return `<${tag} class="${listClass}">${items}</${tag}>`;
+                    } else if (para.trim() === '---') {
+                        return `<hr class="my-6 border-gray-200 dark:border-gray-700">`;
+                    } else {
+                        return `<p class="mb-4 last:mb-0">${para}</p>`;
+                    }
+                })
+                .join('')
+                // 行内格式
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-800 dark:text-gray-100">$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em class="italic text-gray-700 dark:text-gray-300">$1</em>')
+                .replace(/`(.*?)`/g, '<code class="px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-sm font-mono text-indigo-600 dark:text-indigo-400">$1</code>')
+                // 链接
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-indigo-600 dark:text-indigo-400 hover:underline" target="_blank" rel="noopener">$1</a>');
+
+            return html;
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            document.body.style.background = isDark ? '#1f2937' : '#f8f9fa';
+            document.querySelector('.test-container').style.background = isDark ? '#374151' : 'white';
+            document.querySelector('.test-container').style.color = isDark ? '#f9fafb' : '#1f2937';
+            document.querySelector('.message-bubble').style.background = isDark ? '#374151' : 'white';
+            document.querySelector('.message-bubble').style.borderColor = isDark ? '#4b5563' : '#e5e7eb';
+            document.querySelector('.message-bubble').style.color = isDark ? '#f9fafb' : '#1f2937';
+        }
+
+        // 页面加载时渲染测试内容
+        document.addEventListener('DOMContentLoaded', function() {
+            const testElement = document.getElementById('test-markdown');
+            testElement.innerHTML = simpleMarkdownRender(testMarkdown);
+            console.log('🎨 AI消息样式测试页面已加载');
+            console.log('📝 测试新的排版效果和Tailwind CSS样式');
+        });
+    </script>
+</body>
+</html>

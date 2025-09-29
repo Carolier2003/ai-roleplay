@@ -1,0 +1,103 @@
+{
+  "timestamp": "2025-09-23 20:52:13",
+  "character": "爱因斯坦",
+  "total_pages": 17,
+  "successful_pages": 16,
+  "failed_pages": 1,
+  "success_rate": "94.1%",
+  "total_content_length": 249044,
+  "avg_content_length": 15565.25,
+  "categories": [
+    "BIOGRAPHY",
+    "PHYSICS_PHENOMENON",
+    "INSTITUTION",
+    "PHILOSOPHY",
+    "AWARD",
+    "PHYSICS_FORMULA",
+    "SCIENTIST",
+    "PHYSICS_CONCEPT",
+    "PHYSICS_THEORY"
+  ],
+  "pages": [
+    {
+      "title": "阿尔伯特·爱因斯坦",
+      "length": 876,
+      "category": "BIOGRAPHY"
+    },
+    {
+      "title": "相对论",
+      "length": 477,
+      "category": "PHYSICS_THEORY"
+    },
+    {
+      "title": "狭义相对论",
+      "length": 11276,
+      "category": "PHYSICS_THEORY"
+    },
+    {
+      "title": "广义相对论",
+      "length": 76093,
+      "category": "PHYSICS_THEORY"
+    },
+    {
+      "title": "质能方程",
+      "length": 10280,
+      "category": "PHYSICS_FORMULA"
+    },
+    {
+      "title": "光电效应",
+      "length": 658,
+      "category": "PHYSICS_PHENOMENON"
+    },
+    {
+      "title": "布朗运动",
+      "length": 390,
+      "category": "PHYSICS_PHENOMENON"
+    },
+    {
+      "title": "量子力学",
+      "length": 32491,
+      "category": "PHYSICS_THEORY"
+    },
+    {
+      "title": "光子",
+      "length": 1153,
+      "category": "PHYSICS_CONCEPT"
+    },
+    {
+      "title": "波粒二象性",
+      "length": 17284,
+      "category": "PHYSICS_CONCEPT"
+    },
+    {
+      "title": "普林斯顿高等研究院",
+      "length": 443,
+      "category": "INSTITUTION"
+    },
+    {
+      "title": "瑞士联邦理工学院",
+      "length": 180,
+      "category": "INSTITUTION"
+    },
+    {
+      "title": "尼尔斯·玻尔",
+      "length": 51531,
+      "category": "SCIENTIST"
+    },
+    {
+      "title": "马克斯·普朗克",
+      "length": 199,
+      "category": "SCIENTIST"
+    },
+    {
+      "title": "科学哲学",
+      "length": 45471,
+      "category": "PHILOSOPHY"
+    },
+    {
+      "title": "统一场论",
+      "length": 242,
+      "category": "PHYSICS_THEORY"
+    }
+  ]
+}

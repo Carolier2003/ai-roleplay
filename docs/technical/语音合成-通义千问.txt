@@ -1,0 +1,1512 @@
+<section class="aliyun-docs-content help-pure-doc-container">
+    <div class="pc-markdown-container unionContainer" id="pc-markdown-container">
+        <div class="markdown-body" style="margin:0">
+            <div lang="zh" class="icms-help-docs-content">
+                <main id="main-2884192"><p id="7e06d0ed8edka" data-tag="shortdesc" class="shortdesc">
+                    语音合成-通义千问提供多种拟人音色，支持多语言及方言，并可在同一音色下输出多语言内容。系统可自适应语气，流畅处理复杂文本。</p>
+                    <div data-tag="body" class="body">
+                        <div type="important" id="8b8b67eb372hl" props="china" docid="5997907" is-conref="true"
+                             data-cond-props="china" class="note note-important">
+                            <div class="note-icon-wrapper"><i
+                                    class="icon-note note important"></i><strong>重要 </strong></div>
+                            <div class="noteContentSpan"><p id="fbb821d434st4"><span data-tag="ph" id="f0720ab932agk"
+                                                                                     tagname="span"
+                                                                                     data-ref-searchable="yes"
+                                                                                     data-init-id="9e8fee4cb7lnz"
+                                                                                     class="ph">本文档仅适用于<b
+                                    data-tag="uicontrol" id="a219e94677gw6" class="uicontrol">中国大陆版</b>（北京）。如需使用模型，需使用<b
+                                    data-tag="uicontrol" id="915e47aa3fnkr" data-init-id="a219e94677gw6"
+                                    class="uicontrol">中国大陆版</b>（北京）的<span class="help-letter-space"></span><a
+                                    class="" href="https://bailian.console.aliyun.com/?tab=model#/api-key"
+                                    id="19f4a43acac0o">API Key</a>。</span></p></div>
+                        </div>
+                        <section id="4dfa509e7ee2g" class="section"><h2 id="4d86103b5246q"><b>支持的模型</b></h2>
+                            <p id="6f6b73de3ftcs">推荐使用 Qwen3-TTS。</p>
+                            <p id="c8bd051bd1g7j">Qwen3-TTS 拥有 17<span class="help-letter-space"></span>种音色，支持多种语言及方言。
+                            </p>
+                            <p id="16c8d3fb9ck0w">Qwen-TTS 仅拥有<span class="help-letter-space"></span>7<span
+                                    class="help-letter-space"></span>种音色，且只支持中文和英文。</p>
+                            <section id="216342aa1bsri" data-tag="tabbed-content-box" outputclass="tabbed-content-box"
+                                     props="china" data-cond-props="china" class="tabbed-content-box section">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item selected-tab-item" id="8ebfcab8e8stb">Qwen3-TTS</div>
+                                        <div class="tab-item" id="39e3b8b0a76o9">Qwen-TTS</div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <section id="efe4e738db6fw" class="section" style="display: block;">
+                                    <table outputclass="qwen" id="96019bfca1cic" tablewidth="643.98"
+                                           tablecolswidth="107.33 107.33 107.33 107.33 107.33 107.33" autofit="true"
+                                           class="qwen table">
+                                        <colgroup colwidth="1*" style="width:16.67%"></colgroup>
+                                        <colgroup colwidth="1*" style="width:16.67%"></colgroup>
+                                        <colgroup colwidth="1*" style="width:16.67%"></colgroup>
+                                        <colgroup colwidth="1*" style="width:16.67%"></colgroup>
+                                        <colgroup colwidth="1*" style="width:16.67%"></colgroup>
+                                        <colgroup colwidth="1*" style="width:16.67%"></colgroup>
+                                        <tbody class="tbody">
+                                        <tr id="0fbe4c2c44kyi">
+                                            <td id="1d6dcbf067me9" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="f27571fe95lvp"><b>模型名称</b></p></td>
+                                            <td id="fdb253f42dd3p" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="210e823f90mms"><b>版本</b></p></td>
+                                            <td id="235497c800f4k" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    jc="left" id="02190b939fstu" style="text-align:left"><b>单价</b></p>
+                                            </td>
+                                            <td id="f7e4b12e88pvr" rowspan="1" style="background-color:#e5e5e5"
+                                                colspan="1"><p id="d1d4b18d0bcro"><b>最大输入字符数</b></p></td>
+                                            <td id="b74f09644b2rm" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="980412c27dy50"><b>支持的语种</b></p></td>
+                                            <td id="9ee2bfeb71lci" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="c5f5d1ac8csgd"><b>免费额度</b><a
+                                                    href="https://help.aliyun.com/zh/model-studio/new-free-quota#591f3dfedfyzj"
+                                                    id="295a1283e0h4k" title="" class="xref">（注）</a></p></td>
+                                        </tr>
+                                        <tr id="04ef4c4ec2cp0">
+                                            <td id="4f728d7b59t1t" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="f04e8fa695gd0">qwen3-tts-flash</p>
+                                                <blockquote id="9b90ff95101jw">当前能力等同 qwen3-tts-flash-2025-09-18
+                                                </blockquote>
+                                            </td>
+                                            <td id="73c34907596e7" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="45b2736e9417f">稳定版</p></td>
+                                            <td id="87c463fb82yq6" rowspan="2" style="vertical-align:middle"
+                                                colspan="1"><p id="f53a3081eafq9">0.8<span
+                                                    class="help-letter-space"></span>元/万字符</p></td>
+                                            <td id="fe7955f4e0pb3" rowspan="2" colspan="1"><p id="3fef9b39d0lfs">600</p>
+                                            </td>
+                                            <td id="15e9bb8e7dg6p" rowspan="2" style="vertical-align:middle"
+                                                colspan="1"><p id="b2b1dd0e527lt">
+                                                中文（普通话、北京、上海、四川、南京、陕西、闽南、天津、粤语）、英文、西班牙语、俄语、意大利语、法语、韩语、日语、德语、葡萄牙语</p>
+                                            </td>
+                                            <td id="b0cca4f11baz8" rowspan="2" style="vertical-align:middle"
+                                                colspan="1"><p id="128ed93cb76j3">各<span
+                                                    class="help-letter-space"></span>2000<span
+                                                    class="help-letter-space"></span>字符</p>
+                                                <p id="fad5c4e152avw">有效期：百炼开通后<span
+                                                        class="help-letter-space"></span>90<span
+                                                        class="help-letter-space"></span>天内</p></td>
+                                        </tr>
+                                        <tr id="2355378e27v35">
+                                            <td id="13d91f8b95kmy" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="44cdedf1eezsq">qwen3-tts-flash-2025-09-18</p></td>
+                                            <td id="b3ffdf575fsaq" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="6c3ae7c0ad1ix">快照版</p></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </section>
+                                <section id="ee8184688du06" class="section">
+                                    <table outputclass="qwen" id="aaf52e7f0f5qi" tablewidth="756"
+                                           tablecolswidth="185 69 79 78 74 79 79 113" autofit="false"
+                                           class="qwen table">
+                                        <colgroup colwidth="1.97*" style="width:24.47%"></colgroup>
+                                        <colgroup colwidth="0.73*" style="width:9.13%"></colgroup>
+                                        <colgroup colwidth="0.84*" style="width:10.45%"></colgroup>
+                                        <colgroup colwidth="0.83*" style="width:10.32%"></colgroup>
+                                        <colgroup colwidth="0.79*" style="width:9.79%"></colgroup>
+                                        <colgroup colwidth="0.84*" style="width:10.45%"></colgroup>
+                                        <colgroup colwidth="0.84*" style="width:10.45%"></colgroup>
+                                        <colgroup colwidth="1.2*" style="width:14.95%"></colgroup>
+                                        <tbody class="tbody">
+                                        <tr id="a1930bda9fka0">
+                                            <td id="277bd127d015s" rowspan="2"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="f63347c8ddkta"><b>模型名称</b></p></td>
+                                            <td id="92b66404e7l2l" rowspan="2"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="40df823a9fhsm"><b>版本</b></p></td>
+                                            <td id="58eab3fe9893y" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    jc="left" id="baa7f72c8euti" style="text-align:left">
+                                                <b>上下文长度</b></p></td>
+                                            <td id="8c76497c90wr3" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="c96d84affddnt"><b>最大输入</b></p></td>
+                                            <td id="7686f0a7b4j0u" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="890eadc2a2loa"><b>最大输出</b></p></td>
+                                            <td id="120209ed69v99" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    jc="left" id="f82c7113fc1gs" style="text-align:left"><b>输入成本</b>
+                                            </p></td>
+                                            <td id="d7212b281ebke" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    jc="left" id="424a70c3560ey" style="text-align:left"><b>输出成本</b>
+                                            </p></td>
+                                            <td id="781ae2229eo55" rowspan="2"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="c8ad70eccco9v"><b>免费额度</b></p>
+                                                <p id="1cbe9db43e15v"><a
+                                                        href="https://help.aliyun.com/zh/model-studio/new-free-quota#591f3dfedfyzj"
+                                                        id="c768e06497asf" title="" class="xref">（注）</a></p></td>
+                                        </tr>
+                                        <tr id="0f5f7486aacbe" style="height:42px">
+                                            <td id="70308ecfa0m02" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="3"><p
+                                                    jc="center" id="1f78f21c5e643" style="text-align:center">
+                                                <b>（Token<span class="help-letter-space"></span>数）</b></p></td>
+                                            <td id="1bd07aae2anko" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="2"><p
+                                                    jc="center" id="477cc1b13apwx" style="text-align:center">
+                                                <b>（每千<span class="help-letter-space"></span>Token）</b></p></td>
+                                        </tr>
+                                        <tr id="2d970e0414c5z">
+                                            <td id="2cd62052f7kgh" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="46d2c3aa6e8xm"><b>qwen-tts</b></p>
+                                                <blockquote id="494de4229c6t2">当前与 qwen-tts-2025-04-10 能力相同
+                                                </blockquote>
+                                            </td>
+                                            <td id="200b9af741t8d" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="bc8833eed5gbu">稳定版</p></td>
+                                            <td id="e944d2baffnvk" rowspan="4" style="vertical-align:middle"
+                                                colspan="1"><p id="559ab29a249ls">8,192</p></td>
+                                            <td id="00b42e0187b5g" rowspan="4" style="vertical-align:middle"
+                                                colspan="1"><p id="c0221c1c602p6">512</p></td>
+                                            <td id="12c3271601qil" rowspan="4" style="vertical-align:middle"
+                                                colspan="1"><p id="186d389ebe4p0">7,680</p></td>
+                                            <td id="140bafdc8d04j" rowspan="4" style="vertical-align:middle"
+                                                colspan="1"><p id="19332b462flj9">0.0016<span
+                                                    class="help-letter-space"></span>元</p></td>
+                                            <td id="f88be28f1ciwp" rowspan="4" style="vertical-align:middle"
+                                                colspan="1"><p id="3eac25ed7fv2n">0.01<span
+                                                    class="help-letter-space"></span>元</p></td>
+                                            <td id="3cc25361f1tgl" rowspan="4" style="vertical-align:middle"
+                                                colspan="1">
+                                                <section id="b2b2bdc81a729" class="section"><p id="c43706af34hvf">
+                                                    各<span class="help-letter-space"></span>100<span
+                                                        class="help-letter-space"></span>万<span
+                                                        class="help-letter-space"></span>Token</p>
+                                                    <p id="2418f5bf30l5k">有效期：百炼开通后<span
+                                                            class="help-letter-space"></span>90<span
+                                                            class="help-letter-space"></span>天内</p></section>
+                                            </td>
+                                        </tr>
+                                        <tr id="fb24ca217cfpv">
+                                            <td id="52205bb498wvr" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="d453f6ea27zr8"><b>qwen-tts-latest</b></p>
+                                                <blockquote id="dd6bdd2921qha">始终与最新快照版能力相同
+                                                </blockquote>
+                                            </td>
+                                            <td id="4e2c985bfd2wi" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="3be0f454d8nih">最新版</p></td>
+                                        </tr>
+                                        <tr id="da2ddb4a12vrp">
+                                            <td id="206f0502ffo9i" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="e83a9e238dbcc">qwen-tts-2025-05-22</p></td>
+                                            <td id="141effcc131m2" rowspan="2" style="vertical-align:middle"
+                                                colspan="1"><p id="7f3cfc4e78bes">快照版</p></td>
+                                        </tr>
+                                        <tr id="0ed318ff06e44">
+                                            <td id="bcd11a55cdjpp" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="5ceb0544442m7">qwen-tts-2025-04-10</p></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <p id="c726c7a53blku">音频转换为 Token 的规则：每<span
+                                            class="help-letter-space"></span>1<span class="help-letter-space"></span>秒的音频对应
+                                        50<span class="help-letter-space"></span>个 Token 。若音频时长不足<span
+                                                class="help-letter-space"></span>1<span
+                                                class="help-letter-space"></span>秒，则按 50<span
+                                                class="help-letter-space"></span>个 Token 计算。</p></section>
+                            </section>
+                        </section>
+                        <section id="c62fc0b039a4m" class="section"><h2 id="8d5ec675e10sx"><b>功能特性</b></h2>
+                            <div class="table-wrapper">
+                                <table class="fixed-table" style="width: 1517px; visibility: hidden; top: 0px;">
+                                    <colgroup colwidth="0.39*" style="width:13.13%"></colgroup>
+                                    <colgroup colwidth="1.3*" style="width:43.44%"></colgroup>
+                                    <colgroup colwidth="1.3*" style="width:43.44%"></colgroup>
+                                    <thead class="fixed-thead">
+                                    <tr id="bb11ac3940x81">
+                                        <td id="74b7a25bbemsr" rowspan="1" style="background-color:#e5e5e5" colspan="1">
+                                            <span><p id="922a99e1dbdsu"><b>功能特性</b></p></span></td>
+                                        <td id="4bdd8954bba26" rowspan="1" style="background-color:#e5e5e5" colspan="1">
+                                            <span><p id="a240868d57h5s"><b>Qwen3-TTS</b></p></span></td>
+                                        <td id="fa227b312chj3" rowspan="1" style="background-color:#e5e5e5" colspan="1">
+                                            <span><p id="4caac8d8d946l"><b>Qwen-TTS</b></p></span></td>
+                                    </tr>
+                                    </thead>
+                                </table>
+                                <table id="6c094a3afbsb4" tablewidth="1554" tablecolswidth="204 675 675" autofit="false"
+                                       class="table">
+                                    <colgroup colwidth="0.39*" style="width:13.13%"></colgroup>
+                                    <colgroup colwidth="1.3*" style="width:43.44%"></colgroup>
+                                    <colgroup colwidth="1.3*" style="width:43.44%"></colgroup>
+                                    <tbody class="tbody">
+                                    <tr id="bb11ac3940x81">
+                                        <td id="74b7a25bbemsr" rowspan="1" style="background-color:#e5e5e5" colspan="1">
+                                            <p id="922a99e1dbdsu"><b>功能特性</b></p></td>
+                                        <td id="4bdd8954bba26" rowspan="1" style="background-color:#e5e5e5" colspan="1">
+                                            <p id="a240868d57h5s"><b>Qwen3-TTS</b></p></td>
+                                        <td id="fa227b312chj3" rowspan="1" style="background-color:#e5e5e5" colspan="1">
+                                            <p id="4caac8d8d946l"><b>Qwen-TTS</b></p></td>
+                                    </tr>
+                                    <tr id="b9064baa607ko">
+                                        <td id="81bd9d4c22jte" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m4koz03fbk2j5uxi02i" id="3c05cd925bzpq"><b>接入方式</b></p></td>
+                                        <td id="9e0ae61e4943i" rowspan="1" colspan="2"><p id="8a568558c83rk">
+                                            Python、Java、HTTP</p></td>
+                                    </tr>
+                                    <tr id="61f28a6d9bp9c">
+                                        <td id="e11f32fce6n16" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m4kpce1teidpprkq9eg" id="2086d5f6c09lc"><b>流式输出</b></p></td>
+                                        <td id="373003fc3dalv" rowspan="1" colspan="2"><p id="0a92e51c6f258">支持</p>
+                                        </td>
+                                    </tr>
+                                    <tr id="de4c810437enj">
+                                        <td id="2e981bce52qk8" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m4kpccstyj9q0i3y1sl" id="977dd7ee93tbn"><b>流式输入</b></p></td>
+                                        <td id="f9086fe76dbux" rowspan="1" colspan="2"><p id="1fd55d0e82p63">不支持</p>
+                                            <blockquote id="2b21d7c64c56k" props="china" data-cond-props="china"><a
+                                                    href="https://help.aliyun.com/zh/model-studio/qwen-tts-realtime"
+                                                    id="4b87c8ae361kw" title="" class="xref">Qwen-TTS Realtime API</a>
+                                                支持流式输入。
+                                            </blockquote>
+                                        </td>
+                                    </tr>
+                                    <tr id="9d35b7d56271z">
+                                        <td id="a9cadf4656l5c" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m4kpd4841wew5p0smsw" id="a5fe2d8a57ymd"><b>合成音频格式</b></p>
+                                        </td>
+                                        <td id="69604edae91v4" rowspan="1" colspan="2">
+                                            <ul id="596027a5fe357">
+                                                <li id="0b3d16eaffi72"><p id="057181475dk1g">wav</p></li>
+                                                <li id="b8cb3155342ah"><p id="caf153b8f9m2q">流式输出 Base64 编码的
+                                                    pcm</p></li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr id="12ea2d643152w">
+                                        <td id="c2fec0d96448a" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m4kpdn1ykcbswhw49id" id="c9dd503e2cfas"><b>合成音频采样率</b></p>
+                                        </td>
+                                        <td id="e0c520702305j" rowspan="1" colspan="2"><p id="ea033ececcgau">24kHz</p>
+                                        </td>
+                                    </tr>
+                                    <tr id="a5011023f7yrg">
+                                        <td id="430d3d1ff83uw" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m4kperdtt81ngd0xuoi" id="63c0bfa79avk4"><b>时间戳</b></p></td>
+                                        <td id="df5ea8b987jsc" rowspan="1" colspan="2"><p id="815137a68dn27">不支持</p>
+                                        </td>
+                                    </tr>
+                                    <tr id="8038627722vhh">
+                                        <td id="4a4352d44drdf" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m4kpfrbp0giamzf8vdnl" id="02d2b053ed8kv"><b>语言</b></p></td>
+                                        <td id="74c4b2381fkki" rowspan="1" colspan="1"><p id="cb69844c8eb6t">
+                                            中文（普通话、北京、上海、四川、南京、陕西、闽南、天津、粤语）、英文、西班牙语、俄语、意大利语、法语、韩语、日语、德语、葡萄牙语，因音色而异，详情请参见<a
+                                                href="#bac280ddf5a1u" id="1a0e455157vwc" title=""
+                                                class="xref">支持的音色</a></p></td>
+                                        <td id="65588b16d4223" rowspan="1" colspan="1"><p id="d5a951d023uzy">
+                                            中文（普通话、北京、上海、四川）、英文，因模型和音色而异，详情请参见<a
+                                                href="#bac280ddf5a1u" id="784cc022f4zxn" title=""
+                                                class="xref">支持的音色</a></p></td>
+                                    </tr>
+                                    <tr id="294f367c8epk7">
+                                        <td id="7302f51c11k7l" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m4kpgk8bly5ac8g4r5m" id="b3ca1f01e9ett"><b>声音复刻</b></p></td>
+                                        <td id="2777b6222abcv" rowspan="1" colspan="2"><p id="5649a87d55h6b">不支持</p>
+                                        </td>
+                                    </tr>
+                                    <tr id="fef0763af662x">
+                                        <td id="1bac42c936ubx" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m4koz03f51tni1aqeyv" id="31ce51c96be6f"><b>SSML</b></p></td>
+                                        <td id="3bcfcf28b2oxa" rowspan="1" colspan="2"><p id="ad7b082261qfs">不支持</p>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                        <section id="a77dbbb536qli" class="section"><h2 id="e79cb56cfdbbp"><b>快速开始</b></h2>
+                            <p id="b818bea23f66k"><b>准备工作</b></p>
+                            <ul id="261ee02b539qu">
+                                <li id="37a29c7d704eq"><p id="d6515235f01kf">已<a
+                                        href="https://help.aliyun.com/zh/model-studio/get-api-key" id="a264dda26d6v2"
+                                        title="" class="xref">配置 API Key</a><span
+                                        class="help-letter-space"></span>并<a
+                                        href="https://help.aliyun.com/zh/model-studio/configure-api-key-through-environment-variables"
+                                        id="7b56df214dmsp" title="" class="xref">配置<span
+                                        class="help-letter-space"></span>API Key<span class="help-letter-space"></span>到环境变量</a>。
+                                </p></li>
+                                <li id="5bb6ffedec29m"><p id="dd595c801bk2n">如果通过 DashScope SDK 进行调用，需要<a
+                                        href="https://help.aliyun.com/zh/model-studio/install-sdk" id="1ca3a1165134j"
+                                        title="" class="xref">安装最新版<span class="help-letter-space"></span>SDK</a>。
+                                </p>
+                                    <ul id="d2ca10977fke3">
+                                        <li id="fe4a56f0f7lbr"><p id="01d76cd2a72aa">DashScope Java SDK 版本需要不低于
+                                            2.21.9。</p></li>
+                                        <li id="8c589c75699tw"><p id="2613e38038oqp">DashScope Python SDK 版本需要不低于
+                                            1.24.6，DashScope Python SDK<span class="help-letter-space"></span>中的<code
+                                                    data-tag="code" id="e7de974c1dopi"
+                                                    class="code">SpeechSynthesizer</code>接口已统一为<code
+                                                    data-tag="code" id="511e6530b61s9" class="code">MultiModalConversation</code>，使用新接口只需替换接口名称即可，其他参数完全兼容。
+                                        </p></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <p id="38d255c2b31ik">可通过<code data-tag="code" id="17a40eb475be7"
+                                                              class="code">text</code>指定文本，<code data-tag="code"
+                                                                                                     id="49369d925c5aq"
+                                                                                                     class="code">voice</code>指定音色，通过返回的<code
+                                    data-tag="code" id="c848aef96f0t6" class="code">url</code>来获取合成的语音。</p>
+                            <blockquote id="048ab296d94zm">URL 有效期为<span class="help-letter-space"></span>24 小时。
+                            </blockquote>
+                            <div outputclass="tabbed-codeblock" data-tag="fig" id="1ccc63c4b33y8" props="china"
+                                 data-cond-props="china" class="tabbed-codeblock-box">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item selected-tab-item" id="1ccc63c4b33y8-python-tab">Python
+                                        </div>
+                                        <div class="tab-item" id="1ccc63c4b33y8-java-tab">Java</div>
+                                        <div class="tab-item" id="1ccc63c4b33y8-curl-tab">curl</div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-1ccc63c4b33y8" id="1ccc63c4b33y8-python-tab" checked=""><label
+                                    for="1ccc63c4b33y8-python-tab">Python</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="fb61caedf8xno" data-tag="codeblock"
+                                             outputclass="language-python" index="0"
+                                             class="pre codeblock language-python"><code data-highlighted="yes"
+                                                                                         class="hljs language-python"><span
+                                                class="hljs-comment">#  DashScope SDK 版本不低于 1.24.6</span>
+<span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> dashscope
+
+text = <span class="hljs-string">"那我来给大家推荐一款T恤，这款呢真的是超级好看，这个颜色呢很显气质，而且呢也是搭配的绝佳单品，大家可以闭眼入，真的是非常好看，对身材的包容性也很好，不管啥身材的宝宝呢，穿上去都是很好看的。推荐宝宝们下单哦。"</span>
+<span class="hljs-comment"># SpeechSynthesizer接口使用方法：dashscope.audio.qwen_tts.SpeechSynthesizer.call(...)</span>
+response = dashscope.MultiModalConversation.call(
+    model=<span class="hljs-string">"qwen3-tts-flash"</span>,
+    api_key=os.getenv(<span class="hljs-string">"DASHSCOPE_API_KEY"</span>),
+    text=text,
+    voice=<span class="hljs-string">"Cherry"</span>,
+    language_type=<span class="hljs-string">"Chinese"</span>, <span
+                                                    class="hljs-comment"># 建议与文本语种一致，以获得正确的发音和自然的语调。</span>
+    stream=<span class="hljs-literal">False</span>
+)
+audio_url = response.output.audio.url
+save_path = <span class="hljs-string">"downloaded_audio.wav"</span>  <span class="hljs-comment"># 自定义保存路径</span>
+
+<span class="hljs-keyword">try</span>:
+    response = requests.get(audio_url)
+    response.raise_for_status()  <span class="hljs-comment"># 检查请求是否成功</span>
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(save_path, <span class="hljs-string">'wb'</span>) <span
+                                                    class="hljs-keyword">as</span> f:
+        f.write(response.content)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"音频文件已保存至：<span class="hljs-subst">{save_path}</span>"</span>)
+<span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"下载失败：<span class="hljs-subst">{<span
+                                                    class="hljs-built_in">str</span>(e)}</span>"</span>)
+    </code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-1ccc63c4b33y8" id="1ccc63c4b33y8-java-tab"><label
+                                    for="1ccc63c4b33y8-java-tab">Java</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="8fce1d3d01fn4" data-tag="codeblock"
+                                             outputclass="language-java" class="pre codeblock language-java"><code
+                                                data-highlighted="yes" class="hljs language-java"><span
+                                                class="hljs-comment">//  DashScope SDK 版本不低于2.21.9</span>
+<span class="hljs-comment">// 2.20.7 及以上版本支持指定 Dylan、Jada与 Sunny 三种音色</span>
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.aigc.multimodalconversation.AudioParameters;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversation;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversationParam;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversationResult;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.exception.ApiException;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.exception.NoApiKeyException;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.exception.UploadFileException;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.protocol.Protocol;
+<span class="hljs-keyword">import</span> java.io.FileOutputStream;
+<span class="hljs-keyword">import</span> java.io.InputStream;
+<span class="hljs-keyword">import</span> java.net.URL;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span
+                                                    class="hljs-title class_">Main</span> {
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span
+                                                    class="hljs-keyword">final</span> <span
+                                                    class="hljs-type">String</span> <span
+                                                    class="hljs-variable">MODEL</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-string">"qwen3-tts-flash"</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span
+                                                    class="hljs-keyword">void</span> <span class="hljs-title function_">call</span><span
+                                                    class="hljs-params">()</span> <span
+                                                    class="hljs-keyword">throws</span> ApiException, NoApiKeyException, UploadFileException {
+        <span class="hljs-type">MultiModalConversation</span> <span class="hljs-variable">conv</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">MultiModalConversation</span>();
+        <span class="hljs-type">MultiModalConversationParam</span> <span class="hljs-variable">param</span> <span
+                                                    class="hljs-operator">=</span> MultiModalConversationParam.builder()
+                .model(MODEL)
+                .text(<span class="hljs-string">"Today is a wonderful day to build something people love!"</span>)
+                .voice(AudioParameters.Voice.CHERRY)
+                .languageType(<span class="hljs-string">"English"</span>) <span class="hljs-comment">// 建议与文本语种一致，以获得正确的发音和自然的语调。</span>
+                .build();
+        <span class="hljs-type">MultiModalConversationResult</span> <span class="hljs-variable">result</span> <span
+                                                    class="hljs-operator">=</span> conv.call(param);
+        <span class="hljs-type">String</span> <span class="hljs-variable">audioUrl</span> <span
+                                                    class="hljs-operator">=</span> result.getOutput().getAudio().getUrl();
+        System.out.print(audioUrl);
+
+        <span class="hljs-comment">// 下载音频文件到本地</span>
+        <span class="hljs-keyword">try</span> (<span class="hljs-type">InputStream</span> <span
+                                                    class="hljs-variable">in</span> <span class="hljs-operator">=</span> <span
+                                                    class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">URL</span>(audioUrl).openStream();
+             <span class="hljs-type">FileOutputStream</span> <span class="hljs-variable">out</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">FileOutputStream</span>(<span
+                                                    class="hljs-string">"downloaded_audio.wav"</span>)) {
+            <span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">byte</span>[<span
+                                                    class="hljs-number">1024</span>];
+            <span class="hljs-type">int</span> bytesRead;
+            <span class="hljs-keyword">while</span> ((bytesRead = in.read(buffer)) != -<span
+                                                    class="hljs-number">1</span>) {
+                out.write(buffer, <span class="hljs-number">0</span>, bytesRead);
+            }
+            System.out.println(<span class="hljs-string">"\n音频文件已下载到本地: downloaded_audio.wav"</span>);
+        } <span class="hljs-keyword">catch</span> (Exception e) {
+            System.out.println(<span class="hljs-string">"\n下载音频文件时出错: "</span> + e.getMessage());
+        }
+    }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span
+                                                    class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span
+                                                    class="hljs-params">(String[] args)</span> {
+        <span class="hljs-keyword">try</span> {
+            call();
+        } <span class="hljs-keyword">catch</span> (ApiException | NoApiKeyException | UploadFileException e) {
+            System.out.println(e.getMessage());
+        }
+        System.exit(<span class="hljs-number">0</span>);
+    }
+}</code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-1ccc63c4b33y8" id="1ccc63c4b33y8-curl-tab"><label
+                                    for="1ccc63c4b33y8-curl-tab">curl</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="1e0bdb93d3e49" data-tag="codeblock"
+                                             outputclass="language-curl" index="0"
+                                             class="pre codeblock language-curl"><code data-highlighted="yes"
+                                                                                       class="hljs language-curl"><span
+                                                class="hljs-keyword">curl</span> <span class="hljs-literal">-X <span
+                                                class="hljs-symbol">POST</span></span> <span class="hljs-string">'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation'</span> \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Authorization: Bearer $DASHSCOPE_API_KEY"</span> \
+<span class="hljs-literal">-H</span> <span class="hljs-string">'Content-Type: application/json'</span> \
+<span class="hljs-literal">-d</span> <span class="hljs-string">'{
+    "model": "qwen3-tts-flash",
+    "input": {
+        "text": "那我来给大家推荐一款T恤，这款呢真的是超级好看，这个颜色呢很显气质，而且呢也是搭配的绝佳单品，大家可以闭眼入，真的是非常好看，对身材的包容性也很好，不管啥身材的宝宝呢，穿上去都是很好看的。推荐宝宝们下单哦。",
+        "voice": "Cherry",
+        "language_type": "Chinese"
+    }
+}'</span></code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section id="46b2b5f0823p0" class="section"><h2 id="c204937c02gsb"><b>实时播放</b></h2>
+                            <p id="709c009e11z68">Qwen-TTS 模型可以流式地将音频数据以 Base64 格式进行输出，并在最后一个数据包中包含完整音频的
+                                URL。</p>
+                            <div outputclass="tabbed-codeblock" data-tag="fig" id="2e54ca5269af9" props="china"
+                                 data-cond-props="china" class="tabbed-codeblock-box">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item selected-tab-item" id="2e54ca5269af9-python-tab">Python
+                                        </div>
+                                        <div class="tab-item" id="2e54ca5269af9-java-tab">Java</div>
+                                        <div class="tab-item" id="2e54ca5269af9-curl-tab">curl</div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-2e54ca5269af9" id="2e54ca5269af9-python-tab" checked=""><label
+                                    for="2e54ca5269af9-python-tab">Python</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="da1b664d52ed5" data-tag="codeblock"
+                                             outputclass="language-python" class="pre codeblock language-python"><code
+                                                data-highlighted="yes" class="hljs language-python"><span
+                                                class="hljs-comment">#  DashScope SDK 版本不低于 1.24.6</span>
+<span class="hljs-comment"># coding=utf-8</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment"># Installation instructions for pyaudio:</span>
+<span class="hljs-comment"># APPLE Mac OS X</span>
+<span class="hljs-comment">#   brew install portaudio</span>
+<span class="hljs-comment">#   pip install pyaudio</span>
+<span class="hljs-comment"># Debian/Ubuntu</span>
+<span class="hljs-comment">#   sudo apt-get install python-pyaudio python3-pyaudio</span>
+<span class="hljs-comment">#   or</span>
+<span class="hljs-comment">#   pip install pyaudio</span>
+<span class="hljs-comment"># CentOS</span>
+<span class="hljs-comment">#   sudo yum install -y portaudio portaudio-devel &amp;&amp; pip install pyaudio</span>
+<span class="hljs-comment"># Microsoft Windows</span>
+<span class="hljs-comment">#   python -m pip install pyaudio</span>
+
+<span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> dashscope
+<span class="hljs-keyword">import</span> pyaudio
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> base64
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+
+p = pyaudio.PyAudio()
+<span class="hljs-comment"># 创建音频流</span>
+stream = p.<span class="hljs-built_in">open</span>(<span class="hljs-built_in">format</span>=pyaudio.paInt16,
+                channels=<span class="hljs-number">1</span>,
+                rate=<span class="hljs-number">24000</span>,
+                output=<span class="hljs-literal">True</span>)
+
+
+text = <span class="hljs-string">"你好啊，我是通义千问"</span>
+response = dashscope.MultiModalConversation.call(
+    api_key=os.getenv(<span class="hljs-string">"DASHSCOPE_API_KEY"</span>),
+    model=<span class="hljs-string">"qwen3-tts-flash"</span>,
+    text=text,
+    voice=<span class="hljs-string">"Cherry"</span>,
+    language_type=<span class="hljs-string">"Chinese"</span>,  <span
+                                                    class="hljs-comment"># 建议与文本语种一致，以获得正确的发音和自然的语调。</span>
+    stream=<span class="hljs-literal">True</span>
+)
+
+<span class="hljs-keyword">for</span> chunk <span class="hljs-keyword">in</span> response:
+    audio = chunk.output.audio
+    <span class="hljs-keyword">if</span> audio.data <span class="hljs-keyword">is</span> <span
+                                                    class="hljs-keyword">not</span> <span
+                                                    class="hljs-literal">None</span>:
+        wav_bytes = base64.b64decode(audio.data)
+        audio_np = np.frombuffer(wav_bytes, dtype=np.int16)
+        <span class="hljs-comment"># 直接播放音频数据</span>
+        stream.write(audio_np.tobytes())
+    <span class="hljs-keyword">if</span> chunk.output.finish_reason == <span class="hljs-string">"stop"</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"finish at: {} "</span>, chunk.output.audio.expires_at)
+time.sleep(<span class="hljs-number">0.8</span>)
+<span class="hljs-comment"># 清理资源</span>
+stream.stop_stream()
+stream.close()
+p.terminate()
+</code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-2e54ca5269af9" id="2e54ca5269af9-java-tab"><label
+                                    for="2e54ca5269af9-java-tab">Java</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="e366de2c125kz" data-tag="codeblock"
+                                             outputclass="language-java" class="pre codeblock language-java"><code
+                                                data-highlighted="yes" class="hljs language-java"><span
+                                                class="hljs-comment">// DashScope SDK 版本不低于2.21.9</span>
+<span class="hljs-comment">// 2.20.7 及以上版本支持指定 Dylan、Jada与 Sunny 三种音色</span>
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.aigc.multimodalconversation.AudioParameters;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversation;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversationParam;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.aigc.multimodalconversation.MultiModalConversationResult;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.exception.ApiException;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.exception.NoApiKeyException;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.exception.UploadFileException;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.protocol.Protocol;
+<span class="hljs-keyword">import</span> io.reactivex.Flowable;
+<span class="hljs-keyword">import</span> javax.sound.sampled.*;
+<span class="hljs-keyword">import</span> java.util.Base64;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span
+                                                    class="hljs-title class_">Main</span> {
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span
+                                                    class="hljs-keyword">final</span> <span
+                                                    class="hljs-type">String</span> <span
+                                                    class="hljs-variable">MODEL</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-string">"qwen3-tts-flash"</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span
+                                                    class="hljs-keyword">void</span> <span class="hljs-title function_">streamCall</span><span
+                                                    class="hljs-params">()</span> <span
+                                                    class="hljs-keyword">throws</span> ApiException, NoApiKeyException, UploadFileException {
+        <span class="hljs-type">MultiModalConversation</span> <span class="hljs-variable">conv</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">MultiModalConversation</span>();
+        <span class="hljs-type">MultiModalConversationParam</span> <span class="hljs-variable">param</span> <span
+                                                    class="hljs-operator">=</span> MultiModalConversationParam.builder()
+                .model(MODEL)
+                .text(<span class="hljs-string">"Today is a wonderful day to build something people love!"</span>)
+                .voice(AudioParameters.Voice.CHERRY)
+                .languageType(<span class="hljs-string">"English"</span>) <span class="hljs-comment">// 建议与文本语种一致，以获得正确的发音和自然的语调。</span>
+                .build();
+        Flowable&lt;MultiModalConversationResult&gt; result = conv.streamCall(param);
+        result.blockingForEach(r -&gt; {
+            <span class="hljs-keyword">try</span> {
+                <span class="hljs-comment">// 1. 获取Base64编码的音频数据</span>
+                <span class="hljs-type">String</span> <span class="hljs-variable">base64Data</span> <span
+                                                    class="hljs-operator">=</span> r.getOutput().getAudio().getData();
+                <span class="hljs-type">byte</span>[] audioBytes = Base64.getDecoder().decode(base64Data);
+
+                <span class="hljs-comment">// 2. 配置音频格式（根据API返回的音频格式调整）</span>
+                <span class="hljs-type">AudioFormat</span> <span class="hljs-variable">format</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">AudioFormat</span>(
+                        AudioFormat.Encoding.PCM_SIGNED,
+                        <span class="hljs-number">24000</span>, <span
+                                                    class="hljs-comment">// 采样率（需与API返回格式一致）</span>
+                        <span class="hljs-number">16</span>,    <span class="hljs-comment">// 采样位数</span>
+                        <span class="hljs-number">1</span>,     <span class="hljs-comment">// 声道数</span>
+                        <span class="hljs-number">2</span>,     <span class="hljs-comment">// 帧大小（位数/字节数）</span>
+                        <span class="hljs-number">16000</span>, <span class="hljs-comment">// 数据传输率</span>
+                        <span class="hljs-literal">false</span>  <span class="hljs-comment">// 是否压缩</span>
+                );
+
+                <span class="hljs-comment">// 3. 实时播放音频数据</span>
+                DataLine.<span class="hljs-type">Info</span> <span class="hljs-variable">info</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">DataLine</span>.Info(SourceDataLine.class, format);
+                <span class="hljs-keyword">try</span> (<span class="hljs-type">SourceDataLine</span> <span
+                                                    class="hljs-variable">line</span> <span
+                                                    class="hljs-operator">=</span> (SourceDataLine) AudioSystem.getLine(info)) {
+                    <span class="hljs-keyword">if</span> (line != <span class="hljs-literal">null</span>) {
+                        line.open(format);
+                        line.start();
+                        line.write(audioBytes, <span class="hljs-number">0</span>, audioBytes.length);
+                        line.drain();
+                    }
+                }
+            } <span class="hljs-keyword">catch</span> (LineUnavailableException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span
+                                                    class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span
+                                                    class="hljs-params">(String[] args)</span> {
+        <span class="hljs-keyword">try</span> {
+            streamCall();
+        } <span class="hljs-keyword">catch</span> (ApiException | NoApiKeyException | UploadFileException e) {
+            System.out.println(e.getMessage());
+        }
+        System.exit(<span class="hljs-number">0</span>);
+    }
+}
+</code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-2e54ca5269af9" id="2e54ca5269af9-curl-tab"><label
+                                    for="2e54ca5269af9-curl-tab">curl</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="19f26ef233pou" index="0" data-tag="codeblock"
+                                             outputclass="language-curl" class="pre codeblock language-curl"><code
+                                                data-highlighted="yes" class="hljs language-curl"><span
+                                                class="hljs-keyword">curl</span> <span class="hljs-literal">-X <span
+                                                class="hljs-symbol">POST</span></span> <span class="hljs-string">'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation'</span> \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Authorization: Bearer $DASHSCOPE_API_KEY"</span> \
+<span class="hljs-literal">-H</span> <span class="hljs-string">'Content-Type: application/json'</span> \
+<span class="hljs-literal">-H</span> <span class="hljs-string">'X-DashScope-SSE: enable'</span> \
+<span class="hljs-literal">-d</span> <span class="hljs-string">'{
+    "model": "qwen3-tts-flash",
+    "input": {
+        "text": "那我来给大家推荐一款T恤，这款呢真的是超级好看，这个颜色呢很显气质，而且呢也是搭配的绝佳单品，大家可以闭眼入，真的是非常好看，对身材的包容性也很好，不管啥身材的宝宝呢，穿上去都是很好看的。推荐宝宝们下单哦。",
+        "voice": "Cherry",
+        "language_type": "Chinese"
+    }
+}'</span></code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section id="d774348f5dboq" class="section"><h2 id="bb4dbbdb74em4"><b>API 参考</b></h2>
+                            <p id="e4cf15e8106eu">请参见<a href="https://help.aliyun.com/zh/model-studio/qwen-tts-api"
+                                                           id="ba746eddd3stj" title=""
+                                                           class="xref">语音合成（Qwen-TTS）</a>。</p></section>
+                        <section id="184aea6f4399s" class="section"><h2 id="bac280ddf5a1u"><b>支持的音色</b></h2>
+                            <p data-tag="p" id="71b1d9145eqmh" class="p">
+                                不同模型支持的音色有所差异，使用时将请求参数<code data-tag="code" id="89c565a29b2v6"
+                                                                                 class="code">voice</code>设置为如下表格的<span
+                                    class="help-letter-space"></span><b>voice<span class="help-letter-space"></span>参数</b>列对应的值：
+                            </p>
+                            <section id="151a02665bkuh" data-tag="tabbed-content-box" outputclass="tabbed-content-box"
+                                     class="tabbed-content-box section">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item selected-tab-item" id="1e9f1d69e21jg">Qwen3-TTS</div>
+                                        <div class="tab-item" id="884d27db5bcoc">Qwen-TTS</div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <section id="18f2b77db6hf2" class="section" style="display: block;">
+                                    <table id="42f24ded0bgfz" tablewidth="2169" tablecolswidth="242 242 527 386 386 386"
+                                           autofit="true" colswidth="[294,294,641,470,470]" bordertype="has-border"
+                                           tblw="{&quot;type&quot;:&quot;pct&quot;}" docid="5713500"
+                                           comment_4b879e62-08fa-4410-b224-b15c18a6a000="comment" is-conref="true"
+                                           class="table">
+                                        <colgroup colwidth="0.71*" style="width:13.53%"></colgroup>
+                                        <colgroup colwidth="0.71*" style="width:13.53%"></colgroup>
+                                        <colgroup colwidth="1.56*" style="width:29.59%"></colgroup>
+                                        <colgroup colwidth="1.14*" style="width:21.68%"></colgroup>
+                                        <colgroup colwidth="1.14*" style="width:21.66%"></colgroup>
+                                        <tbody class="tbody">
+                                        <tr id="588e71e217wit">
+                                            <td id="7502d98e6d2ho" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="443c402ddb3xg"><b>音色名</b></p></td>
+                                            <td id="b43e2acddeoag" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="18f230d9c89tv"><code data-tag="code" id="83eded027764c"
+                                                                             data-init-id="89c565a29b2v6"
+                                                                             class="code"><b>voice</b></code><b>参数</b>
+                                            </p></td>
+                                            <td id="7ca5bc2594wtw" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="f441bbc8ce2ej"><b>音色效果</b></p></td>
+                                            <td id="9de4fcdccanj4" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="665739cb1dm9t"><b>描述</b></p></td>
+                                            <td id="0936f2429203l" rowspan="1"
+                                                style="background-color:#e5e5e5;vertical-align:middle" colspan="1"><p
+                                                    id="64c5b840f58vb"><b>支持的语种</b></p></td>
+                                        </tr>
+                                        <tr id="e9f630495blnj">
+                                            <td id="729709afe470g" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="ba46dbe664f8v">芊悦</p></td>
+                                            <td id="313176b824g64" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p jc="left" id="f7bfb89888ox8" style="text-align:left">
+                                                Cherry</p></td>
+                                            <td id="69bd1ecf4c9vx" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="92eb8fe6885ty" name="cherry.wav" size="793004"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250211/tixcef/cherry.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="f6c5e18e77v5x" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="751efdc837dbm">阳光积极、亲切自然小姐姐。</p></td>
+                                            <td id="eb9311fb40tvd" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="ffe17831f7aid">
+                                                中文、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p></td>
+                                        </tr>
+                                        <tr id="9947dbe8e9hrt">
+                                            <td id="7f455efe4cq34" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="1670737d9d8xv">晨煦</p></td>
+                                            <td id="949fa46589b82" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="77dfaac219xi1">Ethan</p></td>
+                                            <td id="8488f10b42rb8" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="2be3e703f33ad" name="ethan.wav" size="723884"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250211/emaqdp/ethan.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="d733018ff5nqg" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="55816eb726b09">
+                                                标准普通话，带部分北方口音。阳光、温暖、活力、朝气。</p></td>
+                                            <td id="a1bf9fdfb4snb" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="581af1b433wb8">
+                                                中文、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p></td>
+                                        </tr>
+                                        <tr id="28828a68200dd">
+                                            <td id="d1710fa7c55sc" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="6471d04f90sef">不吃鱼</p></td>
+                                            <td id="3301a08345l6d" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="c43178b4506h9">Nofish</p></td>
+                                            <td id="029a185034y3w" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="7613ec7d23t9b" name="Nofish.wav" size="2191272"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250915/dqpkml/Nofish.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="9e36a235fcdma" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="1212cd9c61edc">不会翘舌音的设计师。</p></td>
+                                            <td id="8d4d20613d0bw" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="173b7224afqgh">
+                                                中文、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p></td>
+                                        </tr>
+                                        <tr id="f39a24f5adffa">
+                                            <td id="db194409c24a5" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="50f5586e28lsd">詹妮弗</p></td>
+                                            <td id="55e49ca213xvf" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="b456bf16f2vda">Jennifer</p></td>
+                                            <td id="4119e4e8b1bxs" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="0b973084685xq" name="Jennifer.wav" size="1487300"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/lgwivy/Jennifer.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="5dbc770b4475o" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="d82c4e2919q5t">品牌级、电影质感般美语女声。</p></td>
+                                            <td id="9d9ac025deuvp" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="df3d892e9f6nm">
+                                                中文、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p></td>
+                                        </tr>
+                                        <tr id="5c373df1feuu0">
+                                            <td id="3cb4a0abe6do0" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="0aa954d5daks3">甜茶</p></td>
+                                            <td id="896bfe9d37xza" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="9823549794kzx">Ryan</p></td>
+                                            <td id="7827cc07868bb" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="7796b469aesxv" name="Ryan.wav" size="884746" data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/dvswuj/Ryan.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="f0200aa3a7hjm" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="2441ed3bf59c4">节奏拉满，戏感炸裂，真实与张力共舞。</p>
+                                            </td>
+                                            <td id="dc88a383e7eds" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="70f0bcd067diz">
+                                                中文、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p></td>
+                                        </tr>
+                                        <tr id="83d3fd31dcupv">
+                                            <td id="247f5ad13bgy6" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="5063d6f220g8m">卡捷琳娜</p></td>
+                                            <td id="b22b95a16176w" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="99a5d913d3ik3">Katerina</p></td>
+                                            <td id="ed17d0875fyzl" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="22e43bdb755vm" name="katerina.wav" size="222808"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/ziffsi/katerina.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="e2656abda5alo" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="1f9ba1d970m2z">御姐音色，韵律回味十足。</p></td>
+                                            <td id="ef58d92f19d32" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="5963be4fcfj2y">
+                                                中文、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p></td>
+                                        </tr>
+                                        <tr id="4f4d965e9e0me">
+                                            <td id="15733e0e14t09" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="242f66c122roo">墨讲师</p></td>
+                                            <td id="df289d98ea06g" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="3867efdcf8i54">Elias</p></td>
+                                            <td id="d0e58ccafeqep" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="1196696a71vmj" name="Elias.wav" size="1101466"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/rcpalp/Elias.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="e672b67e66jmd" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="2492868570gfr">
+                                                既保持学科严谨性，又通过叙事技巧将复杂知识转化为可消化的认知模块。</p>
+                                            </td>
+                                            <td id="6dfe8925abxfg" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="8ed9ec61bdgua">
+                                                中文、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p></td>
+                                        </tr>
+                                        <tr id="7cdc51b35dzan">
+                                            <td id="93d7eb4c0c3ps" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="da5cfeb9ab2ei">上海-阿珍</p></td>
+                                            <td id="e87187bc68hbt" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="47c6191a55uyq">Jada</p></td>
+                                            <td id="b624c6ca31tl7" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="c7ed77439e3cf" name="Jada.wav" size="795378" data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/qjfmmi/Jada.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="8e2be96dd8xjj" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="62ee8b3701src">风风火火的沪上阿姐。</p></td>
+                                            <td id="843d343f7bs46" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="5d6acad58c5fz">
+                                                中文（上海话）、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p>
+                                            </td>
+                                        </tr>
+                                        <tr id="21670c4e76ufk">
+                                            <td id="3ea961fd37zzx" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="a1eebd1594hdx">北京-晓东</p></td>
+                                            <td id="1a2962d2c2mg1" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="f56a001e726tc">Dylan</p></td>
+                                            <td id="c3bb3509e79qk" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="b1a7238ffa3xh" name="Dylan.wav" size="847586"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/ultaxm/Dylan.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="e7b68c674dxse" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="40c4e1059cnri">北京胡同里长大的少年。</p></td>
+                                            <td id="1849926838c5n" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="5c3af92b533ps">
+                                                中文（北京话）、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p>
+                                            </td>
+                                        </tr>
+                                        <tr id="4fe5109a60j49">
+                                            <td id="46206fa491z3z" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="17672745b6blk">四川-晴儿</p></td>
+                                            <td id="b37fbbcb5f03s" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="c69b810bed1vv">Sunny</p></td>
+                                            <td id="30c12f3afaz4i" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="305ef126f5bvz" name="Sunny.wav" size="705446"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/jtrktt/Sunny.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="e9e5a1e0de9hs" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="4da82b2d0f9fm">甜到你心里的川妹子。</p></td>
+                                            <td id="dd19084519f4w" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="84d8e7ab64glb">
+                                                中文（四川话）、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p>
+                                            </td>
+                                        </tr>
+                                        <tr id="54588462c4gr7">
+                                            <td id="c8b75ad16b7v8" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="e2e8ae3baanha">南京-老李</p></td>
+                                            <td id="f4f6a311e28t2" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="1b761755635ib">li</p></td>
+                                            <td id="5b61a6a4a2ew1" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="d7be8ec94bq16" name="Li.wav" data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250916/frgdes/Li.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="569f456d94n9l" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="c211a3dda03hi">耐心的瑜伽老师</p></td>
+                                            <td id="e4165d2d9fcui" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="4a17ef3342jfm">
+                                                中文（南京话）、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p>
+                                            </td>
+                                        </tr>
+                                        <tr id="1df30d3b43shc">
+                                            <td id="95e22a7e78754" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="62bab329abmib">陕西-秦川</p></td>
+                                            <td id="1c67e1be9f2yh" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="53f6275521uxb">Marcus</p></td>
+                                            <td id="09ff7c1ea4och" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="9942d5fe12rxx" name="Marcus.wav" size="821708"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/dwnnrg/Marcus.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="bb8f8e528bojn" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="ecf0c65091z44">面宽话短，心实声沉——老陕的味道。</p>
+                                            </td>
+                                            <td id="499fea2c72sqb" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="77963cc15c7mt">
+                                                中文（陕西话）、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p>
+                                            </td>
+                                        </tr>
+                                        <tr id="0d0e1120b2kfz">
+                                            <td id="14cb2245a52gi" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="90d1c5bf29mfo">闽南-阿杰</p></td>
+                                            <td id="6001b6f30by0m" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="f1cf37438d1o7">Roy</p></td>
+                                            <td id="1ee9328f703zv" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="bdf6af9081550" name="Roy.wav" size="4170713" data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/stsfsz/Roy.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="53b7f6101awsz" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="8f1064f26c3ca">诙谐直爽、市井活泼的台湾哥仔形象。</p>
+                                            </td>
+                                            <td id="f689d0221dsr8" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="9b256f5bd14ex">
+                                                中文（闽南语）、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p>
+                                            </td>
+                                        </tr>
+                                        <tr id="5e3551874azs7">
+                                            <td id="e843846889ww9" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="acab7dd1ea4k8">天津-李彼得</p></td>
+                                            <td id="3b34f7b837l4m" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="a16a881891w92">Peter</p></td>
+                                            <td id="b9ba6c577312r" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="cb741a8e38qe8" name="Peter.wav" size="1242178"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/twvnsp/Peter.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="997f3cd948fzs" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="9ecc54975f5z9">天津相声，专业捧人。</p></td>
+                                            <td id="0085d95817mim" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="3f2644c871h38">
+                                                中文（天津话）、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p>
+                                            </td>
+                                        </tr>
+                                        <tr id="5a7e60625a3kf">
+                                            <td id="ceefc35e769qp" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="93fc6f1ee7aj6">粤语-阿强</p></td>
+                                            <td id="6bb0933a8cfoy" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="52aff30328tud">Rocky</p></td>
+                                            <td id="590a898832aoq" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="93e4c9f931kbh" name="Rocky.wav" size="946562"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/kfxxgp/Rocky.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="4175dafd96tnk" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="2f3e91403e333">幽默风趣的阿强，在线陪聊。</p></td>
+                                            <td id="e5a028b7bb1gr" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="347e1522c62ji">
+                                                中文（粤语）、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p>
+                                            </td>
+                                        </tr>
+                                        <tr id="ad0d77d9edexr">
+                                            <td id="5917041edcgh3" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="55240dee4aigj">粤语-阿清</p></td>
+                                            <td id="1867ecd3eeql2" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="708b260186bcr">Kiki</p></td>
+                                            <td id="3c67428d09qf8" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="d341d50d6cqbs" name="KiKi.wav" size="756824" data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/qwinef/KiKi.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="a84de058109el" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="2c73127ca57z7">甜美的港妹闺蜜。</p></td>
+                                            <td id="eb28e5cfc93rl" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="f00ec6dcefuu8">
+                                                中文（粤语）、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p>
+                                            </td>
+                                        </tr>
+                                        <tr id="ce71a8d5af50a">
+                                            <td id="3757c7cb37ydm" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="be71fb7070enh">四川-程川</p></td>
+                                            <td id="ac55de8dd0ajl" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="f342731a6ev11">Eric</p></td>
+                                            <td id="b0db709819g9k" rowspan="1" style="vertical-align:middle"
+                                                colspan="1">
+                                                <audio id="76ef068c16yg5" name="Eric.wav" size="1108812"
+                                                       data-tag="audio"
+                                                       src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/qhbznw/Eric.wav"
+                                                       controlslist="nodownload noplaybackrate" controls=""
+                                                       style="width:100%" class="audio"></audio>
+                                            </td>
+                                            <td id="db03f0c8f3jel" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="03c9f988c2hj9">一个跳脱市井的四川成都男子。</p></td>
+                                            <td id="51070123cckmk" rowspan="1" style="vertical-align:middle"
+                                                colspan="1"><p id="78a3831099dhh">
+                                                中文（四川话）、英语、法语、德语、俄语、意大利语、西班牙语、葡萄牙语、日语、韩语</p>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </section>
+                                <section id="4e528e33337ab" class="section">
+                                    <section id="4ae204aeaf9ju" docid="5713500" is-conref="true" class="section">
+                                        <ul id="5d3f725e8c07n">
+                                            <li id="921a49cad4pny"><p id="1be6d629a7myd">
+                                                qwen-tts、qwen-tts-2025-05-22、qwen-tts-2025-04-10<span
+                                                    class="help-letter-space"></span>支持的音色：</p>
+                                                <table id="f8470c9126nij" tablewidth="2169"
+                                                       tablecolswidth="294 294 641 470 470" autofit="true"
+                                                       class="table">
+                                                    <colgroup colwidth="0.68*" style="width:13.55%"></colgroup>
+                                                    <colgroup colwidth="0.68*" style="width:13.55%"></colgroup>
+                                                    <colgroup colwidth="1.48*" style="width:29.55%"></colgroup>
+                                                    <colgroup colwidth="1.09*" style="width:21.67%"></colgroup>
+                                                    <colgroup colwidth="1.09*" style="width:21.67%"></colgroup>
+                                                    <tbody class="tbody">
+                                                    <tr id="885bbfd258v24">
+                                                        <td id="188ff3223fblm" rowspan="1"
+                                                            style="background-color:#e5e5e5;vertical-align:middle"
+                                                            colspan="1"><p id="123cd6e585p1a"><b>音色名</b></p></td>
+                                                        <td id="0d7f2b1a9c916" rowspan="1"
+                                                            style="background-color:#e5e5e5;vertical-align:middle"
+                                                            colspan="1"><p id="d0bc8f2f4513b"><code data-tag="code"
+                                                                                                    id="de065ee17ctws"
+                                                                                                    data-init-id="89c565a29b2v6"
+                                                                                                    class="code"><b>voice</b></code><b>参数</b>
+                                                        </p></td>
+                                                        <td id="8af2e505669u2" rowspan="1"
+                                                            style="background-color:#e5e5e5;vertical-align:middle"
+                                                            colspan="1"><p id="6aef7c44d6fyo"><b>音色效果</b></p></td>
+                                                        <td id="8387dea4113z6" rowspan="1"
+                                                            style="background-color:#e5e5e5;vertical-align:middle"
+                                                            colspan="1"><p id="f9bc9140435wn"><b>描述</b></p></td>
+                                                        <td id="de1a4268ad4oy" rowspan="1"
+                                                            style="background-color:#e5e5e5;vertical-align:middle"
+                                                            colspan="1"><p id="0ebf7ca5e2n0r"><b>支持的语种</b></p></td>
+                                                    </tr>
+                                                    <tr id="045b67b6b545f">
+                                                        <td id="2d03e56152l5i" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="1e3a7c4d91iey">芊悦</p></td>
+                                                        <td id="298f793046s0h" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p jc="left" id="388050742f8bt"
+                                                                           style="text-align:left">Cherry</p></td>
+                                                        <td id="ceefd01304e0m" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="b24ad52188fdt" name="cherry.wav" size="793004"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250211/tixcef/cherry.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="8b3166b4ddjvr" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="c7bb9867c46ka">
+                                                            阳光积极、亲切自然小姐姐。</p></td>
+                                                        <td id="ab450e363adu4" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="2968488086c76">中文、英语</p></td>
+                                                    </tr>
+                                                    <tr id="eba60515d62ox">
+                                                        <td id="1caf6a246axl2" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="cff9fd0585yl4">苏瑶</p></td>
+                                                        <td id="25b435cc5eaj5" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p jc="left" id="6530ab741bvsz"
+                                                                           style="text-align:left">Serena</p></td>
+                                                        <td id="020a5d9f73414" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="1301e8cf7dn3s" name="serena.wav" size="662444"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250211/bxokea/serena.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="2d5f131a5emlj" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="1fd26dcbce5wj">温柔小姐姐。</p></td>
+                                                        <td id="290597ebeao0u" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="eefbe4de6beq8">中文、英语</p></td>
+                                                    </tr>
+                                                    <tr id="94607ba970ws0">
+                                                        <td id="39327c83efi2r" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="213e06699b9ep">晨煦</p></td>
+                                                        <td id="9b4e25edf784s" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="a199d52c7fk50">Ethan</p></td>
+                                                        <td id="0e00fcb762eex" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="945c6cef2c3sj" name="ethan.wav" size="723884"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250211/emaqdp/ethan.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="b6141683fe9km" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="56655ce7b2z6z">
+                                                            标准普通话，带部分北方口音。阳光、温暖、活力、朝气。</p></td>
+                                                        <td id="ea615bbfbcif5" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="d5988527b2qlc">中文、英语</p></td>
+                                                    </tr>
+                                                    <tr id="1f47c8bbc6ynm">
+                                                        <td id="ffdb284daet0j" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="04438bf957k0v">千雪</p></td>
+                                                        <td id="5d8db62e0fi0p" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="e4e1572475ohf">Chelsie</p></td>
+                                                        <td id="f93bebd8acgu2" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="34fdbb2872a5z" name="chelsie.wav" size="853484"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250211/vnpxgw/chelsie.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="f81e03d1e9qef" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="53fd3710cbj21">二次元虚拟女友。</p></td>
+                                                        <td id="9f2378ad56gwg" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="ff3a7c76b59f2">中文、英语</p></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </li>
+                                            <li id="6e3044fcd9u6c"><p id="e4cb63821aye9">
+                                                qwen-tts-latest、qwen-tts-2025-05-22<span
+                                                    class="help-letter-space"></span>支持的音色：</p>
+                                                <table id="e024a52b89dhi" tablewidth="2481"
+                                                       tablecolswidth="336 336 733 538 538" autofit="true"
+                                                       class="table">
+                                                    <colgroup colwidth="0.68*" style="width:13.54%"></colgroup>
+                                                    <colgroup colwidth="0.68*" style="width:13.54%"></colgroup>
+                                                    <colgroup colwidth="1.48*" style="width:29.54%"></colgroup>
+                                                    <colgroup colwidth="1.08*" style="width:21.68%"></colgroup>
+                                                    <colgroup colwidth="1.08*" style="width:21.68%"></colgroup>
+                                                    <tbody class="tbody">
+                                                    <tr id="19e1b2e7573wb">
+                                                        <td id="55c8f9f236qgx" rowspan="1"
+                                                            style="background-color:#e5e5e5;vertical-align:middle"
+                                                            colspan="1"><p id="33f936f06appu"><b>音色名</b></p></td>
+                                                        <td id="70a8a0a181p2y" rowspan="1"
+                                                            style="background-color:#e5e5e5;vertical-align:middle"
+                                                            colspan="1"><p id="85e7c17c09wmy"><code data-tag="code"
+                                                                                                    id="8528554416aqs"
+                                                                                                    data-init-id="89c565a29b2v6"
+                                                                                                    class="code"><b>voice</b></code><b>参数</b>
+                                                        </p></td>
+                                                        <td id="d44a53863ep8l" rowspan="1"
+                                                            style="background-color:#e5e5e5;vertical-align:middle"
+                                                            colspan="1"><p id="071491db5al9f"><b>音色效果</b></p></td>
+                                                        <td id="e295a970fdwqn" rowspan="1"
+                                                            style="background-color:#e5e5e5;vertical-align:middle"
+                                                            colspan="1"><p id="189f992a5arok"><b>描述</b></p></td>
+                                                        <td id="e36b966097672" rowspan="1"
+                                                            style="background-color:#e5e5e5;vertical-align:middle"
+                                                            colspan="1"><p id="8f435f46dct82"><b>支持的语种</b></p></td>
+                                                    </tr>
+                                                    <tr id="fde48d8db9uyq">
+                                                        <td id="9e41b8810fm2j" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="6697a21006cad">芊悦</p></td>
+                                                        <td id="ae55be4966kjg" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p jc="left" id="d27129ae1az3i"
+                                                                           style="text-align:left">Cherry</p></td>
+                                                        <td id="cde15e842fkho" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="52fa056b5574p" name="cherry.wav" size="793004"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250211/tixcef/cherry.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="91dfd141d22ug" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="4c74e842b3odd">
+                                                            阳光积极、亲切自然小姐姐。</p></td>
+                                                        <td id="a1caaa5b4diok" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="782801b7c4241">中文、英语</p></td>
+                                                    </tr>
+                                                    <tr id="90befc3547svd">
+                                                        <td id="1aa139e6d63fl" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="6656c791bdap9">苏瑶</p></td>
+                                                        <td id="212332497fjd7" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p jc="left" id="8e4c4fbbf23fu"
+                                                                           style="text-align:left">Serena</p></td>
+                                                        <td id="986a4b536b5wp" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="6e1a48ca55o8h" name="serena.wav" size="662444"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250211/bxokea/serena.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="620fe0dab9pb2" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="4a58ca6c5ec92">温柔小姐姐。</p></td>
+                                                        <td id="3147bdc30cfqd" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="e4d66c77c75zb">中文、英语</p></td>
+                                                    </tr>
+                                                    <tr id="092a20623d1l2">
+                                                        <td id="b9ead1397bpcy" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="f326221cc6top">晨煦</p></td>
+                                                        <td id="de4ffda976a8f" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="1267b22d389c1">Ethan</p></td>
+                                                        <td id="c465344a9cmmx" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="907943666fi9c" name="ethan.wav" size="723884"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250211/emaqdp/ethan.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="205593e588bbm" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="7e058ab6033il">
+                                                            标准普通话，带部分北方口音。阳光、温暖、活力、朝气。</p></td>
+                                                        <td id="5e9f472a8734m" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="0f2f9cb4c31ar">中文、英语</p></td>
+                                                    </tr>
+                                                    <tr id="b6b5bb90773a9">
+                                                        <td id="1877c6804d4xz" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="a9712caeb0mv1">千雪</p></td>
+                                                        <td id="4594fbf7cfsrw" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="b257112833omj">Chelsie</p></td>
+                                                        <td id="661f13ea2fbe3" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="314d142391c1e" name="chelsie.wav" size="853484"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250211/vnpxgw/chelsie.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="bd40897df6hqo" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="7bef64cc67llf">二次元虚拟女友。</p></td>
+                                                        <td id="9f66fca66e3ad" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="318da68bf0sqp">中文、英语</p></td>
+                                                    </tr>
+                                                    <tr id="f88a7718318da">
+                                                        <td id="d262b6aa5166r" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="0b6643483dk0y">四川-晴儿</p></td>
+                                                        <td id="a965cd01cbmn9" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="a2bfa97c59kgn">Sunny</p></td>
+                                                        <td id="1c58ab9751tf9" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="1befef282bjcn" name="Sunny.wav" size="705446"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/jtrktt/Sunny.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="e871f527e2cba" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="6b93a0ef3ahri">甜到你心里的川妹子。</p>
+                                                        </td>
+                                                        <td id="b026675bb8s4z" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="f4115d01a7amj">中文（四川话）、英语</p></td>
+                                                    </tr>
+                                                    <tr id="2bf7f8eb36k87">
+                                                        <td id="028d1c74ebt6i" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="21b96e2e04flw">上海-阿珍</p></td>
+                                                        <td id="7fdb95c3115ny" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="b242854eed8zq">Jada</p></td>
+                                                        <td id="321ff8fef8he8" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="bb3518bfa2q5s" name="Jada.wav" size="795378"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/qjfmmi/Jada.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="6e569896ad6us" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="6cfe14307azrf">风风火火的沪上阿姐。</p>
+                                                        </td>
+                                                        <td id="8daaea5898ti6" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="68dceca5be533">中文（上海话）、英语</p></td>
+                                                    </tr>
+                                                    <tr id="df71b93e4dcxi">
+                                                        <td id="a4ca26df9267c" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="b3ae508f4ck17">北京-晓东</p></td>
+                                                        <td id="059e2f54cajko" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="a004948d02vp7">Dylan</p></td>
+                                                        <td id="f1cc9354536so" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1">
+                                                            <audio id="299c6c8e43la0" name="Dylan.wav" size="847586"
+                                                                   data-tag="audio"
+                                                                   src="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250910/ultaxm/Dylan.wav"
+                                                                   controlslist="nodownload noplaybackrate" controls=""
+                                                                   style="width:100%" class="audio"></audio>
+                                                        </td>
+                                                        <td id="60bed4a5f2vxt" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="2426fbe830baz">北京胡同里长大的少年。</p>
+                                                        </td>
+                                                        <td id="2ee5c898a1i9v" rowspan="1" style="vertical-align:middle"
+                                                            colspan="1"><p id="650ed75304scf">中文（北京话）、英语</p></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </li>
+                                        </ul>
+                                    </section>
+                                </section>
+                            </section>
+                        </section>
+                        <section id="df054d5bdazem" class="section"><h2 id="37914114aaidw"><b>常见问题</b></h2>
+                            <section id="85be1a1a9fylb" class="section"><h3 id="783e508579rco">
+                                <b>Q：音频文件链接的有效期是多久？</b></h3>
+                                <p id="3966f34e16kbr">A：24<span class="help-letter-space"></span>小时后音频文件链接将失效。
+                                </p></section>
+                            <section id="8882def2a3m5u" class="section"><h3 id="9a553518f8g98"><b>Q：可以输入 Markdown
+                                格式的文本吗？</b></h3>
+                                <p id="30ce93047denp">A：暂不支持 Markdown 格式，建议您转换为纯文本后再输入。</p></section>
+                        </section>
+                        <style>
+                            /* 让引用上下间距调小，避免内容显示过于稀疏 */
+                            .unionContainer .markdown-body blockquote {
+                                margin: 4px 0;
+                            }
+
+                            .aliyun-docs-content table.qwen blockquote {
+                                border-left: none; /* 添加这一行来移除表格里的引用文字的左侧边框 */
+                                padding-left: 5px; /* 左侧内边距 */
+                                margin: 4px 0;
+                            }
+
+                        </style>
+
+                        <style>
+                            /* 支持吸顶 */
+                            div:has(.aliyun-docs-content),
+                            .aliyun-docs-content .markdown-body {
+                                overflow: visible;
+                            }
+
+                            .stick-top {
+                                position: sticky;
+                                top: 46px;
+                            }
+                        </style>
+                    </div>
+                </main>
+
+            </div>
+        </div>
+        <div class="aliyun-docs-pagination NextPage--pagination--wQZfrKo" style="display:none"></div>
+    </div>
+</section>

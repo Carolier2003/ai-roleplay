@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流式聊天测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .chat-container {
+            border: 1px solid #ddd;
+            height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .user-message {
+            background: #007bff;
+            color: white;
+            text-align: right;
+        }
+        .ai-message {
+            background: #e9ecef;
+            color: #333;
+        }
+        .streaming {
+            border-left: 3px solid #007bff;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .token-input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .status {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>流式聊天测试</h1>
+    
+    <div>
+        <label for="token">认证令牌:</label>
+        <input type="text" id="token" class="token-input" placeholder="请输入 Bearer token">
+    </div>
+    
+    <div id="status" class="status info">请输入认证令牌</div>
+    
+    <div class="chat-container" id="chatContainer"></div>
+    
+    <div class="controls">
+        <input type="text" id="messageInput" placeholder="输入消息..." disabled>
+        <button id="sendButton" onclick="sendMessage()" disabled>发送</button>
+        <button onclick="clearChat()">清空</button>
+    </div>
+    
+    <script>
+        let currentAiMessageId = null;
+        
+        // 检查令牌输入
+        document.getElementById('token').addEventListener('input', function(e) {
+            const token = e.target.value.trim();
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const status = document.getElementById('status');
+            
+            if (token) {
+                messageInput.disabled = false;
+                sendButton.disabled = false;
+                status.className = 'status success';
+                status.textContent = '令牌已设置，可以开始聊天';
+            } else {
+                messageInput.disabled = true;
+                sendButton.disabled = true;
+                status.className = 'status info';
+                status.textContent = '请输入认证令牌';
+            }
+        });
+        
+        // 回车发送消息
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        function addMessage(content, isUser, streaming = false) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}${streaming ? ' streaming' : ''}`;
+            messageDiv.textContent = content;
+            
+            if (!isUser && streaming) {
+                messageDiv.id = 'current-ai-message';
+                currentAiMessageId = 'current-ai-message';
+            }
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            return messageDiv;
+        }
+        
+        function updateAiMessage(content) {
+            const messageDiv = document.getElementById(currentAiMessageId);
+            if (messageDiv) {
+                messageDiv.textContent = content;
+                document.getElementById('chatContainer').scrollTop = document.getElementById('chatContainer').scrollHeight;
+            }
+        }
+        
+        function finishAiMessage() {
+            const messageDiv = document.getElementById(currentAiMessageId);
+            if (messageDiv) {
+                messageDiv.classList.remove('streaming');
+                messageDiv.id = '';
+            }
+            currentAiMessageId = null;
+        }
+        
+        function setStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+        }
+        
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const token = document.getElementById('token').value.trim();
+            const message = messageInput.value.trim();
+            
+            if (!message || !token) return;
+            
+            // 禁用输入
+            messageInput.disabled = true;
+            sendButton.disabled = true;
+            
+            // 添加用户消息
+            addMessage(message, true);
+            
+            // 清空输入框
+            messageInput.value = '';
+            
+            // 添加AI消息占位符
+            addMessage('', false, true);
+            
+            setStatus('正在发送消息...', 'info');
+            
+            try {
+                const response = await fetch('http://localhost:18080/api/chat/stream', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'text/event-stream',
+                        'Cache-Control': 'no-cache'
+                    },
+                    body: JSON.stringify({
+                        characterId: 1,
+                        message: message
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                if (!response.body) {
+                    throw new Error('Response body is null');
+                }
+                
+                setStatus('正在接收回复...', 'info');
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                let buffer = '';
+                let aiContent = '';
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) {
+                        console.log('流式响应完成');
+                        break;
+                    }
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    buffer += chunk;
+                    
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+                    
+                    for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        
+                        if (!trimmedLine) continue;
+                        
+                        console.log('处理行:', trimmedLine);
+                        
+                        if (trimmedLine.startsWith('data:')) {
+                            let content = trimmedLine.slice(5).trim();
+                            
+                            // 处理重复的 data: 前缀
+                            while (content.startsWith('data:')) {
+                                content = content.slice(5).trim();
+                            }
+                            
+                            if (content === '[DONE]') {
+                                console.log('收到结束标记');
+                                finishAiMessage();
+                                setStatus('消息发送完成', 'success');
+                                break;
+                            }
+                            
+                            if (content) {
+                                aiContent += content;
+                                updateAiMessage(aiContent);
+                            }
+                        }
+                    }
+                }
+                
+            } catch (error) {
+                console.error('发送消息失败:', error);
+                setStatus(`发送失败: ${error.message}`, 'error');
+                finishAiMessage();
+            } finally {
+                // 重新启用输入
+                messageInput.disabled = false;
+                sendButton.disabled = false;
+                messageInput.focus();
+            }
+        }
+        
+        function clearChat() {
+            document.getElementById('chatContainer').innerHTML = '';
+            currentAiMessageId = null;
+            setStatus('聊天记录已清空', 'info');
+        }
+        
+        // 页面加载完成后聚焦到令牌输入框
+        window.onload = function() {
+            document.getElementById('token').focus();
+        };
+    </script>
+</body>
+</html>

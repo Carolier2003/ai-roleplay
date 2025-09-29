@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天布局测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9fafb;
+        }
+        
+        .chat-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            animation: messageIn 0.3s ease-out;
+        }
+        
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message-content {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            max-width: 80%;
+        }
+        
+        /* 用户消息 - 右对齐 */
+        .message.self .message-content {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .user-avatar {
+            background: #1677ff !important;
+            color: white;
+        }
+        
+        .ai-avatar {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        .bubble-container {
+            position: relative;
+            max-width: 480px;
+        }
+        
+        .bubble {
+            background: white;
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            position: relative;
+        }
+        
+        /* 用户消息气泡 */
+        .message.self .bubble {
+            background: linear-gradient(135deg, #1677ff, #0958d9);
+            color: white;
+            border: none;
+        }
+        
+        .character-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1677ff;
+            margin-bottom: 4px;
+        }
+        
+        .content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #374151;
+            word-wrap: break-word;
+        }
+        
+        .message.self .content {
+            color: white;
+        }
+        
+        .message-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+            gap: 8px;
+        }
+        
+        .time {
+            font-size: 11px;
+            color: #9ca3af;
+            white-space: nowrap;
+        }
+        
+        .message.self .time {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .test-controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f3f4f6;
+            border-radius: 8px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #1677ff;
+            color: white;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #0958d9;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        
+        .status.info { background: #e6f7ff; color: #0958d9; }
+        .status.success { background: #f6ffed; color: #389e0d; }
+        .status.warning { background: #fff7e6; color: #d46b08; }
+    </style>
+</head>
+<body>
+    <h1>聊天布局测试</h1>
+    
+    <div class="test-controls">
+        <h3>测试控制</h3>
+        <button onclick="addUserMessage()">添加用户消息</button>
+        <button onclick="addAIMessage()">添加AI消息</button>
+        <button onclick="clearMessages()">清空消息</button>
+        <button onclick="testConversation()">测试完整对话</button>
+        
+        <div id="status" class="status info">点击按钮测试聊天布局</div>
+    </div>
+    
+    <div class="chat-container" id="chatContainer">
+        <!-- 消息将在这里显示 -->
+    </div>
+    
+    <script>
+        let messageId = 1;
+        
+        function createMessage(content, isUser, characterName = '') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message${isUser ? ' self' : ''}`;
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="message-avatar ${isUser ? 'user-avatar' : 'ai-avatar'}">
+                        ${isUser ? 'U' : 'AI'}
+                    </div>
+                    <div class="bubble-container">
+                        <div class="bubble">
+                            ${!isUser && characterName ? `<div class="character-name">${characterName}</div>` : ''}
+                            <div class="content">${content}</div>
+                            <div class="message-footer">
+                                <div class="time">${new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return messageDiv;
+        }
+        
+        function addUserMessage() {
+            const messages = [
+                "你好！",
+                "今天天气怎么样？",
+                "能帮我解释一下这个问题吗？",
+                "谢谢你的帮助！",
+                "再见！"
+            ];
+            const content = messages[Math.floor(Math.random() * messages.length)];
+            const messageDiv = createMessage(content, true);
+            
+            document.getElementById('chatContainer').appendChild(messageDiv);
+            scrollToBottom();
+            
+            document.getElementById('status').className = 'status success';
+            document.getElementById('status').textContent = `添加了用户消息: "${content}"`;
+        }
+        
+        function addAIMessage() {
+            const messages = [
+                "你好！很高兴见到你。",
+                "今天天气很不错，阳光明媚。",
+                "当然可以！让我来为你详细解释一下。",
+                "不客气！随时可以问我问题。",
+                "再见！祝你有美好的一天！"
+            ];
+            const characters = ['哈利·波特', '苏格拉底', '爱因斯坦', '江户川柯南'];
+            const content = messages[Math.floor(Math.random() * messages.length)];
+            const character = characters[Math.floor(Math.random() * characters.length)];
+            const messageDiv = createMessage(content, false, character);
+            
+            document.getElementById('chatContainer').appendChild(messageDiv);
+            scrollToBottom();
+            
+            document.getElementById('status').className = 'status success';
+            document.getElementById('status').textContent = `添加了AI消息 (${character}): "${content}"`;
+        }
+        
+        function clearMessages() {
+            document.getElementById('chatContainer').innerHTML = '';
+            document.getElementById('status').className = 'status info';
+            document.getElementById('status').textContent = '消息已清空';
+        }
+        
+        function testConversation() {
+            clearMessages();
+            
+            // 模拟一段对话
+            setTimeout(() => addUserMessage(), 100);
+            setTimeout(() => addAIMessage(), 800);
+            setTimeout(() => addUserMessage(), 1500);
+            setTimeout(() => addAIMessage(), 2200);
+            setTimeout(() => addUserMessage(), 2900);
+            
+            document.getElementById('status').className = 'status info';
+            document.getElementById('status').textContent = '正在生成测试对话...';
+        }
+        
+        function scrollToBottom() {
+            const container = document.getElementById('chatContainer');
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // 页面加载时添加一些示例消息
+        window.onload = function() {
+            testConversation();
+        };
+    </script>
+</body>
+</html>

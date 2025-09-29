@@ -1,0 +1,11 @@
+# AI 角色扮演系统 - Python 依赖
+# 用于部署脚本、测试工具和调试工具
+
+# HTTP 请求库 - API 调用
+requests>=2.25.0
+
+# MySQL 数据库连接
+mysql-connector-python>=8.0.28
+
+# 其他可能需要的依赖
+# 注意：pathlib, json, datetime, dataclasses, logging, os, sys, time, typing, statistics 都是 Python 标准库，无需安装

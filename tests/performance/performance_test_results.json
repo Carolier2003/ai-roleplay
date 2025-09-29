@@ -1,0 +1,20 @@
+{
+  "泰拉瑞亚向导": {
+    "character_id": 5,
+    "success_rate": 0,
+    "timeout_count": 1,
+    "grade": "测试失败"
+  },
+  "江户川柯南": {
+    "character_id": 4,
+    "success_rate": 0,
+    "timeout_count": 0,
+    "grade": "测试失败"
+  },
+  "哈利·波特": {
+    "character_id": 1,
+    "success_rate": 0,
+    "timeout_count": 0,
+    "grade": "测试失败"
+  }
+}

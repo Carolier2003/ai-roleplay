@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-09-23 20:11:15",
+  "character": "苏格拉底",
+  "total_pages": 8,
+  "successful_pages": 8,
+  "success_rate": "100.0%",
+  "total_content_length": 38886,
+  "avg_content_length": 4860,
+  "categories": [
+    "PHILOSOPHY",
+    "LOCATION",
+    "BIOGRAPHY",
+    "STUDENT"
+  ],
+  "pages": [
+    {
+      "title": "苏格拉底",
+      "length": 6611
+    },
+    {
+      "title": "蘇格拉底反詰法",
+      "length": 633
+    },
+    {
+      "title": "古希腊哲学",
+      "length": 3175
+    },
+    {
+      "title": "柏拉图",
+      "length": 11024
+    },
+    {
+      "title": "雅典",
+      "length": 6252
+    },
+    {
+      "title": "认识论",
+      "length": 5679
+    },
+    {
+      "title": "伦理学",
+      "length": 5231
+    },
+    {
+      "title": "德性倫理學",
+      "length": 281
+    }
+  ]
+}

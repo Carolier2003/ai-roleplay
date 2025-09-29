@@ -1,0 +1,1370 @@
+<section class="aliyun-docs-content" style="height: auto;">
+    <header class="aliyun-docs-view-header">
+        <div class="Header--topBar--LXfTLL5">
+            <div class="BreadCrumb--breadcrumb--cbt4qaF">
+                <div class="help-header-breadcrumb"><a href="/">首页</a><span><span
+                        class="BreadCrumb--arrow--FD7AzzB"><i class="help-iconfont help-icon-right-arrow"></i></span><a
+                        href="/zh/model-studio/">大模型服务平台百炼</a></span><span><span
+                        class="BreadCrumb--arrow--FD7AzzB"><i class="help-iconfont help-icon-right-arrow"></i></span><a
+                        href="/zh/model-studio/model-api-reference/">API参考（模型）</a></span><span><span
+                        class="BreadCrumb--arrow--FD7AzzB"><i class="help-iconfont help-icon-right-arrow"></i></span><a
+                        href="/zh/model-studio/speech-synthesis-and-speech-recognition/">语音合成/识别/翻译</a></span><span><span
+                        class="BreadCrumb--arrow--FD7AzzB"><i class="help-iconfont help-icon-right-arrow"></i></span><a
+                        href="/zh/model-studio/paraformer-speech-recognition/">语音识别（Paraformer）</a></span><span><span
+                        class="BreadCrumb--arrow--FD7AzzB"><i
+                        class="help-iconfont help-icon-right-arrow"></i></span><span>定制热词</span></span></div>
+            </div>
+        </div>
+        <div class="Header--title--iTk2tUo"><h1 data-spm-anchor-id="a2c4g.11186623.0.i4.1af660bdE1QcoP">定制热词</h1>
+            <div class="Header--actionBar--dvzFYrk">
+                <div class="Header--left--x8TGxDL"><span class="Header--updateTime--YXGPhcZ">更新时间：2025-09-26 10:38:54</span>
+                </div>
+                <div class="Header--right--l4TSW1E">
+                    <div class="Header--linkButton--LpCRs1O">
+                        <div class="OuterUrl--outUrl--ZFzJIhk"><a href="https://www.aliyun.com/product/bailian"
+                                                                  target="_blank" rel="noreferrer">产品详情</a></div>
+                    </div>
+                    <div class="Contact--contactButton--TBwTX5R"><span class="Contact--favoritesBtn--J8mRVBp"
+                                                                       title="收藏本文档"
+                                                                       data-spm-click="gostr=/aliyun;locaid=collect"><i
+                            class="help-iconfont help-icon-like"></i></span><a href="/my_favorites.html">我的收藏</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="pc-markdown-container unionContainer" id="pc-markdown-container">
+        <div class="markdown-body">
+            <div lang="zh" class="icms-help-docs-content">
+                <main id="main-2805349">
+                    <div data-tag="body" class="body"><p id="f83243d61cjrb"
+                                                         data-spm-anchor-id="a2c4g.11186623.0.i3.1af660bdE1QcoP">
+                        针对您的特定业务领域，如果有部分词汇的语音识别效果不够好，可以将这些关键词或短语添加为热词进行优先识别，从而提升识别效果。</p>
+                        <section id="9e92e98dd43ba" class="section"><h2 uuid="lzkufc0e2wfolpw2lzf" id="41da228156kvm">
+                            热词简介</h2>
+                            <p id="fe2198bc31u7u">热词通过热词列表的形式在<span
+                                    class="help-letter-space"></span>SDK<span class="help-letter-space"></span>中使用，热词列表是<span
+                                    class="help-letter-space"></span>JSON<span class="help-letter-space"></span>列表，其中每一个热词包含如下字段：
+                            </p>
+                            <div class="table-wrapper">
+                                <table class="fixed-table" style="width: 1177px; visibility: hidden; top: 39px;">
+                                    <colgroup colwidth="0.63*" style="width:15.80%"></colgroup>
+                                    <colgroup colwidth="0.77*" style="width:19.28%"></colgroup>
+                                    <colgroup colwidth="0.69*" style="width:17.14%"></colgroup>
+                                    <colgroup colwidth="1.92*" style="width:47.79%"></colgroup>
+                                    <thead class="fixed-thead">
+                                    <tr id="423774eab0kdk">
+                                        <td id="784471fa3dsbf" rowspan="1"
+                                            style="background-color:#e5e5e5;vertical-align:top" colspan="1"><span><p
+                                                uuid="lzkupl8xnzrm5vykfz" id="a140b19431k5k"><b>字段</b></p></span></td>
+                                        <td id="19c6e025acae2" rowspan="1"
+                                            style="background-color:#e5e5e5;vertical-align:top" colspan="1"><span><p
+                                                uuid="lzkuqa1fboeggl4fzi" id="6fa49bce70oog"><b>类型</b></p></span></td>
+                                        <td id="611dcf3ccffvv" rowspan="1"
+                                            style="background-color:#e5e5e5;vertical-align:top" colspan="1"><span><p
+                                                uuid="m0eyzj9fok9f0vj7qoh" id="42daaf1fc8zui"><b>是否必填</b></p></span>
+                                        </td>
+                                        <td id="7f9cd274e0suq" rowspan="1"
+                                            style="background-color:#e5e5e5;vertical-align:top" colspan="1"><span><p
+                                                uuid="lzkupl8x64cwr47gxs" id="757355cb70ub8"><b>说明</b></p></span></td>
+                                    </tr>
+                                    </thead>
+                                </table>
+                                <table id="10715567c0dyi" tablewidth="747" tablecolswidth="118 144 128 357"
+                                       autofit="true" class="table">
+                                    <colgroup colwidth="0.63*" style="width:15.80%"></colgroup>
+                                    <colgroup colwidth="0.77*" style="width:19.28%"></colgroup>
+                                    <colgroup colwidth="0.69*" style="width:17.14%"></colgroup>
+                                    <colgroup colwidth="1.92*" style="width:47.79%"></colgroup>
+                                    <tbody class="tbody">
+                                    <tr id="423774eab0kdk">
+                                        <td id="784471fa3dsbf" rowspan="1"
+                                            style="background-color:#e5e5e5;vertical-align:top" colspan="1"><p
+                                                uuid="lzkupl8xnzrm5vykfz" id="a140b19431k5k"><b>字段</b></p></td>
+                                        <td id="19c6e025acae2" rowspan="1"
+                                            style="background-color:#e5e5e5;vertical-align:top" colspan="1"><p
+                                                uuid="lzkuqa1fboeggl4fzi" id="6fa49bce70oog"><b>类型</b></p></td>
+                                        <td id="611dcf3ccffvv" rowspan="1"
+                                            style="background-color:#e5e5e5;vertical-align:top" colspan="1"><p
+                                                uuid="m0eyzj9fok9f0vj7qoh" id="42daaf1fc8zui"><b>是否必填</b></p></td>
+                                        <td id="7f9cd274e0suq" rowspan="1"
+                                            style="background-color:#e5e5e5;vertical-align:top" colspan="1"><p
+                                                uuid="lzkupl8x64cwr47gxs" id="757355cb70ub8"><b>说明</b></p></td>
+                                    </tr>
+                                    <tr id="159b6867c6gsf">
+                                        <td id="5339bdefa47i1" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="lzkupl8xrvnpzheas4" id="667e6a26dbx57">text</p></td>
+                                        <td id="b3bcd7de8fxho" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="lzkuqa1gywy2pd6qkz" id="abb38bd9878r3">string</p></td>
+                                        <td id="70a7e1e886bi7" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m0eyzj9isi9cy30ps9" id="c148384607ec6">是</p></td>
+                                        <td id="e666f9375cd64" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="lzkupl8x49r9cjiz1to" id="7817bc9368elg">热词文本。</p>
+                                            <p id="d711d9a5c4mui">每个热词不超过<span class="help-letter-space"></span>15<span
+                                                    class="help-letter-space"></span>个汉字或<span
+                                                    class="help-letter-space"></span>7<span
+                                                    class="help-letter-space"></span>个英文单词。若热词同时含中文和英文，则汉字与英文字母总数不超过<span
+                                                    class="help-letter-space"></span>15<span
+                                                    class="help-letter-space"></span>个。</p></td>
+                                    </tr>
+                                    <tr id="411d912bb6m6r">
+                                        <td id="cf7dee6f9378e" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="lzkupl8x8m08obsougu" id="eee7f1528b1nw">weight</p></td>
+                                        <td id="e0591197b1czv" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="lzkuqa1g1ixf60rnolf" id="f57291a37d2qy">int</p></td>
+                                        <td id="30aff34a75y2v" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m0eyzj9ikwfcyyhqgrd" id="8dbb59ea22gyl">是</p></td>
+                                        <td id="fc6254a2f72s6" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="lzkupl8ybpf121cj8w" id="a15ac2bab394u">热词权重，取值范围为[1,
+                                            5]之间的整数。</p>
+                                            <p uuid="m0d7h0u78rki31b4cd2" id="34f75075e1g46">常用值：4。</p>
+                                            <p uuid="m0djdfvoq59st95fg1s" id="9a5d1d1792z46" left="0">
+                                                如果效果不明显可以适当增加权重，但是当权重较大时可能会引起负面效果，导致其他词语识别不准确。</p>
+                                        </td>
+                                    </tr>
+                                    <tr id="52eabd5432nrq">
+                                        <td id="bfe2c9647bwso" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="lzkupvhm1vreqr3s46z" id="f2c6e3af54hav">lang</p></td>
+                                        <td id="ddb1dce3e3u01" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="lzkuqa1gfwbh6e7dryo" id="a42cba686bnkk">string</p></td>
+                                        <td id="905a4da20ek49" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="m0eyzj9iretoxnx3b2l" id="f639956c29r3r">否</p></td>
+                                        <td id="425e5a034cb3v" rowspan="1" style="vertical-align:top" colspan="1"><p
+                                                uuid="lzkupvhm29lca38un5n" id="9e55982ea6mjl">语言代码，支持对<span
+                                                class="help-letter-space"></span>ASR<span
+                                                class="help-letter-space"></span>模型对应的语种做热词加强。具体语种和语言代码对应关系请参考模型的<span
+                                                class="help-letter-space"></span>API<span
+                                                class="help-letter-space"></span>详情页。请在调用语音识别服务使用指定同样的语种，如果指定识别语种<span
+                                                class="help-letter-space"></span>language_hints<span
+                                                class="help-letter-space"></span>后其他语种热词会失效。</p></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                        <section id="501002efcdssd" class="section"><h2 id="c5004d0558w71">应用场景</h2>
+                            <p uuid="lzkzdqiasjwcotr4kb" id="5b76272042ics">
+                                为了提高电影名称的识别率，将如下电影名称作为热词添加到项目中。</p>
+                            <div class="help-code-block">
+                                <div class="code-tools">
+                                    <div class="left-tools">
+                                    </div>
+                                    <div class="right-tools">
+                                        <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                           title="更改代码主题"></i>
+                                        <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                    </div>
+                                </div>
+                                <pre code-type="xCode" id="08d565351e0zl" data-tag="codeblock"
+                                     outputclass="language-json" class="pre codeblock language-json"><code
+                                        data-highlighted="yes" class="hljs language-json"><span
+                                        class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span><span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"赛德克巴莱"</span><span
+                                            class="hljs-punctuation">,</span> <span
+                                            class="hljs-attr">"weight"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span
+                                            class="hljs-punctuation">,</span> <span class="hljs-attr">"lang"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-string">"zh"</span><span
+                                            class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span><span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"Seediq Bale"</span><span
+                                            class="hljs-punctuation">,</span> <span
+                                            class="hljs-attr">"weight"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span
+                                            class="hljs-punctuation">,</span> <span class="hljs-attr">"lang"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-string">"en"</span><span
+                                            class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    
+    <span class="hljs-punctuation">{</span><span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"夏洛特烦恼"</span><span
+                                            class="hljs-punctuation">,</span> <span
+                                            class="hljs-attr">"weight"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span
+                                            class="hljs-punctuation">,</span> <span class="hljs-attr">"lang"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-string">"zh"</span><span
+                                            class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span><span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"Goodbye Mr. Loser"</span><span
+                                            class="hljs-punctuation">,</span> <span
+                                            class="hljs-attr">"weight"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span
+                                            class="hljs-punctuation">,</span> <span class="hljs-attr">"lang"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-string">"en"</span><span
+                                            class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    
+    <span class="hljs-punctuation">{</span><span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"阙里人家"</span><span class="hljs-punctuation">,</span> <span
+                                            class="hljs-attr">"weight"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span
+                                            class="hljs-punctuation">,</span> <span class="hljs-attr">"lang"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-string">"zh"</span><span
+                                            class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span><span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"Confucius' Family"</span><span
+                                            class="hljs-punctuation">,</span> <span
+                                            class="hljs-attr">"weight"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span
+                                            class="hljs-punctuation">,</span> <span class="hljs-attr">"lang"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-string">"en"</span><span
+                                            class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+<span class="hljs-punctuation">]</span></code></pre>
+                            </div>
+                        </section>
+                        <section id="aa0a8c15053sw" class="section"><h2 id="ec3ff461ecoxz">支持的模型列表</h2>
+                            <ul id="498f175286cs2">
+                                <li id="1677c3c437knc"><p uuid="m0excqwn35t3r01dfzv" id="d1ba6a0372dcf">
+                                    实时语音识别：paraformer-realtime-v2，paraformer-realtime-8k-v2，fun-asr-realtime，fun-asr-realtime-2025-09-15</p>
+                                </li>
+                                <li id="a3fbba81b7nqd"><p uuid="m0excqwo89lc7hgy4" id="9053fca6cdb8n">
+                                    录音文件识别：paraformer-v2，paraformer-8k-v2，fun-asr，fun-asr-2025-08-25</p></li>
+                            </ul>
+                        </section>
+                        <section id="ded31edf3crzf" class="section"><h2 id="a325d86211u2t">计费说明</h2>
+                            <p uuid="m0c0s4p2gmvd5wj9t9e" id="6e53434c5bdi5">热词暂不收费。</p></section>
+                        <section id="58c26361eakme" class="section"><h2 id="6824a74dddu8c">前提条件</h2>
+                            <ul id="9386ea3696afc">
+                                <li id="62fb9f87cbsy0"><p id="dacb55a07api4">已开通服务并获得<span
+                                        class="help-letter-space"></span>API-KEY：<a
+                                        href="https://help.aliyun.com/zh/model-studio/get-api-key" id="b8be4dfd12ptd"
+                                        title="" class="xref">获取<span class="help-letter-space"></span>API Key</a>。
+                                </p></li>
+                                <li id="33c204defaljf"><p id="9d8156d629zwx">我们推荐您将<span
+                                        class="help-letter-space"></span>API-KEY<span class="help-letter-space"></span>配置到环境变量中以降低<span
+                                        class="help-letter-space"></span>API-KEY<span class="help-letter-space"></span>的泄漏风险，详情可参考<a
+                                        href="https://help.aliyun.com/zh/model-studio/configure-api-key-through-environment-variables"
+                                        id="46c1197557nmu" title="" class="xref">配置<span
+                                        class="help-letter-space"></span>API Key<span class="help-letter-space"></span>到环境变量</a>。您也可以在代码中配置<span
+                                        class="help-letter-space"></span>API-KEY，但是泄漏风险会提高。</p></li>
+                                <li id="d49e7db3a8cv6"><p id="6133b8c14dpw4">已安装最新版<span
+                                        class="help-letter-space"></span>SDK：<a
+                                        href="https://help.aliyun.com/zh/model-studio/install-sdk" id="dc04868046qo9"
+                                        title="" class="xref">安装<span class="help-letter-space"></span>SDK</a>。</p>
+                                </li>
+                            </ul>
+                            <p uuid="lzkuw8svfp484b2vcjm" id="ed61a4e7176ef"><b>注意：</b></p>
+                            <p uuid="lzminzx1b4fi7cjyelv" id="79d9d7c9cehbz"><b>1、</b>每个热词列表最多添加<span
+                                    class="help-letter-space"></span>500<span class="help-letter-space"></span>个词，</p>
+                            <p uuid="lzmdwfdavht4rw17v3" id="542de6fe124h6"><b>2、</b>每个账号默认分配<span
+                                    class="help-letter-space"></span>10<span class="help-letter-space"></span>个热词列表额度<span
+                                    data-tag="ph" id="df8640d429xn0" props="china" data-cond-props="china" class="ph">，该额度由<span
+                                    class="help-letter-space"></span>Paraformer<span class="help-letter-space"></span>和<span
+                                    class="help-letter-space"></span>Gummy<span
+                                    class="help-letter-space"></span>共享</span>，如果有需要创建更多请联系我们。</p>
+                        </section>
+                        <section id="f7e81516cdc1l" class="section"><h2 id="7fd3fb4b6da7q">代码示例</h2>
+                            <p id="faa084368523j">以下示例代码展示如何创建一个热词表，并通过实时接口调用<span
+                                    class="help-letter-space"></span>paraformer-realtime-v2<span
+                                    class="help-letter-space"></span>模型识别本地音频文件。</p>
+                            <div outputclass="tabbed-codeblock" data-tag="fig" id="d4cd8ba0426xz"
+                                 class="tabbed-codeblock-box">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item" id="d4cd8ba0426xz-python-tab">Python</div>
+                                        <div class="tab-item selected-tab-item" id="d4cd8ba0426xz-java-tab"
+                                             data-spm-anchor-id="a2c4g.11186623.0.i2.1af660bdE1QcoP">Java
+                                        </div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-d4cd8ba0426xz" id="d4cd8ba0426xz-python-tab" checked=""><label
+                                    for="d4cd8ba0426xz-python-tab">Python</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="811c85b637qnn" data-tag="codeblock"
+                                             outputclass="language-python" class="pre codeblock language-python"><code
+                                                data-highlighted="yes" class="hljs language-python"><span
+                                                class="hljs-keyword">import</span> dashscope
+<span class="hljs-keyword">from</span> dashscope.audio.asr <span class="hljs-keyword">import</span> *
+
+
+dashscope.api_key = <span class="hljs-string">'your-dashscope-api-key'</span>
+prefix = <span class="hljs-string">'prefix'</span>
+target_model = <span class="hljs-string">"paraformer-realtime-v2"</span>
+
+my_vocabulary = [
+    {<span class="hljs-string">"text"</span>: <span class="hljs-string">"吴贻弓"</span>, <span class="hljs-string">"weight"</span>: <span
+                                                    class="hljs-number">4</span>, <span
+                                                    class="hljs-string">"lang"</span>: <span
+                                                    class="hljs-string">"zh"</span>},
+    {<span class="hljs-string">"text"</span>: <span class="hljs-string">"阙里人家"</span>, <span class="hljs-string">"weight"</span>: <span
+                                                    class="hljs-number">4</span>, <span
+                                                    class="hljs-string">"lang"</span>: <span
+                                                    class="hljs-string">"zh"</span>},
+]
+
+
+<span class="hljs-comment"># create a vocabulary</span>
+service = VocabularyService()
+vocabulary_id = service.create_vocabulary(
+      prefix=prefix,
+      target_model=target_model,
+      vocabulary=my_vocabulary)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"your vocabulary id is <span class="hljs-subst">{vocabulary_id}</span>"</span>)
+
+<span class="hljs-comment"># use the vocabulary to recognize a file</span>
+recognition = Recognition(model=target_model,
+                          <span class="hljs-built_in">format</span>=<span class="hljs-string">'wav'</span>,
+                          sample_rate=<span class="hljs-number">16000</span>,
+                          callback=<span class="hljs-literal">None</span>,
+                          vocabulary_id=vocabulary_id,
+                          language_hints=[<span class="hljs-string">'zh'</span>])  <span class="hljs-comment"># “language_hints”只支持paraformer-v2和paraformer-realtime-v2模型</span>
+result = recognition.call(<span class="hljs-string">'your-audio-file.wav'</span>)
+<span class="hljs-built_in">print</span>(result.output)
+</code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-d4cd8ba0426xz" id="d4cd8ba0426xz-java-tab"><label
+                                    for="d4cd8ba0426xz-java-tab">Java</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="51dc2f14c4l7u" data-tag="codeblock"
+                                             outputclass="language-java" class="pre codeblock language-java"><code
+                                                data-highlighted="yes" class="hljs language-java"><span
+                                                class="hljs-keyword">package</span> org.example.customization;
+
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.audio.asr.recognition.Recognition;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.audio.asr.recognition.RecognitionParam;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.audio.asr.vocabulary.Vocabulary;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.audio.asr.vocabulary.VocabularyService;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.exception.InputRequiredException;
+<span class="hljs-keyword">import</span> com.alibaba.dashscope.exception.NoApiKeyException;
+<span class="hljs-keyword">import</span> com.google.gson.JsonArray;
+<span class="hljs-keyword">import</span> com.google.gson.JsonObject;
+
+<span class="hljs-keyword">import</span> java.io.File;
+<span class="hljs-keyword">import</span> java.util.ArrayList;
+<span class="hljs-keyword">import</span> java.util.List;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">VocabularySampleCodes</span> {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span
+                                                    class="hljs-type">String</span> <span
+                                                    class="hljs-variable">apiKey</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-string">"your-dashscope-apikey"</span>;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span
+                                                    class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span
+                                                    class="hljs-params">(String[] args)</span> <span
+                                                    class="hljs-keyword">throws</span> NoApiKeyException, InputRequiredException {
+        <span class="hljs-type">String</span> <span class="hljs-variable">targetModel</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-string">"paraformer-realtime-v2"</span>;
+        <span class="hljs-comment">// prepare vocabulary</span>
+        <span class="hljs-keyword">class</span> <span class="hljs-title class_">Hotword</span> {
+            String text;
+            <span class="hljs-type">int</span> weight;
+            String lang;
+
+            <span class="hljs-keyword">public</span> <span class="hljs-title function_">Hotword</span><span
+                                                    class="hljs-params">(String text, <span class="hljs-type">int</span> weight, String lang)</span> {
+                <span class="hljs-built_in">this</span>.text = text;
+                <span class="hljs-built_in">this</span>.weight = weight;
+                <span class="hljs-built_in">this</span>.lang = lang;
+            }
+        }
+        <span class="hljs-type">JsonArray</span> <span class="hljs-variable">vocabulary</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">JsonArray</span>();
+        List&lt;Hotword&gt; wordList = <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">ArrayList</span>&lt;&gt;();
+        wordList.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Hotword</span>(<span
+                                                    class="hljs-string">"吴贻弓"</span>, <span
+                                                    class="hljs-number">4</span>, <span class="hljs-string">"zh"</span>));
+        wordList.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Hotword</span>(<span
+                                                    class="hljs-string">"阙里人家"</span>, <span
+                                                    class="hljs-number">4</span>, <span class="hljs-string">"zh"</span>));
+
+        <span class="hljs-keyword">for</span> (Hotword word : wordList) {
+            <span class="hljs-type">JsonObject</span> <span class="hljs-variable">jsonObject</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">JsonObject</span>();
+            jsonObject.addProperty(<span class="hljs-string">"text"</span>, word.text);
+            jsonObject.addProperty(<span class="hljs-string">"weight"</span>, word.weight);
+            jsonObject.addProperty(<span class="hljs-string">"lang"</span>, word.lang);
+            vocabulary.add(jsonObject);
+        }
+        <span class="hljs-comment">// create vocabulary</span>
+        <span class="hljs-type">VocabularyService</span> <span class="hljs-variable">service</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">VocabularyService</span>(apiKey);
+        <span class="hljs-type">Vocabulary</span> <span class="hljs-variable">myVoc</span> <span
+                                                    class="hljs-operator">=</span> service.createVocabulary(targetModel, <span
+                                                    class="hljs-string">"prefix"</span>, vocabulary);
+        System.out.println(<span class="hljs-string">"your vocabulary id is "</span> + myVoc.getVocabularyId());
+        <span class="hljs-comment">// use the vocabulary to recognize a file</span>
+        <span class="hljs-type">Recognition</span> <span class="hljs-variable">recognizer</span> <span
+                                                    class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">Recognition</span>();
+        <span class="hljs-type">RecognitionParam</span> <span class="hljs-variable">param</span> <span
+                                                    class="hljs-operator">=</span>
+                RecognitionParam.builder()
+                        .model(targetModel)
+                        .format(<span class="hljs-string">"wav"</span>)
+                        .sampleRate(<span class="hljs-number">16000</span>)
+                        .apiKey(apiKey)
+                        .vocabularyId(myVoc.getVocabularyId())
+                        <span class="hljs-comment">// “language_hints”只支持paraformer-v2和paraformer-realtime-v2模型</span>
+                        .parameter(<span class="hljs-string">"language_hints"</span>, <span
+                                                    class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>[] {<span
+                                                    class="hljs-string">"zh"</span>})
+                        .build();
+        <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span
+                                                    class="hljs-operator">=</span> recognizer.call(param, <span
+                                                    class="hljs-keyword">new</span> <span
+                                                    class="hljs-title class_">File</span>(<span class="hljs-string">"your-local-audio-file.wav"</span>));
+        System.out.println(result);
+        System.exit(<span class="hljs-number">0</span>);
+    }
+}</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section id="61c8c320525zn" class="section"><h2 id="708d9b891a1ij"><b>使用<span
+                                class="help-letter-space"></span>DashScope SDK<span class="help-letter-space"></span>增删查改热词</b>
+                        </h2>
+                            <h3 uuid="lzhu6rkej45cxqsjt2" id="1910c6134ahs6">初始化对象</h3>
+                            <div outputclass="tabbed-codeblock" data-tag="fig" id="db8e75b55evn6"
+                                 class="tabbed-codeblock-box">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item selected-tab-item" id="db8e75b55evn6-python-tab">Python
+                                        </div>
+                                        <div class="tab-item" id="db8e75b55evn6-java-tab">Java</div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-db8e75b55evn6" id="db8e75b55evn6-python-tab" checked=""><label
+                                    for="db8e75b55evn6-python-tab">Python</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="83dfabfb8c9pk" data-tag="codeblock"
+                                             outputclass="language-python" class="pre codeblock language-python"><code
+                                                data-highlighted="yes" class="hljs language-python">service = VocabularyService(api_key=<span
+                                                class="hljs-string">"your-dashscope-apikey"</span>)</code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-db8e75b55evn6" id="db8e75b55evn6-java-tab"><label
+                                    for="db8e75b55evn6-java-tab">Java</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="6e70284d3ffm0" data-tag="codeblock"
+                                             outputclass="language-java" class="pre codeblock language-java"><code
+                                                data-highlighted="yes" class="hljs language-java"><span
+                                                class="hljs-type">VocabularyService</span> <span class="hljs-variable">service</span> <span
+                                                class="hljs-operator">=</span> <span
+                                                class="hljs-keyword">new</span> <span class="hljs-title class_">VocabularyService</span>(<span
+                                                class="hljs-string">"your-dashscope-apikey"</span>);</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 uuid="lzl29ykn87p3z9ydxrl" id="05a97fee144gu">创建热词表</h3>
+                            <div outputclass="tabbed-codeblock" data-tag="fig" id="ef2df18c14mx0"
+                                 class="tabbed-codeblock-box">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item selected-tab-item" id="ef2df18c14mx0-python-tab">Python
+                                        </div>
+                                        <div class="tab-item" id="ef2df18c14mx0-java-tab">Java</div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-ef2df18c14mx0" id="ef2df18c14mx0-python-tab" checked=""><label
+                                    for="ef2df18c14mx0-python-tab">Python</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="e62bd98713lqn" data-tag="codeblock"
+                                             outputclass="language-python" class="pre codeblock language-python"><code
+                                                data-highlighted="yes" class="hljs language-python"><span
+                                                class="hljs-keyword">def</span> <span class="hljs-title function_">create_vocabulary</span>(<span
+                                                class="hljs-params">self, target_model: <span
+                                                class="hljs-built_in">str</span>, prefix: <span class="hljs-built_in">str</span>, vocabulary: <span
+                                                class="hljs-type">List</span>[<span
+                                                class="hljs-built_in">dict</span>]</span>) -&gt; <span
+                                                class="hljs-built_in">str</span>:
+    <span class="hljs-string">'''
+    创建热词表
+    param: target_model 热词表对应的语音识别模型版本
+    param: prefix 热词表自定义前缀，仅允许数字和小写字母，小于十个字符。
+    param: vocabulary 热词表字典
+    return: 热词表标识符 vocabulary_id
+    '''</span></code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-ef2df18c14mx0" id="ef2df18c14mx0-java-tab"><label
+                                    for="ef2df18c14mx0-java-tab">Java</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="3a490d5741wwo" data-tag="codeblock"
+                                             outputclass="language-java" class="pre codeblock language-java"><code
+                                                data-highlighted="yes" class="hljs language-java"><span
+                                                class="hljs-comment">/**
+ * 创建新热词
+ *
+ * <span class="hljs-doctag">@param</span> targetModel 热词对应的语音识别模型版本
+ * <span class="hljs-doctag">@param</span> prefix 热词自定义前缀，仅允许数字和小写字母，小于十个字符。
+ * <span class="hljs-doctag">@param</span> vocabulary 热词表
+ * <span class="hljs-doctag">@return</span> 热词表对象
+ * <span class="hljs-doctag">@throws</span> NoApiKeyException 如果apikey为空
+ * <span class="hljs-doctag">@throws</span> InputRequiredException 如果必须参数为空
+ */</span>
+<span class="hljs-keyword">public</span> Vocabulary <span class="hljs-title function_">createVocabulary</span><span
+                                                    class="hljs-params">(String targetModel, String prefix, JsonArray vocabulary)</span>
+    <span class="hljs-keyword">throws</span> NoApiKeyException, InputRequiredException </code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 uuid="m0c1eaomygpumfd7eya" id="7ee84ec33f76f">查询所有热词表</h3>
+                            <div outputclass="tabbed-codeblock" data-tag="fig" id="a82ef7489a0o9"
+                                 class="tabbed-codeblock-box">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item selected-tab-item" id="a82ef7489a0o9-python-tab">Python
+                                        </div>
+                                        <div class="tab-item" id="a82ef7489a0o9-java-tab">Java</div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-a82ef7489a0o9" id="a82ef7489a0o9-python-tab" checked=""><label
+                                    for="a82ef7489a0o9-python-tab">Python</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="e04d5c85a2yio" data-tag="codeblock"
+                                             outputclass="language-python" class="pre codeblock language-python"><code
+                                                data-highlighted="yes" class="hljs language-python"><span
+                                                class="hljs-keyword">def</span> <span class="hljs-title function_">list_vocabularies</span>(<span
+                                                class="hljs-params">self, prefix=<span class="hljs-literal">None</span>, page_index: <span
+                                                class="hljs-built_in">int</span> = <span class="hljs-number">0</span>, page_size: <span
+                                                class="hljs-built_in">int</span> = <span
+                                                class="hljs-number">10</span></span>) -&gt; <span
+                                                class="hljs-type">List</span>[<span class="hljs-built_in">dict</span>]:
+    <span class="hljs-string">'''
+    查询已创建的所有热词表
+    param: prefix 自定义前缀，如果设定则只返回指定前缀的热词表标识符列表。
+    param: page_index 查询的页索引
+    param: page_size 查询页大小
+    return: 热词表标识符列表
+    '''</span></code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-a82ef7489a0o9" id="a82ef7489a0o9-java-tab"><label
+                                    for="a82ef7489a0o9-java-tab">Java</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="81fead9255inm" data-tag="codeblock"
+                                             outputclass="language-java" class="pre codeblock language-java"><code
+                                                data-highlighted="yes" class="hljs language-java"><span
+                                                class="hljs-comment">/**
+ * 查询已创建的所有热词表。默认的页索引为0，默认的页大小为10
+ *
+ * <span class="hljs-doctag">@param</span> prefix 热词自定义前缀
+ * <span class="hljs-doctag">@return</span> 热词表对象数组
+ * <span class="hljs-doctag">@throws</span> NoApiKeyException 如果apikey为空
+ * <span class="hljs-doctag">@throws</span> InputRequiredException 如果必须参数为空
+ */</span>
+<span class="hljs-keyword">public</span> Vocabulary[] listVocabulary(String prefix)
+    <span class="hljs-keyword">throws</span> NoApiKeyException, InputRequiredException
+
+<span class="hljs-comment">/**
+ * 查询已创建的所有热词表
+ *
+ * <span class="hljs-doctag">@param</span> prefix 热词自定义前缀
+ * <span class="hljs-doctag">@param</span> pageIndex 查询的页索引
+ * <span class="hljs-doctag">@param</span> pageSize 查询的页大小
+ * <span class="hljs-doctag">@return</span> 热词表对象数组
+ * <span class="hljs-doctag">@throws</span> NoApiKeyException 如果apikey为空
+ * <span class="hljs-doctag">@throws</span> InputRequiredException 如果必须参数为空
+ */</span>
+<span class="hljs-keyword">public</span> Vocabulary[] listVocabulary(String prefix, <span class="hljs-type">int</span> pageIndex, <span
+                                                    class="hljs-type">int</span> pageSize)
+    <span class="hljs-keyword">throws</span> NoApiKeyException, InputRequiredException</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <p id="f7d03e55a2ycq">响应示例</p>
+                            <div class="help-code-block">
+                                <div class="code-tools">
+                                    <div class="left-tools">
+                                    </div>
+                                    <div class="right-tools">
+                                        <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                           title="更改代码主题"></i>
+                                        <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                    </div>
+                                </div>
+                                <pre code-type="xCode" id="2fc524d190aez" data-tag="codeblock"
+                                     outputclass="language-json" class="pre codeblock language-json"><code
+                                        data-highlighted="yes" class="hljs language-json"><span
+                                        class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">"gmt_create"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2024-08-21 15:19:09"</span><span
+                                            class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"vocabulary_id"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"vocab-xxx-1f8b10e61ac54b1da86a8d5axxxxxxxx"</span><span
+                                            class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"gmt_modified"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2024-08-21 15:19:09"</span><span
+                                            class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"status"</span><span class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"OK"</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">"gmt_create"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2024-08-27 11:17:04"</span><span
+                                            class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"vocabulary_id"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"vocab-xxx-24ee19fa8cfb4d52902170a0xxxxxxxx"</span><span
+                                            class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"gmt_modified"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2024-08-27 11:17:04"</span><span
+                                            class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"status"</span><span class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"OK"</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+                            </div>
+                            <h3 uuid="m0c1oyqcgpeb0xoo0a" id="e8e1ea9bc9ezq">查询指定热词表</h3>
+                            <div outputclass="tabbed-codeblock" data-tag="fig" id="7ea65cd745kzi"
+                                 class="tabbed-codeblock-box">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item selected-tab-item" id="7ea65cd745kzi-python-tab">Python
+                                        </div>
+                                        <div class="tab-item" id="7ea65cd745kzi-java-tab">Java</div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-7ea65cd745kzi" id="7ea65cd745kzi-python-tab" checked=""><label
+                                    for="7ea65cd745kzi-python-tab">Python</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="8813e60d37n48" data-tag="codeblock"
+                                             outputclass="language-python" class="pre codeblock language-python"><code
+                                                data-highlighted="yes" class="hljs language-python"><span
+                                                class="hljs-keyword">def</span> <span class="hljs-title function_">query_vocabulary</span>(<span
+                                                class="hljs-params">self, vocabulary_id: <span
+                                                class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-type">List</span>[<span
+                                                class="hljs-built_in">dict</span>]:
+    <span class="hljs-string">'''
+    获取热词表内容
+    param: vocabulary_id 热词表标识符
+    return: 热词表
+    '''</span></code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-7ea65cd745kzi" id="7ea65cd745kzi-java-tab"><label
+                                    for="7ea65cd745kzi-java-tab">Java</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="2b157815264m4" data-tag="codeblock"
+                                             outputclass="language-java" class="pre codeblock language-java"><code
+                                                data-highlighted="yes" class="hljs language-java"><span
+                                                class="hljs-comment">/**
+ * 查询指定热词表
+ *
+ * <span class="hljs-doctag">@param</span> vocabularyId 需要查询的热词表
+ * <span class="hljs-doctag">@return</span> 热词表对象
+ * <span class="hljs-doctag">@throws</span> NoApiKeyException 如果apikey为空
+ * <span class="hljs-doctag">@throws</span> InputRequiredException 如果必须参数为空
+ */</span>
+<span class="hljs-keyword">public</span> Vocabulary <span class="hljs-title function_">queryVocabulary</span><span
+                                                    class="hljs-params">(String vocabularyId)</span>
+    <span class="hljs-keyword">throws</span> NoApiKeyException, InputRequiredException</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <p id="85831e0475wgt">响应示例</p>
+                            <div class="help-code-block">
+                                <div class="code-tools">
+                                    <div class="left-tools">
+                                    </div>
+                                    <div class="right-tools">
+                                        <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                           title="更改代码主题"></i>
+                                        <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                    </div>
+                                </div>
+                                <pre code-type="xCode" id="f82501bbe1bhr" data-tag="codeblock"
+                                     outputclass="language-json" class="pre codeblock language-json"><code
+                                        data-highlighted="yes" class="hljs language-json"><span
+                                        class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"gmt_create"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2024-08-21 15:19:09"</span><span
+                                            class="hljs-punctuation">,</span>
+    <span class="hljs-attr">"vocabulary"</span><span class="hljs-punctuation">:</span> <span
+                                            class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span><span class="hljs-attr">"weight"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span
+                                            class="hljs-punctuation">,</span> <span class="hljs-attr">"text"</span><span
+                                            class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"吴贻弓"</span><span
+                                            class="hljs-punctuation">,</span> <span class="hljs-attr">"lang"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-string">"zh"</span><span
+                                            class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-punctuation">{</span><span class="hljs-attr">"weight"</span><span
+                                            class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span
+                                            class="hljs-punctuation">,</span> <span class="hljs-attr">"text"</span><span
+                                            class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"阙里人家"</span><span class="hljs-punctuation">,</span> <span
+                                            class="hljs-attr">"lang"</span><span class="hljs-punctuation">:</span> <span
+                                            class="hljs-string">"zh"</span><span class="hljs-punctuation">}</span><span
+                                            class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">"target_model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"paraformer-realtime-v2"</span><span
+                                            class="hljs-punctuation">,</span>
+    <span class="hljs-attr">"gmt_modified"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2024-08-21 15:19:09"</span><span
+                                            class="hljs-punctuation">,</span>
+    <span class="hljs-attr">"status"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"OK"</span><span
+                                            class="hljs-punctuation">,</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+                            </div>
+                            <h3 uuid="m0c1swr7rbsdy4aiia" id="8955be7526a6x">更新热词表</h3>
+                            <div outputclass="tabbed-codeblock" data-tag="fig" id="1b1f9f37ecpuc"
+                                 class="tabbed-codeblock-box">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item selected-tab-item" id="1b1f9f37ecpuc-python-tab">Python
+                                        </div>
+                                        <div class="tab-item" id="1b1f9f37ecpuc-java-tab">Java</div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-1b1f9f37ecpuc" id="1b1f9f37ecpuc-python-tab" checked=""><label
+                                    for="1b1f9f37ecpuc-python-tab">Python</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="85cd331132jte" data-tag="codeblock"
+                                             outputclass="language-python" class="pre codeblock language-python"><code
+                                                data-highlighted="yes" class="hljs language-python"><span
+                                                class="hljs-keyword">def</span> <span class="hljs-title function_">update_vocabulary</span>(<span
+                                                class="hljs-params">self, vocabulary_id: <span
+                                                class="hljs-built_in">str</span>, vocabulary: <span class="hljs-type">List</span>[<span
+                                                class="hljs-built_in">dict</span>]</span>) -&gt; <span
+                                                class="hljs-literal">None</span>:
+    <span class="hljs-string">'''
+    用新的热词表替换已有热词表
+    param: vocabulary_id 需要替换的热词表标识符
+    param: vocabulary 热词表
+    '''</span></code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-1b1f9f37ecpuc" id="1b1f9f37ecpuc-java-tab"><label
+                                    for="1b1f9f37ecpuc-java-tab">Java</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="7b8b12ead5mnv" data-tag="codeblock"
+                                             outputclass="language-java" class="pre codeblock language-java"><code
+                                                data-highlighted="yes" class="hljs language-java"><span
+                                                class="hljs-comment">/**
+ * 更新热词表
+ *
+ * <span class="hljs-doctag">@param</span> vocabularyId 需要更新的热词表
+ * <span class="hljs-doctag">@param</span> vocabulary 热词表对象
+ * <span class="hljs-doctag">@throws</span> NoApiKeyException 如果apikey为空
+ * <span class="hljs-doctag">@throws</span> InputRequiredException 如果必须参数为空
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">updateVocabulary</span><span
+                                                    class="hljs-params">(String vocabularyId, JsonArray vocabulary)</span>
+    <span class="hljs-keyword">throws</span> NoApiKeyException, InputRequiredException</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 uuid="m0c1w2l2b69ndkuuarl" id="44363d79e3hxx">删除热词表</h3>
+                            <div outputclass="tabbed-codeblock" data-tag="fig" id="4c03935edb8hq"
+                                 class="tabbed-codeblock-box">
+                                <div class="tab-box">
+                                    <div class="tab-item-container">
+                                        <div class="tab-item selected-tab-item" id="4c03935edb8hq-python-tab">Python
+                                        </div>
+                                        <div class="tab-item" id="4c03935edb8hq-java-tab">Java</div>
+                                    </div>
+                                    <div class="tab-box-button" style="visibility: hidden;">
+                                        <div class="left deactivateBtn"><i class="help-iconfont help-icon-zhankai1"></i>
+                                        </div>
+                                        <div class="right"><i class="help-iconfont help-icon-zhankai1"></i></div>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-4c03935edb8hq" id="4c03935edb8hq-python-tab" checked=""><label
+                                    for="4c03935edb8hq-python-tab">Python</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="dcc62f916682i" data-tag="codeblock"
+                                             outputclass="language-python" class="pre codeblock language-python"><code
+                                                data-highlighted="yes" class="hljs language-python"><span
+                                                class="hljs-keyword">def</span> <span class="hljs-title function_">delete_vocabulary</span>(<span
+                                                class="hljs-params">self, vocabulary_id: <span
+                                                class="hljs-built_in">str</span></span>) -&gt; <span
+                                                class="hljs-literal">None</span>:
+    <span class="hljs-string">'''
+    删除热词表
+    param: vocabulary_id 需要删除的热词表标识符
+    '''</span></code></pre>
+                                    </div>
+                                </div>
+                                <input type="radio" name="check-4c03935edb8hq" id="4c03935edb8hq-java-tab"><label
+                                    for="4c03935edb8hq-java-tab">Java</label>
+                                <div class="codeblock-item">
+                                    <div class="help-code-block">
+                                        <div class="code-tools">
+                                            <div class="left-tools">
+                                            </div>
+                                            <div class="right-tools">
+                                                <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                                   title="更改代码主题"></i>
+                                                <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                            </div>
+                                        </div>
+                                        <pre code-type="xCode" id="c0ca24c66fayi" data-tag="codeblock"
+                                             outputclass="language-java" class="pre codeblock language-java"><code
+                                                data-highlighted="yes" class="hljs language-java"><span
+                                                class="hljs-comment">/**
+ * 删除热词表
+ *
+ * <span class="hljs-doctag">@param</span> vocabularyId 需要删除的热词表
+ * <span class="hljs-doctag">@throws</span> NoApiKeyException 如果apikey为空
+ * <span class="hljs-doctag">@throws</span> InputRequiredException 如果必须参数为空
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">deleteVocabulary</span><span
+                                                    class="hljs-params">(String vocabularyId)</span>
+    <span class="hljs-keyword">throws</span> NoApiKeyException, InputRequiredException</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 uuid="lzhzvq6ni0kc4acrmy8" id="93fea061dal4l">错误处理</h3>
+                            <p uuid="lzhzyi0kk809rrm6s8p" id="49277c8e94ogo">在 Python SDK 中调用发生错误将通过异常
+                                VocabularyServiceException 抛出。异常包括：状态码、异常代码、异常描述</p>
+                            <div class="help-code-block">
+                                <div class="code-tools">
+                                    <div class="left-tools">
+                                    </div>
+                                    <div class="right-tools">
+                                        <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                           title="更改代码主题"></i>
+                                        <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                    </div>
+                                </div>
+                                <pre id="lmqcvq" title=""
+                                     font="{&quot;fontFamily&quot;:&quot;defaultFont&quot;,&quot;ligatures&quot;:false}"
+                                     uuid="lzi0ji6vk2flr517wlc" data-tag="codeblock" outputclass="language-python"
+                                     code-type="xCode" class="pre codeblock language-python"><code
+                                        data-highlighted="yes" class="hljs language-python"><span class="hljs-keyword">class</span> <span
+                                        class="hljs-title class_">VocabularyServiceException</span>(<span
+                                        class="hljs-title class_ inherited__">Exception</span>):
+  <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, status_code: <span
+                                            class="hljs-built_in">int</span>, code: <span
+                                            class="hljs-built_in">str</span>, error_message: <span
+                                            class="hljs-built_in">str</span></span>)</code></pre>
+                            </div>
+                            <p uuid="m0c21jr7jjncatn4fup" id="7065880e2c5fb">在 Java SDK 中调用发生错误将通过
+                                NoApiKeyException 和 InputRequiredException<span class="help-letter-space"></span>异常抛出。
+                            </p></section>
+                        <section id="b3ba39524eomt" class="section"><h2 id="39c520f209r8b"><b>通过<span
+                                class="help-letter-space"></span>HTTP<span class="help-letter-space"></span>服务增删查改热词</b>
+                        </h2>
+                            <section id="a0a0f89110bqz" class="section"><p id="297f1749824yb">热词服务的协议为<span
+                                    class="help-letter-space"></span>HTTPS，开发者可以通过<span
+                                    class="help-letter-space"></span>HTTP<span class="help-letter-space"></span>创建、查询、更新、删除热词表。
+                            </p>
+                                <p id="de4f3d3155pm3">如您没将<span class="help-letter-space"></span>API Key<span
+                                        class="help-letter-space"></span>配置到环境变量中，请将<span
+                                        class="help-letter-space"></span>cURL<span class="help-letter-space"></span>中的“Authorization:
+                                    Bearer $DASHSCOPE_API_KEY”改成<span class="help-letter-space"></span>Authorization:
+                                    Bearer your-api-key”，其中<span class="help-letter-space"></span>your-api-key<span
+                                            class="help-letter-space"></span>为您的<span
+                                            class="help-letter-space"></span>API Key。</p>
+                                <div id="b8db201e7fcdw" type="note" class="note note-note">
+                                    <div class="note-icon-wrapper"><i
+                                            class="icon-note note note"></i><strong>说明 </strong></div>
+                                    <div class="noteContentSpan"><p id="0121520b32m3o">返回结果中的 usage
+                                        字段用于计费计数。定制热词服务是免费的，因此您无需关注该字段。</p></div>
+                                </div>
+                                <h3 id="0ba367b7e1f00"><b>创建热词表</b></h3>
+                                <p id="743778939ds4o">curl<span class="help-letter-space"></span>调用示例：</p>
+                                <div class="help-code-block">
+                                    <div class="code-tools">
+                                        <div class="left-tools">
+                                        </div>
+                                        <div class="right-tools">
+                                            <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                               title="更改代码主题"></i>
+                                            <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                        </div>
+                                    </div>
+                                    <pre id="6d493ea69c9ki" code-type="xCode" data-tag="codeblock"
+                                         outputclass="language-curl" class="pre codeblock language-curl"><code
+                                            data-highlighted="yes" class="hljs language-curl"><span
+                                            class="hljs-keyword">curl</span> <span class="hljs-literal">-X <span
+                                            class="hljs-symbol">POST</span></span> https://dashscope.aliyuncs.com/api/v1/services/audio/asr/customization \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Authorization: Bearer $DASHSCOPE_API_KEY"</span> \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Content-Type: application/json"</span> \
+<span class="hljs-literal">-d</span> <span class="hljs-string">'{
+    "model": "speech-biasing",
+    "input": {
+            "action": "create_vocabulary",
+            "target_model": "paraformer-realtime-v2",
+            "prefix": "testpfx",
+            "vocabulary": [
+              {"text": "吴贻弓", "weight": 4, "lang": "zh"},
+              {"text": "阙里人家", "weight": 4, "lang": "zh"}
+            ]
+        }
+}'</span></code></pre>
+                                </div>
+                                <p id="76945f87a06db">返回示例：</p>
+                                <div class="help-code-block">
+                                    <div class="code-tools">
+                                        <div class="left-tools">
+                                        </div>
+                                        <div class="right-tools">
+                                            <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                               title="更改代码主题"></i>
+                                            <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                        </div>
+                                    </div>
+                                    <pre id="c4dd6712cdr97" code-type="xCode" data-tag="codeblock"
+                                         outputclass="language-json" class="pre codeblock language-json"><code
+                                            data-highlighted="yes" class="hljs language-json"><span
+                                            class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"output"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"task_status"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"PENDING"</span><span
+                                                class="hljs-punctuation">,</span>
+    <span class="hljs-attr">"task_id"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"c2e5d63b-96e1-4607-bb91-************"</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"request_id"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"77ae55ae-be17-97b8-9942--************"</span>
+<span class="hljs-punctuation">}</span></code></pre>
+                                </div>
+                                <h3 id="60ad79237e59c"><b>查询所有热词表</b></h3>
+                                <p id="1d7317e42ab6i">curl<span class="help-letter-space"></span>调用示例：</p>
+                                <div class="help-code-block">
+                                    <div class="code-tools">
+                                        <div class="left-tools">
+                                        </div>
+                                        <div class="right-tools">
+                                            <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                               title="更改代码主题"></i>
+                                            <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                        </div>
+                                    </div>
+                                    <pre id="c8653eb220ui2" code-type="xCode" data-tag="codeblock"
+                                         outputclass="language-curl" class="pre codeblock language-curl"><code
+                                            data-highlighted="yes" class="hljs language-curl"><span
+                                            class="hljs-keyword">curl</span> <span class="hljs-literal">-X <span
+                                            class="hljs-symbol">POST</span></span> https://dashscope.aliyuncs.com/api/v1/services/audio/asr/customization \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Authorization: Bearer $DASHSCOPE_API_KEY"</span> \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Content-Type: application/json"</span> \
+<span class="hljs-literal">-d</span> <span class="hljs-string">'{
+    "model": "speech-biasing",
+    "input": {
+                "action": "list_vocabulary",
+                "prefix": null,
+                "page_index": 0,
+                "page_size": 10
+            }
+}'</span></code></pre>
+                                </div>
+                                <div type="note" id="27cff42596hcp" class="note note-note">
+                                    <div class="note-icon-wrapper"><i
+                                            class="icon-note note note"></i><strong>说明 </strong></div>
+                                    <div class="noteContentSpan"><p id="746084229bebi">prefix<span
+                                            class="help-letter-space"></span>字段在示例中为<span
+                                            class="help-letter-space"></span>null，会返回所有热词表，您可以根据需要修改为指定字符串。
+                                    </p></div>
+                                </div>
+                                <p id="058af98425abh">返回示例：</p>
+                                <div class="help-code-block">
+                                    <div class="code-tools">
+                                        <div class="left-tools">
+                                        </div>
+                                        <div class="right-tools">
+                                            <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                               title="更改代码主题"></i>
+                                            <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                        </div>
+                                    </div>
+                                    <pre id="0972adf592gb7" code-type="xCode" data-tag="codeblock"
+                                         outputclass="language-json" class="pre codeblock language-json"><code
+                                            data-highlighted="yes" class="hljs language-json"><span
+                                            class="hljs-punctuation">{</span>
+	<span class="hljs-attr">"output"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-punctuation">{</span>
+		<span class="hljs-attr">"vocabulary_list"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
+			<span class="hljs-attr">"gmt_create"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-string">"2024-11-05 16:31:32"</span><span
+                                                class="hljs-punctuation">,</span>
+			<span class="hljs-attr">"vocabulary_id"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-string">"vocab-testpfx-6977ae49f65c4c3db054727cxxxxxxxx"</span><span
+                                                class="hljs-punctuation">,</span>
+			<span class="hljs-attr">"gmt_modified"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-string">"2024-11-05 16:31:32"</span><span
+                                                class="hljs-punctuation">,</span>
+			<span class="hljs-attr">"status"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"OK"</span>
+		<span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
+	<span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+	<span class="hljs-attr">"usage"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-punctuation">{</span>
+		<span class="hljs-attr">"count"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>
+	<span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+	<span class="hljs-attr">"request_id"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"4e7df7c0-18a8-9f3e-bfc4-xxxxxxxxxxxx"</span>
+<span class="hljs-punctuation">}</span></code></pre>
+                                </div>
+                                <h3 id="af49c3acc08j9"><b>查询指定热词表</b></h3>
+                                <p id="0462c1d434mkq">curl<span class="help-letter-space"></span>调用示例：</p>
+                                <div class="help-code-block">
+                                    <div class="code-tools">
+                                        <div class="left-tools">
+                                        </div>
+                                        <div class="right-tools">
+                                            <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                               title="更改代码主题"></i>
+                                            <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                        </div>
+                                    </div>
+                                    <pre id="d5f166e167dpu" code-type="xCode" data-tag="codeblock"
+                                         outputclass="language-curl" class="pre codeblock language-curl"><code
+                                            data-highlighted="yes" class="hljs language-curl"><span
+                                            class="hljs-keyword">curl</span> <span class="hljs-literal">-X <span
+                                            class="hljs-symbol">POST</span></span> https://dashscope.aliyuncs.com/api/v1/services/audio/asr/customization \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Authorization: Bearer $DASHSCOPE_API_KEY"</span> \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Content-Type: application/json"</span> \
+<span class="hljs-literal">-d</span> <span class="hljs-string">'{
+    "model": "speech-biasing",
+    "input": {
+                "action": "query_vocabulary",
+                "vocabulary_id": "vocab-testpfx-6977ae49f65c4c3db054727cxxxxxxxx"
+            }
+}'</span></code></pre>
+                                </div>
+                                <p id="4c9e023f8a7ue">返回示例：</p>
+                                <div class="help-code-block">
+                                    <div class="code-tools">
+                                        <div class="left-tools">
+                                        </div>
+                                        <div class="right-tools">
+                                            <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                               title="更改代码主题"></i>
+                                            <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                        </div>
+                                    </div>
+                                    <pre id="5c82b5f85cc5v" code-type="xCode" data-tag="codeblock"
+                                         outputclass="language-json" class="pre codeblock language-json"><code
+                                            data-highlighted="yes" class="hljs language-json"><span
+                                            class="hljs-punctuation">{</span>
+	<span class="hljs-attr">"output"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-punctuation">{</span>
+		<span class="hljs-attr">"gmt_create"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2024-11-05 16:31:32"</span><span
+                                                class="hljs-punctuation">,</span>
+		<span class="hljs-attr">"vocabulary"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
+			<span class="hljs-attr">"weight"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+			<span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-string">"吴贻弓"</span><span
+                                                class="hljs-punctuation">,</span>
+			<span class="hljs-attr">"lang"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-string">"zh"</span>
+		<span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span> <span
+                                                class="hljs-punctuation">{</span>
+			<span class="hljs-attr">"weight"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+			<span class="hljs-attr">"text"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"阙里人家"</span><span
+                                                class="hljs-punctuation">,</span>
+			<span class="hljs-attr">"lang"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-string">"zh"</span>
+		<span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span><span
+                                                class="hljs-punctuation">,</span>
+		<span class="hljs-attr">"target_model"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"paraformer-realtime-v2"</span><span
+                                                class="hljs-punctuation">,</span>
+		<span class="hljs-attr">"gmt_modified"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"2024-11-05 16:31:32"</span><span
+                                                class="hljs-punctuation">,</span>
+		<span class="hljs-attr">"status"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-string">"OK"</span>
+	<span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+	<span class="hljs-attr">"usage"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-punctuation">{</span>
+		<span class="hljs-attr">"count"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>
+	<span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+	<span class="hljs-attr">"request_id"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"b02d18a4-ff8d-9fd4-b4f0-xxxxxxxxxxxx"</span>
+<span class="hljs-punctuation">}</span></code></pre>
+                                </div>
+                                <h3 id="79411dab10hcf"><b>更新热词表</b></h3>
+                                <p id="f34b4ce9f65d6">curl<span class="help-letter-space"></span>调用示例：</p>
+                                <div class="help-code-block">
+                                    <div class="code-tools">
+                                        <div class="left-tools">
+                                        </div>
+                                        <div class="right-tools">
+                                            <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                               title="更改代码主题"></i>
+                                            <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                        </div>
+                                    </div>
+                                    <pre id="4d64736d4cy6w" code-type="xCode" data-tag="codeblock"
+                                         outputclass="language-curl" class="pre codeblock language-curl"><code
+                                            data-highlighted="yes" class="hljs language-curl"><span
+                                            class="hljs-keyword">curl</span> <span class="hljs-literal">-X <span
+                                            class="hljs-symbol">POST</span></span> https://dashscope.aliyuncs.com/api/v1/services/audio/asr/customization \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Authorization: Bearer $DASHSCOPE_API_KEY"</span> \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Content-Type: application/json"</span> \
+<span class="hljs-literal">-d</span> <span class="hljs-string">'{
+    "model": "speech-biasing",
+    "input": {
+                "action": "update_vocabulary",
+                "vocabulary_id": "vocab-testpfx-6977ae49f65c4c3db054727cxxxxxxxx",
+                "vocabulary": [
+                  {"text": "吴贻弓", "weight": 4, "lang": "zh"}
+                ]      
+            }
+}'</span></code></pre>
+                                </div>
+                                <p id="8425a4c3b6yri">返回示例：</p>
+                                <div class="help-code-block">
+                                    <div class="code-tools">
+                                        <div class="left-tools">
+                                        </div>
+                                        <div class="right-tools">
+                                            <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                               title="更改代码主题"></i>
+                                            <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                        </div>
+                                    </div>
+                                    <pre id="3e468c7a04e7n" code-type="xCode" data-tag="codeblock"
+                                         outputclass="language-json" class="pre codeblock language-json"><code
+                                            data-highlighted="yes" class="hljs language-json"><span
+                                            class="hljs-punctuation">{</span>
+	<span class="hljs-attr">"output"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span><span
+                                                class="hljs-punctuation">,</span>
+	<span class="hljs-attr">"usage"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-punctuation">{</span>
+		<span class="hljs-attr">"count"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>
+	<span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+	<span class="hljs-attr">"request_id"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"a51f3139-7aaa-941b-994f-xxxxxxxxxxxx"</span>
+<span class="hljs-punctuation">}</span></code></pre>
+                                </div>
+                                <h3 id="85f23775c00ri"><b>删除热词表</b></h3>
+                                <p id="3bb1aa4a8aati">curl<span class="help-letter-space"></span>调用示例：</p>
+                                <div class="help-code-block">
+                                    <div class="code-tools">
+                                        <div class="left-tools">
+                                        </div>
+                                        <div class="right-tools">
+                                            <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                               title="更改代码主题"></i>
+                                            <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                        </div>
+                                    </div>
+                                    <pre id="852ca26659gz6" code-type="xCode" data-tag="codeblock"
+                                         outputclass="language-curl" class="pre codeblock language-curl"><code
+                                            data-highlighted="yes" class="hljs language-curl"><span
+                                            class="hljs-keyword">curl</span> <span class="hljs-literal">-X <span
+                                            class="hljs-symbol">POST</span></span> https://dashscope.aliyuncs.com/api/v1/services/audio/asr/customization \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Authorization: Bearer $DASHSCOPE_API_KEY"</span> \
+<span class="hljs-literal">-H</span> <span class="hljs-string">"Content-Type: application/json"</span> \
+<span class="hljs-literal">-d</span> <span class="hljs-string">'{
+    "model": "speech-biasing",
+    "input": {
+                "action": "delete_vocabulary",
+                "vocabulary_id": "vocab-testpfx-6977ae49f65c4c3db054727cxxxxxxxx"
+            }
+}'</span></code></pre>
+                                </div>
+                                <p id="951dc12dabouk">返回示例：</p>
+                                <div class="help-code-block">
+                                    <div class="code-tools">
+                                        <div class="left-tools">
+                                        </div>
+                                        <div class="right-tools">
+                                            <i class="theme-switch-btn help-iconfont help-icon-baitian"
+                                               title="更改代码主题"></i>
+                                            <i class="copy-btn help-iconfont help-icon-fuzhi" title="复制代码"></i>
+                                        </div>
+                                    </div>
+                                    <pre id="b9a7b20115cx2" code-type="xCode" data-tag="codeblock"
+                                         outputclass="language-json" class="pre codeblock language-json"><code
+                                            data-highlighted="yes" class="hljs language-json"><span
+                                            class="hljs-punctuation">{</span>
+	<span class="hljs-attr">"output"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span><span
+                                                class="hljs-punctuation">,</span>
+	<span class="hljs-attr">"usage"</span><span class="hljs-punctuation">:</span> <span
+                                                class="hljs-punctuation">{</span>
+		<span class="hljs-attr">"count"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>
+	<span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+	<span class="hljs-attr">"request_id"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"d7499ee5-6c91-956c-a1aa-xxxxxxxxxxxx"</span>
+<span class="hljs-punctuation">}</span></code></pre>
+                                </div>
+                            </section>
+                        </section>
+                        <section id="4244b5a580l56" class="section"><h2 id="59d8812767dk7" uuid="lzi0jg9obinqyzjf0zw">
+                            <b>错误码说明</b></h2>
+                            <p uuid="lzl2bwty5t817gdiavp" id="0fc998c426uht">如遇报错问题，请参见<a
+                                    href="https://help.aliyun.com/zh/model-studio/error-code" id="4bca53ac833bq"
+                                    title="" class="xref">错误信息</a>进行排查。</p></section>
+                    </div>
+                </main>
+
+            </div>
+        </div>
+        <div class="aliyun-docs-pagination NextPage--pagination--wQZfrKo">
+            <div class="NextPage--container--cfVcdEE"><span class="NextPage--paginationLeft--WTOmehr"><a
+                    href="/zh/model-studio/paraformer-recorded-speech-recognition-restful-api"
+                    data-spm-click="gostr=/aliyun;locaid=preDoc"><i class="help-iconfont help-icon-prev-arrow"></i>上一篇：RESTful API</a></span><span
+                    class="NextPage--paginationRight--TgS6P1r"><a href="/zh/model-studio/paraformer-best-practices"
+                                                                  data-spm-click="gostr=/aliyun;locaid=nextDoc">下一篇：最佳实践<i
+                    class="help-iconfont help-icon-next-arrow"></i></a></span></div>
+        </div>
+    </div>
+    <div class="RecommendDoc--container--IhRK6Om"></div>
+    <div class="FeedbackButton--feedbackContainer--v2ywOOX aliyun-docs-feedback" id="help-doc-feedback">
+        <div class="FeedbackButton--feedbackHelpTip--BFRvMbx">该文章对您有帮助吗？</div>
+        <div class="FeedbackButton--feedbackButtonContainer--MHnR42I">
+            <div class="FeedbackButton--feedbackButtonBox--KiH2lHU">
+                <button class="FeedbackButton--iconButton--v243wMx"><i class="help-iconfont help-icon-tag-empty"></i>
+                </button>
+                <button class="FeedbackButton--iconButton--v243wMx"><i class="help-iconfont help-icon-tag-empty"
+                                                                       style="display: inline-block; transform: rotateX(-180deg);"></i>
+                </button>
+                <button class="FeedbackButton--clickButton--ZUiZLGR"><i class="help-iconfont help-icon-bianji"></i>反馈
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

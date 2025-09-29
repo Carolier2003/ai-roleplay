@@ -1,0 +1,61 @@
+{
+  "colors": {
+    "primary": {
+      "50": "#eff6ff",
+      "100": "#dbeafe", 
+      "200": "#bfdbfe",
+      "300": "#93c5fd",
+      "400": "#60a5fa",
+      "500": "#1677ff",
+      "600": "#1366d9",
+      "700": "#1155cc",
+      "800": "#0f46a3",
+      "900": "#0c3b82"
+    },
+    "gray": {
+      "50": "#f9fafb",
+      "100": "#f3f4f6",
+      "200": "#e5e7eb",
+      "300": "#d1d5db",
+      "400": "#9ca3af",
+      "500": "#6b7280",
+      "600": "#4b5563",
+      "700": "#374151",
+      "800": "#1f2937",
+      "900": "#111827"
+    }
+  },
+  "spacing": {
+    "xs": "4px",
+    "sm": "8px", 
+    "md": "12px",
+    "lg": "16px",
+    "xl": "20px",
+    "2xl": "24px"
+  },
+  "borderRadius": {
+    "sm": "8px",
+    "md": "12px",
+    "lg": "16px",
+    "xl": "20px"
+  },
+  "fontSize": {
+    "sm": "12px",
+    "base": "14px",
+    "lg": "16px",
+    "xl": "18px"
+  },
+  "shadows": {
+    "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    "base": "0 2px 8px 0 rgba(0, 0, 0, 0.06)",
+    "lg": "0 4px 12px 0 rgba(0, 0, 0, 0.08)"
+  },
+  "login": {
+    "width": "400px",
+    "radius": "16px",
+    "inputHeight": "48px",
+    "btnHeight": "44px",
+    "borderColor": "#D8D8D8",
+    "focusColor": "#1677FF"
+  }
+}

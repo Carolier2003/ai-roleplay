@@ -1,0 +1,233 @@
+server:
+  port: 18080
+  tomcat:
+    connection-timeout: 5s
+
+spring:
+  application:
+    name: ai-roleplay-backend
+  webflux:
+    base-path: /
+    
+  # Jackson配置 - 修复时间序列化问题
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+    
+  # 数据库配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/ai_roleplay?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&autoReconnect=true
+    username: roleplay
+    password: roleplay123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      
+  # Redis配置 - 用于会话记忆和向量存储
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 1
+          max-wait: 3000ms
+
+  # 通义千问AI配置
+  ai:
+    dashscope:
+      api-key: ${AI_DASHSCOPE_API_KEY}
+      chat:
+        enabled: true
+        options:
+          model: qwen3-max
+          temperature: 0.7
+          max-tokens: 2000
+          top-p: 0.8
+          
+    # Redis向量存储配置 - 用于RAG知识库
+    vectorstore:
+      redis:
+        initialize-schema: true
+        prefix: "ai_roleplay_character"
+        index: "character_knowledge_idx"
+
+# 阿里云OSS配置
+aliyun:
+  oss:
+    endpoint: ${ALIYUN_OSS_ENDPOINT}
+    access-key-id: ${ALIYUN_OSS_ACCESS_KEY_ID}
+    access-key-secret: ${ALIYUN_OSS_ACCESS_KEY_SECRET}
+    bucket-name: ${ALIYUN_OSS_BUCKET_NAME}
+    # 头像存储配置
+    avatar:
+      base-path: avatars/
+      original-path: original/
+      processed-path: processed/
+      thumbnail-path: thumbnails/
+      # 图片处理配置
+      max-file-size: 10485760  # 10MB
+      allowed-formats: jpg,jpeg,png,webp
+      thumbnail-size: 150
+      processed-size: 400
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET:ai-roleplay-secret-key-for-jwt-token-generation-and-validation-must-be-at-least-32-characters-long}
+  expiration: ${JWT_EXPIRATION:86400000}  # 24小时 (毫秒)
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}  # 7天 (毫秒)
+
+# MyBatis Plus配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: AUTO
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  mapper-locations: classpath*:/mapper/**/*.xml
+  # 注释掉type-aliases-package以避免与java.lang.Character冲突
+  # type-aliases-package: com.carol.backend.entity
+
+# 日志配置
+logging:
+  level:
+    com.carol.backend: DEBUG
+    org.springframework.ai: DEBUG
+    com.baomidou.mybatisplus: DEBUG
+    # JWT认证相关日志
+    com.carol.backend.config.JwtAuthenticationInterceptor: DEBUG
+    com.carol.backend.util.JwtUtil: DEBUG
+    com.carol.backend.util.UserContext: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+
+# 应用配置
+app:
+  # 会话记忆配置
+  chat:
+    memory:
+      max-messages: 100  # 最大保存消息数
+      ttl: 7200         # 会话TTL(秒) 2小时
+    # 角色扮演配置
+    character:
+      default-temperature: 0.7
+      max-context-length: 4000
+      system-prompt-template: |
+        你现在要完全扮演角色: {character_name}
+        
+        ## 角色设定
+        - 角色背景: {background_story}
+        - 性格特征: {personality_traits}  
+        - 说话风格: {speaking_style}
+        - 专业知识: {expertise_area}
+        
+        ## 扮演要求
+        1. 请完全沉浸在这个角色中，用该角色的语气、思维方式和知识背景来回答
+        2. 保持角色的时代背景和文化特征
+        3. 使用符合角色身份的语言风格
+        4. 如果问题超出角色的知识范围，请以角色的身份诚实说明
+        
+        现在开始角色扮演：
+
+  audio:
+    cleanup:
+      enabled: true
+      keep-days: 7
+      very-old-keep-days: 30
+    storage:
+      folder: "uploaded-audio"
+      max-files-per-user: 100
+
+  # 语音识别配置
+  speech:
+    recognition:
+      default-model: "fun-asr-realtime"
+      default-sample-rate: 16000
+      default-format: "wav"
+      semantic-punctuation-enabled: false
+      punctuation-prediction-enabled: true
+      max-sentence-silence: 1300
+    # 性能优化配置
+    performance:
+      file-limit:
+        max-file-size-mb: 50
+        max-duration-seconds: 300
+        allowed-formats: ["wav", "mp3", "pcm", "opus", "speex", "aac", "amr"]
+        max-sample-rate: 48000
+        min-sample-rate: 8000
+      timeout:
+        sync-recognition-timeout-seconds: 60
+        async-recognition-timeout-seconds: 300
+        streaming-session-timeout-seconds: 300
+        connection-timeout-seconds: 30
+        read-timeout-seconds: 60
+      concurrency:
+        max-sync-tasks: 10
+        max-async-tasks: 20
+        max-streaming-sessions: 50
+        queue-size: 100
+        core-pool-size: 5
+        max-pool-size: 20
+      monitoring:
+        enabled: true
+        metrics-interval-seconds: 60
+        data-retention-hours: 24
+        enable-detailed-logging: true
+        slow-request-threshold-ms: 5000
+      alerting:
+        enabled: true
+        failure-rate-threshold: 10.0
+        avg-latency-threshold-ms: 10000
+        memory-usage-threshold: 80.0
+        concurrent-connections-threshold: 80
+        alert-check-interval-minutes: 5
+        alert-cooldown-minutes: 15
+      heartbeat: false
+      language-hints: ["zh", "en"]
+      supported-formats: ["pcm", "wav", "mp3", "opus", "speex", "aac", "amr"]
+      max-file-size-mb: 100
+      stream-chunk-duration-ms: 100
+      min-chunk-size-kb: 1
+      max-chunk-size-kb: 16
+
+  # TTS语音合成配置
+  tts:
+    default-model: qwen3-tts-flash-realtime
+    default-voice: Cherry
+    default-language-type: Chinese
+    max-text-length: 600
+    streaming-timeout: 60
+    sync-timeout: 30
+    audio-save-directory: ./audio_files
+    enable-local-save: false
+    audio-url-expiry-hours: 24
+
+    # 费用计算配置
+    cost:
+      qwen3-tts-price: 0.8      # 元/万字符
+      qwen-tts-input-price: 0.0016   # 元/千Token
+      qwen-tts-output-price: 0.01    # 元/千Token
+
+    # 角色音色映射
+    character-voice-mapping:
+      1: Ethan        # 哈利·波特 - 年轻男性
+      2: Elias        # 苏格拉底 - 智慧长者
+      3: Marcus       # 爱因斯坦 - 科学家
+      4: Dylan        # 江户川柯南 - 推理侦探
+      5: Ryan         # 泰拉瑞亚向导 - 游戏向导
+
+

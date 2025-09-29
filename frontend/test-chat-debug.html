@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>聊天调试测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { color: red; }
+        .success { color: green; }
+        .warning { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>聊天调试测试</h1>
+    
+    <button onclick="enableDebugAndRefresh()">启用调试模式并刷新主页面</button>
+    <button onclick="sendTestMessage()">发送测试消息到主页面</button>
+    <button onclick="checkMainPageLogs()">检查主页面控制台</button>
+    
+    <div id="logs"></div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log ${type}`;
+            logEntry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        function enableDebugAndRefresh() {
+            // 启用调试模式
+            localStorage.setItem('CHAT_DEBUG', 'true');
+            log('✅ 调试模式已启用', 'success');
+            
+            // 尝试刷新主页面
+            try {
+                // 查找主应用窗口
+                const mainWindow = window.open('http://localhost:5173/', 'main_app');
+                if (mainWindow) {
+                    setTimeout(() => {
+                        mainWindow.location.reload();
+                        log('🔄 主页面已刷新', 'success');
+                    }, 1000);
+                } else {
+                    log('⚠️ 无法访问主页面，请手动刷新 http://localhost:5173/', 'warning');
+                }
+            } catch (error) {
+                log('❌ 刷新主页面失败: ' + error.message, 'error');
+            }
+        }
+        
+        function sendTestMessage() {
+            try {
+                // 打开主应用并发送测试消息
+                const mainWindow = window.open('http://localhost:5173/', 'main_app');
+                
+                setTimeout(() => {
+                    // 在主窗口中执行测试脚本
+                    const testScript = `
+                        // 启用调试模式
+                        localStorage.setItem('CHAT_DEBUG', 'true');
+                        console.log('🔧 调试模式已启用');
+                        
+                        // 等待页面加载
+                        setTimeout(() => {
+                            // 查找输入框
+                            const input = document.querySelector('textarea, input[type="text"]');
+                            if (input) {
+                                console.log('✅ 找到输入框');
+                                input.value = '测试消息 - ' + new Date().toLocaleTimeString();
+                                input.dispatchEvent(new Event('input', { bubbles: true }));
+                                
+                                // 查找发送按钮并点击
+                                const sendBtn = document.querySelector('.send-btn, button[type="submit"]');
+                                if (sendBtn && !sendBtn.disabled) {
+                                    sendBtn.click();
+                                    console.log('📤 测试消息已发送');
+                                } else {
+                                    console.log('❌ 发送按钮不可用');
+                                    // 尝试按回车
+                                    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+                                    console.log('⌨️ 尝试按回车发送');
+                                }
+                            } else {
+                                console.log('❌ 未找到输入框');
+                            }
+                        }, 2000);
+                    `;
+                    
+                    try {
+                        mainWindow.eval(testScript);
+                        log('📤 测试消息脚本已发送到主页面', 'success');
+                    } catch (error) {
+                        log('❌ 无法在主页面执行脚本: ' + error.message, 'error');
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                log('❌ 发送测试消息失败: ' + error.message, 'error');
+            }
+        }
+        
+        function checkMainPageLogs() {
+            try {
+                const mainWindow = window.open('http://localhost:5173/', 'main_app');
+                
+                setTimeout(() => {
+                    log('🔍 请在主页面按 F12 打开开发者工具查看控制台日志', 'info');
+                    log('🔍 查找以下关键日志:', 'info');
+                    log('  - [ChatStore] 创建新消息', 'info');
+                    log('  - [ChatStore] 更新消息', 'info');
+                    log('  - [ChatMessage] 消息渲染', 'info');
+                    log('  - 🚨 警告：消息的 isUser 字段发生了变化', 'warning');
+                }, 500);
+                
+            } catch (error) {
+                log('❌ 检查日志失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 初始化
+        window.onload = function() {
+            log('🚀 聊天调试测试页面已加载');
+            const debugEnabled = localStorage.getItem('CHAT_DEBUG') === 'true';
+            log(`当前调试模式状态: ${debugEnabled ? '启用' : '禁用'}`, debugEnabled ? 'success' : 'warning');
+        }
+    </script>
+</body>
+</html>

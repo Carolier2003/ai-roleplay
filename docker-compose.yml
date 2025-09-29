@@ -1,0 +1,53 @@
+services:
+  # MySQL数据库 - 存储角色信息和对话历史
+  mysql:
+    image: mysql:8.0
+    container_name: ai-roleplay-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: roleplay123
+      MYSQL_DATABASE: ai_roleplay
+      MYSQL_USER: roleplay
+      MYSQL_PASSWORD: roleplay123
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+      - ./docker/mysql/conf:/etc/mysql/conf.d
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - ai-roleplay-network
+
+  # Redis Stack - 支持向量搜索的Redis，用于会话记忆、缓存和RAG向量存储
+  redis:
+    image: redis/redis-stack:latest
+    container_name: ai-roleplay-redis-stack
+    restart: always
+    ports:
+      - "6379:6379"     # Redis 核心服务
+      - "8001:8001"     # RedisInsight Web UI (可选)
+    volumes:
+      - redis_data:/data
+      - ./docker/redis/redis-stack.conf:/redis-stack.conf
+    command: redis-stack-server /redis-stack.conf
+    environment:
+      - REDIS_ARGS=--save 900 1 --save 300 10 --save 60 10000
+    networks:
+      - ai-roleplay-network
+
+  # 注: 已移除 Redis Commander 和 Adminer
+  # 推荐使用专业客户端工具:
+  # - 数据库: Navicat, DBeaver, DataGrip 等
+  # - Redis: Another Redis, RedisInsight 等
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  ai-roleplay-network:
+    driver: bridge

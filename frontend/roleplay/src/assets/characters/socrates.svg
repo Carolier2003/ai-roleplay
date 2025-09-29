@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <circle cx="32" cy="32" r="32" fill="#059669"/>
+  <!-- 头部 -->
+  <circle cx="32" cy="26" r="12" fill="#FDE68A"/>
+  <!-- 胡须 -->
+  <path d="M26 32 C28 36, 30 38, 32 38 C34 38, 36 36, 38 32" stroke="#9CA3AF" stroke-width="3" fill="none"/>
+  <!-- 头发/光头 -->
+  <path d="M22 18 C22 15, 26 12, 32 12 C38 12, 42 15, 42 18" stroke="#9CA3AF" stroke-width="2" fill="none"/>
+  <!-- 眼睛 -->
+  <circle cx="28" cy="24" r="2" fill="#374151"/>
+  <circle cx="36" cy="24" r="2" fill="#374151"/>
+  <!-- 长袍 -->
+  <rect x="20" y="38" width="24" height="20" rx="4" fill="#F3F4F6"/>
+</svg>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天调试助手</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9fafb;
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card h3 {
+            margin-top: 0;
+            color: #1f2937;
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: #1677ff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0958d9;
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        
+        .status.info {
+            background: #e6f7ff;
+            color: #0958d9;
+            border: 1px solid #91d5ff;
+        }
+        
+        .status.success {
+            background: #f6ffed;
+            color: #389e0d;
+            border: 1px solid #b7eb8f;
+        }
+        
+        .code {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        
+        .instructions {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .instructions h4 {
+            margin-top: 0;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <h1>聊天调试助手</h1>
+    <p>这个工具可以帮助您调试聊天消息的布局问题。</p>
+    
+    <div class="card">
+        <h3>调试模式控制</h3>
+        <p>启用调试模式后，每条聊天消息都会显示调试信息，包括 isUser 值和预期位置。</p>
+        
+        <button class="btn-primary" onclick="enableDebug()">启用调试模式</button>
+        <button class="btn-secondary" onclick="disableDebug()">禁用调试模式</button>
+        <button class="btn-success" onclick="checkDebugStatus()">检查当前状态</button>
+        
+        <div id="debugStatus" class="status info">点击"检查当前状态"查看调试模式状态</div>
+    </div>
+    
+    <div class="card">
+        <h3>问题诊断步骤</h3>
+        <div class="instructions">
+            <h4>如何使用调试模式：</h4>
+            <ol>
+                <li>点击"启用调试模式"按钮</li>
+                <li>刷新您的聊天页面</li>
+                <li>发送一条消息（比如 "hi"）</li>
+                <li>观察消息上方的调试信息</li>
+                <li>检查用户消息是否显示 "isUser: true" 且位于右侧</li>
+                <li>检查AI回复是否显示 "isUser: false" 且位于左侧</li>
+            </ol>
+        </div>
+        
+        <p><strong>预期行为：</strong></p>
+        <ul>
+            <li>用户消息：isUser: true，应该显示在右侧（蓝色气泡）</li>
+            <li>AI消息：isUser: false，应该显示在左侧（白色气泡）</li>
+        </ul>
+    </div>
+    
+    <div class="card">
+        <h3>手动检查方法</h3>
+        <p>您也可以在浏览器开发者工具中手动检查：</p>
+        
+        <div class="code">
+// 在浏览器控制台中运行这些命令：
+
+// 启用调试模式
+localStorage.setItem('CHAT_DEBUG', 'true');
+
+// 禁用调试模式
+localStorage.removeItem('CHAT_DEBUG');
+
+// 检查调试状态
+console.log('调试模式:', localStorage.getItem('CHAT_DEBUG'));
+        </div>
+    </div>
+    
+    <div class="card">
+        <h3>常见问题排查</h3>
+        <p><strong>如果消息都显示在同一侧，可能的原因：</strong></p>
+        <ul>
+            <li>isUser 字段值不正确</li>
+            <li>CSS 样式被覆盖</li>
+            <li>Vue 组件的 class 绑定有问题</li>
+            <li>Naive UI 的样式冲突</li>
+        </ul>
+        
+        <p><strong>解决方案：</strong></p>
+        <ul>
+            <li>启用调试模式查看 isUser 值</li>
+            <li>检查浏览器开发者工具中的 CSS 样式</li>
+            <li>查看元素是否有正确的 class 名称</li>
+        </ul>
+    </div>
+    
+    <script>
+        function enableDebug() {
+            localStorage.setItem('CHAT_DEBUG', 'true');
+            updateStatus('调试模式已启用！请刷新聊天页面查看调试信息。', 'success');
+        }
+        
+        function disableDebug() {
+            localStorage.removeItem('CHAT_DEBUG');
+            updateStatus('调试模式已禁用。', 'info');
+        }
+        
+        function checkDebugStatus() {
+            const isEnabled = localStorage.getItem('CHAT_DEBUG') === 'true';
+            const status = isEnabled ? '已启用' : '已禁用';
+            const className = isEnabled ? 'success' : 'info';
+            updateStatus(`调试模式当前状态：${status}`, className);
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('debugStatus');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+        
+        // 页面加载时检查状态
+        window.onload = function() {
+            checkDebugStatus();
+        };
+    </script>
+</body>
+</html>

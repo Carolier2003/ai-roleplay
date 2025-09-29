@@ -1,0 +1,1 @@
+tools/management/stop_backend.sh

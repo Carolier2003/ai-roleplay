@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <circle cx="32" cy="32" r="32" fill="#1E40AF"/>
+  <!-- 头部 -->
+  <circle cx="32" cy="26" r="12" fill="#FDE68A"/>
+  <!-- 疯狂的头发 -->
+  <path d="M20 20 C18 16, 22 12, 26 14 C28 10, 32 12, 32 12 C32 12, 36 10, 38 14 C42 12, 46 16, 44 20 C44 22, 40 24, 38 22 C36 26, 32 24, 32 24 C32 24, 28 26, 26 22 C24 24, 20 22, 20 20 Z" fill="#F3F4F6"/>
+  <!-- 胡子 -->
+  <path d="M28 30 C30 32, 32 32, 32 32 C32 32, 34 32, 36 30" stroke="#F3F4F6" stroke-width="2" fill="none"/>
+  <!-- 眼睛 -->
+  <circle cx="28" cy="24" r="2" fill="#374151"/>
+  <circle cx="36" cy="24" r="2" fill="#374151"/>
+  <!-- 实验服 -->
+  <rect x="24" y="38" width="16" height="20" rx="2" fill="#F9FAFB"/>
+</svg>

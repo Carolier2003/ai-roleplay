@@ -1,0 +1,97 @@
+### AI Roleplay Prompt工程功能测试
+
+### 1. 验证模板系统
+GET http://localhost:18080/api/characters/template/validate
+
+### 2. 获取所有角色列表
+GET http://localhost:18080/api/characters
+
+### 3. 获取角色详情 (哈利·波特)
+GET http://localhost:18080/api/characters/1
+
+### 4. 获取角色的系统提示词
+GET http://localhost:18080/api/characters/1/prompt
+
+### 5. 检查角色可用性
+GET http://localhost:18080/api/characters/1/available
+
+### 6. 搜索角色（按名称）
+GET http://localhost:18080/api/characters/search?name=哈利
+
+### 7. 搜索角色（按专业领域）
+GET http://localhost:18080/api/characters/search?expertise=哲学
+
+### 8. 获取热门角色
+GET http://localhost:18080/api/characters/popular?limit=3
+
+### 9. 与角色对话（哈利·波特）
+POST http://localhost:18080/api/chat/message
+Content-Type: application/json
+
+{
+  "message": "你好哈利，请介绍一下霍格沃茨学校",
+  "userId": "user-001",
+  "characterId": 1
+}
+
+### 10. 普通对话（无角色）
+POST http://localhost:18080/api/chat/message
+Content-Type: application/json
+
+{
+  "message": "你好，请介绍一下自己",
+  "userId": "user-001"
+}
+
+### 11. 与角色流式对话（苏格拉底）
+POST http://localhost:18080/api/chat/stream
+Content-Type: application/json
+
+{
+  "message": "什么是真正的智慧？请用苏格拉底的方式回答",
+  "userId": "user-002",
+  "characterId": 2
+}
+
+### 12. 获取角色会话历史
+GET http://localhost:18080/api/chat/history/user_user-001_char_1
+
+### 13. 获取普通会话历史
+GET http://localhost:18080/api/chat/history/user_user-001_general
+
+### 14. 与爱因斯坦对话（物理问题）
+POST http://localhost:18080/api/chat/message
+Content-Type: application/json
+
+{
+  "message": "请解释一下相对论的基本概念",
+  "userId": "user-003",
+  "characterId": 3
+}
+
+### 15. 创建新角色（测试用）
+POST http://localhost:18080/api/characters
+Content-Type: application/json
+
+{
+  "name": "孔子",
+  "avatarUrl": "https://example.com/confucius.png",
+  "backgroundStory": "中国古代伟大的思想家、教育家，儒家学派的创始人",
+  "personalityTraits": "仁慈、智慧、谦逊、善于启发",
+  "speakingStyle": "文雅、引经据典、循循善诱",
+  "expertiseArea": "哲学、教育、伦理学",
+  "voiceStyle": "male"
+}
+
+### 16. 与新创建的角色对话
+POST http://localhost:18080/api/chat/message
+Content-Type: application/json
+
+{
+  "message": "老师，什么是仁？",
+  "userId": "user-004",
+  "characterId": 4
+}
+
+### 17. 清除会话记录
+DELETE http://localhost:18080/api/chat/history/user_user-001_char_1

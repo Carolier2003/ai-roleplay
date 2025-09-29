@@ -1,0 +1,16 @@
+{
+  "characterId": 1,
+  "title": "禁林",
+  "content": "禁林 (Forbidden Forest)，也常被称为黑暗森林 (Dark Forest[1][2])，位于霍格沃茨魔法学校场地的边缘。正如它名字所显示的，霍格沃茨学生通常不被允许进入禁林，但在关禁闭或者上保护神奇动物课等特殊情况时，学生们可以走进禁林。不过由于禁林里有许多危险的神奇动物，少数学生就更想进去一探究竟了。",
+  "knowledgeType": "BASIC_INFO",
+  "importance": 8,
+  "source": "哈利·波特中文维基",
+  "sourceUrl": "https://harrypotter.fandom.com/zh/wiki/%E7%A6%81%E6%9E%97",
+  "tags": [
+    "霍格沃茨",
+    "魔法",
+    "禁林",
+    "重要地点"
+  ],
+  "category": "LOCATIONS"
+}
