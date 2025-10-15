@@ -1,5 +1,25 @@
 <template>
   <div class="chat-input-bar">
+    <!-- RAG功能开关（仅用于测试） -->
+    <div class="rag-toggle-container">
+      <n-tooltip placement="top">
+        <template #trigger>
+          <n-switch
+            v-model:value="enableRag"
+            size="small"
+          >
+            <template #checked>
+              RAG
+            </template>
+            <template #unchecked>
+              基础
+            </template>
+          </n-switch>
+        </template>
+        <span>{{ enableRag ? 'RAG知识检索已启用' : '基础角色模式（无RAG）' }}</span>
+      </n-tooltip>
+    </div>
+
     <div class="input-container">
       <!-- 语音转文字按钮 (左边) -->
       <n-button
@@ -127,8 +147,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick } from 'vue'
-import { NButton, NInput, NSpin, useMessage } from 'naive-ui'
+import { ref, computed, nextTick, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { NButton, NInput, NSpin, NTooltip, NSwitch, useMessage } from 'naive-ui'
 import VoiceWave from './VoiceWave.vue'
 import VoiceCallButton from './VoiceCallButton.vue'
 import { useChatStore } from '@/stores/chat'
@@ -156,6 +177,14 @@ const emit = defineEmits<Emits>()
 const chatStore = useChatStore()
 const authStore = useAuthStore()
 const message = useMessage()
+
+// 获取RAG开关状态
+const { enableRag } = storeToRefs(chatStore)
+
+// 监听RAG状态变化
+watch(enableRag, (newVal) => {
+  console.log('[ChatInputBar] RAG状态切换为:', newVal ? '✓ 启用' : '✗ 禁用')
+})
 
 // TTS播放器
 const { addToQueue, stopPlaying, clearQueue } = useTTSPlayer()
@@ -367,6 +396,7 @@ const handleSend = async () => {
       characterId: chatStore.currentCharacterId,
       message: content,  // ✅ 使用 message 字段匹配后端
       enableTts: enableTtsForThisMessage,   // ✅ 根据输入模式决定是否启用TTS
+      enableRag: chatStore.enableRag,  // ✅ 传递RAG开关状态
       languageType: "Chinese"  // ✅ 设置语言类型
       // ✅ 不需要传递 userId，后端从 JWT token 中自动获取
     }
@@ -981,6 +1011,7 @@ const processVoiceMessage = async (audioBlob: Blob) => {
       characterId: chatStore.currentCharacterId,
       message: recognizedText,  // 发送实际的文字内容给AI
       enableTts: true,  // 语音消息模式始终启用TTS
+      enableRag: chatStore.enableRag,  // ✅ 传递RAG开关状态
       languageType: "Chinese"
     }
     
@@ -1414,6 +1445,22 @@ const processVoiceMessage = async (audioBlob: Blob) => {
   100% {
     box-shadow: 0 0 0 0 rgba(22, 119, 255, 0);
   }
+}
+
+/* RAG开关样式 */
+.rag-toggle-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #666;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 </style>

@@ -38,9 +38,9 @@
               v-if="shouldShowTextContent" 
               class="content" 
               :class="{ 'with-voice': hasAudioUrl }"
-              :key="`content-${message.id}-${message.streaming}-${message.content.length}`"
+              :key="`content-${message.id}-${forceRefreshCounter}-${message.timestamp}`"
             >
-              <div v-html="safeContent"></div>
+              <div :key="`markdown-${message.id}-${forceRefreshCounter}`" v-html="safeContent"></div>
               <span v-if="message.streaming" class="typing-cursor-inline">▍</span>
             </div>
             
@@ -59,6 +59,20 @@ import { NAvatar, NButton, NCollapseTransition } from 'naive-ui'
 import { useChatStore, type ChatMessage } from '@/stores/chat'
 import { marked } from 'marked'
 import VoiceWaveform from './VoiceWaveform.vue'
+import mermaid from 'mermaid'
+import { detectMermaidBlock, convertToMermaid } from '@/utils/mermaidDetector'
+
+// 初始化 Mermaid 配置
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'default',
+  securityLevel: 'loose',
+  flowchart: { 
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: 'basis'
+  }
+})
 
 interface Props {
   message: ChatMessage
@@ -132,9 +146,71 @@ marked.setOptions({
   smartypants: true   // 启用智能标点符号
 })
 
-// Markdown预处理函数
+// 强制刷新计数器，用于解决Markdown渲染延迟问题
+const forceRefreshCounter = ref(0)
+
+// 监听消息内容变化，增加刷新频率
+watch(() => props.message.content, (newContent, oldContent) => {
+  if (newContent !== oldContent && !props.message.isUser) {
+    // 对于AI消息，每次内容变化都强制刷新
+    forceRefreshCounter.value++
+
+    // 使用nextTick确保DOM更新
+    nextTick(() => {
+      // 再次强制刷新以确保Markdown渲染
+      setTimeout(() => {
+        forceRefreshCounter.value++
+      }, 50)
+    })
+  }
+}, { immediate: true })
+
+// 监听流式状态变化
+watch(() => props.message.streaming, (isStreaming, wasStreaming) => {
+  console.log(`[ChatMessage] 🔍 流式状态变化监听 - ID: ${props.message.id}`)
+  console.log(`[ChatMessage] 当前streaming: ${isStreaming}, 之前streaming: ${wasStreaming}`)
+  console.log(`[ChatMessage] 是否为用户消息: ${props.message.isUser}`)
+  console.log(`[ChatMessage] 触发条件检查: !isUser=${!props.message.isUser}, wasStreaming=${wasStreaming}, !isStreaming=${!isStreaming}`)
+
+  if (!props.message.isUser && wasStreaming && !isStreaming) {
+    console.log(`[ChatMessage] 🎯 触发条件满足！开始静态重渲染流程 - ID: ${props.message.id}`)
+    console.log(`[ChatMessage] 消息内容长度: ${props.message.content.length}`)
+
+    // 🔥 直接触发静态重渲染，不再使用复杂的延迟逻辑
+    console.log('[ChatMessage] 🚀 立即开始静态内容一次性重新渲染...')
+
+    // 稍微延迟一下，确保流式状态完全稳定
+    setTimeout(async () => {
+      console.log('[ChatMessage] 🔥 执行静态重渲染...')
+      performStaticRerender()
+      
+      // 🎨 渲染完成后，检查并渲染 Mermaid 图表
+      setTimeout(() => {
+        renderMermaidCharts()
+      }, 200)
+    }, 100)
+  } else {
+    console.log(`[ChatMessage] ❌ 触发条件不满足，跳过静态重渲染`)
+  }
+}, { immediate: false })
+
+// Markdown预处理函数 - 优化段落分隔
 const preprocessMarkdown = (content: string): string => {
+  // 🎨 先检测并转换 Mermaid 块
   let processed = content
+  
+  // 如果检测到 Mermaid 语法，进行转换
+  if (detectMermaidBlock(content)) {
+    console.log('[ChatMessage] 检测到 Mermaid 块，开始转换')
+    processed = convertToMermaid(content)
+  }
+  
+  return processed
+    // ✨ 清理AI输出中的特殊符号和格式占位符（但保留 Mermaid 块内的符号）
+    .replace(/---#{1,}/g, '')  // 清理 ---###、---## 等符号
+    .replace(/#{3,}\\+/g, '')  // 清理 ###\、####\ 等符号
+    .replace(/#{3,}(?!\s)/g, '') // 清理独立的 ### (但保留标题语法 ### 标题)
+    .replace(/^\s*>\s*⚠️?\s*注意[：:]/gm, '\n**⚠️ 注意**：') // 将注意事项转换为加粗格式
     // 将中文破折号转换为标准连字符（用于列表）
     .replace(/^([\s]*)—(\s+)/gm, '$1- $2')
     // 将行中的中文破折号也转换（如果前面有空格的话）
@@ -142,27 +218,30 @@ const preprocessMarkdown = (content: string): string => {
     // 处理其他可能的列表符号
     .replace(/^([\s]*)•(\s+)/gm, '$1- $2')
     .replace(/(\n[\s]*)•(\s+)/g, '$1- $2')
-  
-  // ⚠️ 核心修复: 在明显的语义断点处插入双换行
-  // 策略1: 在句号/感叹号后面紧跟中文或大写字母时,插入双换行(更保守的段落分隔)
-  // 排除: a) 感叹号后面紧跟另一个标点(如"！它"这种情况视为同一段落)
-  //       b) 中间有括号、引号等(如"。（"不分段）
-  processed = processed.replace(/([。！])(?=[\u4e00-\u9fa5A-Z])/g, '$1\n\n')
-  
-  // 策略2: 将已有的单换行转为双换行(如果AI确实输出了换行的话)
-  processed = processed.replace(/(\S)\n(?!\n)(?![\->*#])/g, '$1\n\n')
-  
-  return processed
+    // ✨ 智能段落分隔：在句号、感叹号、问号后如果紧跟中文或大写字母，添加双换行
+    .replace(/([。！？])(?=[A-Z\u4e00-\u9fa5])/g, '$1\n\n')
+    // ✨ 在标题前后添加空行，让标题更突出
+    .replace(/([^\n])\n(#{1,6}\s+)/g, '$1\n\n$2')
+    .replace(/(#{1,6}\s+[^\n]+)\n([^\n#])/g, '$1\n\n$2')
+    // ✨ 确保列表项前后有适当的空行
+    .replace(/([^\n])\n([-*+]\s+)/g, '$1\n\n$2')
 }
+
+// 添加静态渲染状态
+const isStaticRerendering = ref(false)
+const staticRenderedContent = ref('')
+// 添加强制更新触发器
+const forceUpdateTrigger = ref(0)
+
 
 // Markdown渲染逻辑,直接根据streaming状态切换
 const safeContent = computed(() => {
   // 直接依赖props.message的streaming和content,确保响应式更新
   const isStreaming = props.message.streaming
   let content = props.message.content
-  
+
   console.log(`[ChatMessage] safeContent计算 - ID: ${props.message.id}, 流式: ${isStreaming}, 内容长度: ${content.length}`)
-  
+
   // 如果是用户消息，只进行简单的HTML转义
   if (props.message.isUser) {
     return content
@@ -174,6 +253,7 @@ const safeContent = computed(() => {
       .replace(/\n/g, '<br>')
   }
   
+  // 如果是AI消息，使用渲染策略
   // AI消息: 根据streaming状态选择渲染方式
   try {
     // 预处理Markdown内容
@@ -182,16 +262,45 @@ const safeContent = computed(() => {
     let htmlContent: string
     
     if (isStreaming) {
-      // 流式输出时: 使用简化渲染,减少计算开销
+      // 🔄 流式输出时：使用简化渲染，减少计算开销
+      console.log(`[ChatMessage] 流式渲染模式（简化） - ID: ${props.message.id}`)
+
+      // 流式时使用优化的渲染，支持段落分隔
       htmlContent = content
-        .replace(/\n/g, '<br>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/`(.*?)`/g, '<code>$1</code>')
+        // ✨ 先处理双换行为段落标记
+        .replace(/\n\n+/g, '</p><p>')
+        // 处理标题（必须在换行处理之前）
         .replace(/^### (.*$)/gm, '<h3>$1</h3>')
         .replace(/^## (.*$)/gm, '<h2>$1</h2>')
         .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        // 处理列表项
+        .replace(/^- (.*$)/gm, '<li>$1</li>')
+        // 处理加粗和斜体
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        // 处理代码
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        // 处理单个换行为<br>
+        .replace(/\n/g, '<br>')
+      
+      // 包装在段落标签中
+      htmlContent = '<p>' + htmlContent + '</p>'
+      // 清理多余的空段落
+      htmlContent = htmlContent.replace(/<p><\/p>/g, '')
     } else {
+      // 🎯 非流式时：使用完整的Markdown渲染
+      console.log(`[ChatMessage] 完整渲染模式 - ID: ${props.message.id}`)
+
+      // 重新初始化marked配置，确保干净的解析状态
+      marked.setOptions({
+        breaks: true,
+        gfm: true,
+        sanitize: false,
+        smartypants: true,
+        pedantic: false,
+        silent: false
+      })
+
       // 非流式时: 使用完整的Markdown渲染
       console.log(`[ChatMessage] 执行marked.parse()完整渲染 - ID: ${props.message.id}`)
       htmlContent = marked.parse(content) as string
@@ -204,6 +313,7 @@ const safeContent = computed(() => {
       .replace(/javascript:/gi, '')
       .replace(/on\w+\s*=/gi, '')
     
+    console.log(`[ChatMessage] Markdown渲染完成 - ID: ${props.message.id}, 内容长度: ${result.length}, 模式: ${isStreaming ? '流式（简化）' : '完整'}`)
     return result
   } catch (error) {
     console.error('[ChatMessage] Markdown解析失败:', error)
@@ -380,6 +490,217 @@ const shouldShowTextContent = computed(() => {
   return true
 })
 
+// 🎨 Mermaid 图表渲染函数
+const renderMermaidCharts = async () => {
+  try {
+    await nextTick()
+    
+    // 查找当前消息中的所有 Mermaid 元素
+    const messageElement = document.querySelector(`[data-message-id="${props.message.id}"]`)
+    if (!messageElement) {
+      return
+    }
+    
+    const mermaidElements = messageElement.querySelectorAll('.mermaid')
+    
+    if (mermaidElements.length > 0) {
+      console.log(`[ChatMessage] 检测到 ${mermaidElements.length} 个 Mermaid 图表，开始渲染`)
+      
+      // 为每个 Mermaid 元素添加唯一 ID
+      mermaidElements.forEach((el, index) => {
+        if (!el.id) {
+          el.id = `mermaid-${props.message.id}-${index}-${Date.now()}`
+        }
+      })
+      
+      // 执行 Mermaid 渲染
+      await mermaid.run({
+        nodes: Array.from(mermaidElements) as HTMLElement[],
+        suppressErrors: true
+      })
+      
+      console.log('[ChatMessage] Mermaid 图表渲染完成')
+    }
+  } catch (error) {
+    console.error('[ChatMessage] Mermaid 渲染失败:', error)
+    // 渲染失败时不影响正常显示，保持原始文本
+  }
+}
+
+// 🔧 调试用：手动触发静态重渲染（可以在浏览器控制台调用）
+if (typeof window !== 'undefined') {
+  window.triggerStaticRerender = (messageId: string) => {
+    if (props.message.id === messageId) {
+      console.log('🔧 [DEBUG] 手动触发静态重渲染:', messageId)
+      performStaticRerender()
+    }
+  }
+}
+
+// 🎯 静态内容一次性重新渲染方法 - 完全替换流式输出内容
+const performStaticRerender = async () => {
+  console.log('🔥🔥🔥 [ChatMessage] 静态重渲染函数被调用！🔥🔥🔥')
+  console.log(`[ChatMessage] 消息ID: ${props.message.id}`)
+  console.log(`[ChatMessage] 消息内容: ${props.message.content.substring(0, 100)}...`)
+  console.log(`[ChatMessage] 当前streaming状态: ${props.message.streaming}`)
+  console.log(`[ChatMessage] 当前isStaticRerendering: ${isStaticRerendering.value}`)
+  console.log('[ChatMessage] 开始静态内容一次性重新渲染，将完全替换流式输出...')
+
+  try {
+    // 🔄 第1步: 预渲染静态内容
+    console.log('[ChatMessage] 第1步: 预渲染静态内容')
+
+    // 获取完整的静态内容
+    const finalContent = props.message.content
+
+    // 使用全新的marked实例进行静态渲染，完全避免状态污染
+    const staticMarked = new marked.Marked({
+      breaks: true,
+      gfm: true,
+      sanitize: false,
+      smartypants: true,
+      pedantic: false,
+      silent: false
+    })
+
+    // 预处理内容
+    const processedContent = preprocessMarkdown(finalContent)
+
+    // 进行完整的静态渲染
+    const staticHtml = staticMarked.parse(processedContent) as string
+
+    // XSS防护
+    const safeStaticHtml = staticHtml
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+\s*=/gi, '')
+
+    console.log('[ChatMessage] 静态内容预渲染完成，内容长度:', safeStaticHtml.length)
+    console.log('[ChatMessage] 原始流式内容长度:', props.message.content.length)
+
+    // 🔄 第2步: 完全替换流式内容
+    console.log('[ChatMessage] 第2步: 完全替换流式输出内容')
+
+    // 等待字体加载完成
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready
+    }
+
+    // 保存静态渲染结果，准备替换
+    staticRenderedContent.value = safeStaticHtml
+
+    // 🎯 关键步骤：启用静态重渲染模式，这将完全替换原来的流式内容
+    isStaticRerendering.value = true
+
+    // 🔒 确保消息状态完全脱离流式模式
+    if (props.message.streaming) {
+      console.log('[ChatMessage] 检测到消息仍处于流式状态，正在强制结束流式模式')
+      // 通过chatStore更新消息状态，确保streaming为false
+      chatStore.updateMessage(props.message.id, { streaming: false })
+    }
+
+    // 🔥 多重强制更新机制，确保Vue响应式系统检测到变化
+    forceRefreshCounter.value = Date.now() + Math.random() * 10000
+    forceUpdateTrigger.value = Date.now() + Math.random() * 10000
+
+    console.log('[ChatMessage] 已切换到静态渲染模式，原流式内容已被完全替换')
+    console.log('[ChatMessage] 消息流式状态已确保关闭，现在完全使用静态渲染内容')
+    console.log('[ChatMessage] 强制更新触发器已激活:', forceUpdateTrigger.value)
+
+    // 🔄 第3步: 强制DOM更新并直接替换内容
+    await nextTick()
+
+    console.log('[ChatMessage] 第3步: 强制DOM更新并直接替换内容')
+
+    // 🎯 关键改进：直接操作DOM确保内容被替换
+    const messageElement = document.querySelector(`[data-message-id="${props.message.id}"]`)
+    if (messageElement) {
+      const contentElement = messageElement.querySelector('.content')
+      if (contentElement) {
+        console.log('[ChatMessage] 找到内容元素，准备直接替换DOM内容')
+        console.log('[ChatMessage] 替换前DOM内容长度:', contentElement.innerHTML.length)
+
+        // 🔥 直接替换DOM内容，确保静态内容被显示
+        contentElement.innerHTML = safeStaticHtml
+
+        console.log('[ChatMessage] ✅ DOM内容已直接替换')
+        console.log('[ChatMessage] 替换后DOM内容长度:', contentElement.innerHTML.length)
+
+        // 强制浏览器重新计算布局
+        contentElement.offsetHeight
+        contentElement.offsetWidth
+      }
+    }
+
+    // 再次强制Vue响应式更新，确保状态同步
+    setTimeout(() => {
+      forceRefreshCounter.value = Date.now() + Math.random() * 10000
+      forceUpdateTrigger.value = Date.now() + Math.random() * 10000
+
+      nextTick(() => {
+        // 🔄 第4步: 验证替换效果并进行最终优化
+        console.log('[ChatMessage] 第4步: 验证内容替换效果')
+
+        if (messageElement) {
+          const contentElement = messageElement.querySelector('.content')
+          if (contentElement) {
+            console.log('[ChatMessage] ✅ 验证：当前显示的是静态渲染内容')
+            console.log('[ChatMessage] 最终DOM内容长度:', contentElement.innerHTML.length)
+
+            // 触发样式重新计算，确保静态内容的完美显示
+            const computedStyle = window.getComputedStyle(contentElement)
+            computedStyle.getPropertyValue('font-family')
+            computedStyle.getPropertyValue('line-height')
+            computedStyle.getPropertyValue('font-size')
+
+            // 🎯 额外的软加载机制：确保所有样式都正确应用
+            const allElements = contentElement.querySelectorAll('*')
+            allElements.forEach(el => {
+              // 触发每个元素的样式重新计算
+              const style = window.getComputedStyle(el)
+              style.getPropertyValue('display')
+              style.getPropertyValue('position')
+            })
+
+            // 🔥 终极软加载机制：临时隐藏并重新显示整个消息元素
+            const originalDisplay = messageElement.style.display
+            messageElement.style.display = 'none'
+            messageElement.offsetHeight // 强制重新计算
+            messageElement.style.display = originalDisplay
+
+            // 最终的强制更新
+            forceRefreshCounter.value = Date.now() + Math.random() * 10000
+            forceUpdateTrigger.value = Date.now() + Math.random() * 10000
+
+            console.log('[ChatMessage] 🔥 终极软加载机制已执行，确保内容完全更新')
+          }
+        }
+
+        // 触发全局重新布局
+        window.dispatchEvent(new Event('resize'))
+
+        // 如果有第三方渲染器，重新渲染静态内容
+        if (window.MathJax && window.MathJax.typesetPromise && messageElement) {
+          window.MathJax.typesetPromise([messageElement]).then(() => {
+            console.log('[ChatMessage] MathJax对静态内容重新渲染完成')
+          })
+        }
+
+        console.log('[ChatMessage] ✅ 静态内容替换完成！')
+        console.log('[ChatMessage] ✅ 原流式输出已被完全替换为高质量静态渲染内容')
+        console.log('[ChatMessage] ✅ 已获得页面重新加载后的完美排版效果！')
+      })
+    }, 100)
+
+  } catch (error) {
+    console.error('[ChatMessage] 静态重新渲染失败:', error)
+    // 如果静态渲染失败，回退到普通模式，保持原流式内容
+    isStaticRerendering.value = false
+    staticRenderedContent.value = ''
+    console.log('[ChatMessage] 已回退到原流式内容显示')
+  }
+}
 </script>
 
 <style scoped>
@@ -423,12 +744,16 @@ const shouldShowTextContent = computed(() => {
 }
 
 .message-avatar {
-  border-radius: var(--radius-sm) !important;
+  border-radius: 50% !important;
   flex-shrink: 0;
+  /* ✨ 确保是完美的圆形 */
+  overflow: hidden;
+  object-fit: cover;
 }
 
 .user-avatar {
   background: var(--primary-500) !important;
+  border-radius: 50% !important;
 }
 
 .bubble-container {
@@ -466,9 +791,11 @@ const shouldShowTextContent = computed(() => {
 
 .content {
   font-size: var(--font-base);
-  line-height: 1.6;
+  line-height: 1.75;
   color: var(--gray-800);
   word-wrap: break-word;
+  /* ✨ 优化：让文字更易读 */
+  letter-spacing: 0.3px;
 }
 
 .content.with-voice {
@@ -481,46 +808,90 @@ const shouldShowTextContent = computed(() => {
   color: white;
 }
 
-/* Markdown 样式 */
+/* Markdown 样式 - 优化段落间距 */
 .content :deep(h1),
 .content :deep(h2),
 .content :deep(h3),
 .content :deep(h4),
 .content :deep(h5),
 .content :deep(h6) {
-  margin: 16px 0 8px 0;
+  margin: 20px 0 12px 0;
   font-weight: 600;
   line-height: 1.4;
 }
 
-.content :deep(h1) { font-size: 1.5em; }
-.content :deep(h2) { font-size: 1.3em; }
-.content :deep(h3) { font-size: 1.1em; }
-.content :deep(h4) { font-size: 1em; }
-
-.content :deep(p) {
-  margin: 8px 0;
-  line-height: 1.6;
+/* ✨ 标题下方增加更多空间 */
+.content :deep(h1) { 
+  font-size: 1.5em;
+  margin-top: 24px;
+}
+.content :deep(h2) { 
+  font-size: 1.3em;
+  margin-top: 22px;
+}
+.content :deep(h3) { 
+  font-size: 1.1em;
+  margin-top: 20px;
+}
+.content :deep(h4) { 
+  font-size: 1em;
+  margin-top: 18px;
 }
 
+/* ✨ 段落间距优化 - 关键改进！*/
+.content :deep(p) {
+  margin: 12px 0;
+  line-height: 1.75;
+}
+
+/* ✨ 确保第一个段落没有上边距 */
+.content :deep(p:first-child) {
+  margin-top: 0;
+}
+
+/* ✨ 确保最后一个段落没有下边距 */
+.content :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+/* ✨ 相邻段落之间增加更明显的间距 */
+.content :deep(p + p) {
+  margin-top: 16px;
+}
+
+/* ✨ 列表样式优化 */
 .content :deep(ul),
 .content :deep(ol) {
-  margin: 8px 0;
-  padding-left: 20px;
+  margin: 14px 0;
+  padding-left: 24px;
 }
 
 .content :deep(li) {
-  margin: 4px 0;
-  line-height: 1.5;
+  margin: 6px 0;
+  line-height: 1.7;
 }
 
+/* ✨ 列表项之间的间距 */
+.content :deep(li + li) {
+  margin-top: 8px;
+}
+
+/* ✨ 嵌套列表的间距 */
+.content :deep(li > ul),
+.content :deep(li > ol) {
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+/* ✨ 引用块样式优化 */
 .content :deep(blockquote) {
-  margin: 12px 0;
-  padding: 8px 16px;
+  margin: 16px 0;
+  padding: 12px 20px;
   border-left: 4px solid var(--primary-300);
   background: var(--gray-50);
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 6px 6px 0;
   font-style: italic;
+  line-height: 1.7;
 }
 
 .message.self .content :deep(blockquote) {
@@ -528,34 +899,69 @@ const shouldShowTextContent = computed(() => {
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* ✨ 行内代码样式优化 */
 .content :deep(code) {
   background: var(--gray-100);
-  padding: 2px 6px;
+  padding: 3px 8px;
   border-radius: 4px;
   font-family: 'Fira Code', 'Consolas', monospace;
   font-size: 0.9em;
+  border: 1px solid var(--gray-200);
 }
 
 .message.self .content :deep(code) {
   background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* ✨ 代码块样式优化 */
 .content :deep(pre) {
-  margin: 12px 0;
-  padding: 12px;
+  margin: 16px 0;
+  padding: 16px;
   background: var(--gray-900);
   color: var(--gray-100);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow-x: auto;
   font-family: 'Fira Code', 'Consolas', monospace;
   font-size: 0.9em;
-  line-height: 1.4;
+  line-height: 1.5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .content :deep(pre code) {
   background: none;
   padding: 0;
   color: inherit;
+}
+
+/* 🎨 Mermaid 图表样式 */
+.content :deep(pre.mermaid) {
+  margin: 20px 0;
+  padding: 20px;
+  background: #f9fafb;
+  color: inherit;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+}
+
+.content :deep(.mermaid) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+}
+
+.content :deep(.mermaid svg) {
+  max-width: 100%;
+  height: auto;
+}
+
+.message.self .content :deep(pre.mermaid) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .content :deep(strong) {

@@ -376,8 +376,8 @@ public class ChatController {
      * 集成RAG知识检索，提供更智能的角色扮演体验
      */
     private String handleCharacterChat(ChatRequest request, String conversationId) {
-        log.info("处理RAG增强角色扮演对话: characterId={}, conversationId={}", 
-                request.getCharacterId(), conversationId);
+        log.info("[handleCharacterChat] 处理角色扮演对话: characterId={}, conversationId={}, enableRag={}",
+                request.getCharacterId(), conversationId, request.getEnableRag());
         
         try {
             // 1. 获取角色信息
@@ -388,43 +388,54 @@ public class ChatController {
                 throw new RuntimeException("角色 " + character.getName() + " 当前不可用，请稍后再试");
             }
             
-            // 3. RAG知识检索 - 根据用户问题检索相关知识
-            List<CharacterKnowledge> relevantKnowledge = ragService.searchRelevantKnowledge(
-                request.getCharacterId(), 
-                request.getMessage(), 
-                5  // 检索top5相关知识
-            );
-            
-            log.info("RAG检索到 {} 个相关知识条目", relevantKnowledge.size());
-            
-            // 4. 生成包含RAG知识的增强系统提示词
-            Message systemMessage = promptTemplateService.createCharacterSystemMessageWithRAG(
-                character, 
-                relevantKnowledge,
-                Boolean.TRUE.equals(request.getEnableTts())
-            );
-            
-            // 5. 创建用户消息
+            // 3. 根据enableRag标志决定是否使用RAG知识检索
+            Message systemMessage;
+            if (Boolean.TRUE.equals(request.getEnableRag())) {
+                // 启用RAG：检索知识并使用增强提示词
+                List<CharacterKnowledge> relevantKnowledge = ragService.searchRelevantKnowledge(
+                    request.getCharacterId(),
+                    request.getMessage(),
+                    5  // 检索top5相关知识
+                );
+
+                log.info("[handleCharacterChat] RAG模式：检索到 {} 个相关知识条目", relevantKnowledge.size());
+
+                // 生成包含RAG知识的增强系统提示词
+                systemMessage = promptTemplateService.createCharacterSystemMessageWithRAG(
+                    character,
+                    relevantKnowledge,
+                    Boolean.TRUE.equals(request.getEnableTts())
+                );
+            } else {
+                // 禁用RAG：直接使用基础角色提示词
+                log.info("[handleCharacterChat] 基础模式：不使用RAG知识检索");
+                systemMessage = promptTemplateService.createCharacterSystemMessage(
+                    character,
+                    Boolean.TRUE.equals(request.getEnableTts())
+                );
+            }
+
+            // 4. 创建用户消息
             UserMessage userMessage = new UserMessage(request.getMessage());
-            
-            // 6. 使用Prompt进行对话
+
+            // 5. 使用Prompt进行对话
             Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
-            
-            // 7. 保存用户消息到自定义存储
+
+            // 6. 保存用户消息到自定义存储
             customMessageStorageService.saveMessage(conversationId, userMessage, true);
-            
-            // 8. 调用ChatClient，包含会话记忆
+
+            // 7. 调用ChatClient，包含会话记忆
             String response = chatClient.prompt(prompt)
                     .advisors(advisor -> advisor.param(CONVERSATION_ID, conversationId))
                     .call()
                     .content();
             
-            // 9. 保存AI回复到自定义存储
+            // 8. 保存AI回复到自定义存储
             AssistantMessage assistantMessage = new AssistantMessage(response);
             customMessageStorageService.saveMessage(conversationId, assistantMessage, false);
-            
-            log.info("角色 {} RAG增强回复成功: conversationId={}, 使用知识条目: {}", 
-                character.getName(), conversationId, relevantKnowledge.size());
+
+            log.info("[handleCharacterChat] 角色 {} 回复成功: conversationId={}, RAG模式: {}",
+                character.getName(), conversationId, request.getEnableRag());
             return response;
             
         } catch (Exception e) {
@@ -440,8 +451,8 @@ public class ChatController {
      * 支持TTS语音合成
      */
     private Flux<String> handleCharacterStreamChat(ChatRequest request, String conversationId) {
-        log.info("处理RAG增强流式角色扮演对话: characterId={}, conversationId={}, enableTts={}", 
-                request.getCharacterId(), conversationId, request.getEnableTts());
+        log.info("[handleCharacterStreamChat] 处理流式角色扮演对话: characterId={}, conversationId={}, enableTts={}, enableRag={}",
+                request.getCharacterId(), conversationId, request.getEnableTts(), request.getEnableRag());
         
         return Flux.defer(() -> {
             try {
@@ -457,33 +468,44 @@ public class ChatController {
                     );
                 }
                 
-                // 3. RAG知识检索 - 根据用户问题检索相关知识
-                List<CharacterKnowledge> relevantKnowledge = ragService.searchRelevantKnowledge(
-                    request.getCharacterId(), 
-                    request.getMessage(), 
-                    5  // 检索top5相关知识
-                );
-                
-                log.info("流式聊天RAG检索到 {} 个相关知识条目", relevantKnowledge.size());
-                
-                // 4. 生成包含RAG知识的增强系统提示词
-                Message systemMessage = promptTemplateService.createCharacterSystemMessageWithRAG(
-                    character, 
-                    relevantKnowledge,
-                    Boolean.TRUE.equals(request.getEnableTts())
-                );
-                
-                // 5. 创建用户消息
+                // 3. 根据enableRag标志决定是否使用RAG知识检索
+                Message systemMessage;
+                if (Boolean.TRUE.equals(request.getEnableRag())) {
+                    // 启用RAG：检索知识并使用增强提示词
+                    List<CharacterKnowledge> relevantKnowledge = ragService.searchRelevantKnowledge(
+                        request.getCharacterId(),
+                        request.getMessage(),
+                        5  // 检索top5相关知识
+                    );
+
+                    log.info("[handleCharacterStreamChat] RAG模式：检索到 {} 个相关知识条目", relevantKnowledge.size());
+
+                    // 生成包含RAG知识的增强系统提示词
+                    systemMessage = promptTemplateService.createCharacterSystemMessageWithRAG(
+                        character,
+                        relevantKnowledge,
+                        Boolean.TRUE.equals(request.getEnableTts())
+                    );
+                } else {
+                    // 禁用RAG：直接使用基础角色提示词
+                    log.info("[handleCharacterStreamChat] 基础模式：不使用RAG知识检索");
+                    systemMessage = promptTemplateService.createCharacterSystemMessage(
+                        character,
+                        Boolean.TRUE.equals(request.getEnableTts())
+                    );
+                }
+
+                // 4. 创建用户消息
                 UserMessage userMessage = new UserMessage(request.getMessage());
-                
-                // 6. 使用Prompt进行流式对话
+
+                // 5. 使用Prompt进行流式对话
                 Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
-                
-                // 7. 保存用户消息到自定义存储
+
+                // 6. 保存用户消息到自定义存储
                 customMessageStorageService.saveMessage(conversationId, userMessage, true);
-                
-                log.info("角色 {} RAG增强流式回复开始: conversationId={}, 使用知识条目: {}", 
-                    character.getName(), conversationId, relevantKnowledge.size());
+
+                log.info("[handleCharacterStreamChat] 角色 {} 流式回复开始: conversationId={}, RAG模式: {}",
+                    character.getName(), conversationId, request.getEnableRag());
                 
                 // 如果启用了TTS，需要收集完整响应用于语音合成
                 if (Boolean.TRUE.equals(request.getEnableTts())) {
