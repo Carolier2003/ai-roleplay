@@ -254,6 +254,139 @@ class KnowledgeBaseDeployer:
                     if not isinstance(item, dict):
                         continue
                     
+                    # 🆕 泰拉瑞亚数据特殊字段映射（完整版 - 包含所有字段）
+                    if character_id == 5:  # 泰拉瑞亚向导
+                        # 映射名称字段
+                        if '武器名' in item:
+                            item['title'] = item['武器名']
+                        elif '工具名' in item:
+                            item['title'] = item['工具名']
+                        elif 'NPC名称' in item:
+                            item['title'] = item['NPC名称']
+                        elif 'Boss中文名' in item:
+                            item['title'] = item['Boss中文名']
+                        elif '事件中文名' in item:
+                            item['title'] = item['事件中文名']
+                        
+                        # 映射内容字段（包含所有有用信息）
+                        content_parts = []
+                        
+                        # 处理武器数据
+                        if '武器名' in item:
+                            content_parts.append(f"【武器名称】{item['武器名']}")
+                            
+                            # 属性信息
+                            if '属性' in item and isinstance(item['属性'], dict):
+                                content_parts.append("\n【属性信息】")
+                                for key, value in item['属性'].items():
+                                    content_parts.append(f"  {key}：{value}")
+                            
+                            # ⭐ 合成表（关键信息！）
+                            if '合成表' in item and isinstance(item['合成表'], list) and len(item['合成表']) > 0:
+                                content_parts.append("\n【合成配方】")
+                                for recipe in item['合成表']:
+                                    if isinstance(recipe, dict):
+                                        product = recipe.get('产物', '未知')
+                                        materials = recipe.get('材料', [])
+                                        station = recipe.get('制作站', '未知')
+                                        content_parts.append(f"  制作 {product}：需要 {', '.join(materials) if materials else '无材料'}（制作站：{station}）")
+                            
+                            # URL链接
+                            if 'url' in item:
+                                content_parts.append(f"\n【详细信息】{item['url']}")
+                        
+                        # 处理工具数据
+                        elif '工具名' in item:
+                            content_parts.append(f"【工具名称】{item['工具名']}")
+                            
+                            # 属性信息
+                            if '属性' in item and isinstance(item['属性'], dict):
+                                content_parts.append("\n【属性信息】")
+                                for key, value in item['属性'].items():
+                                    content_parts.append(f"  {key}：{value}")
+                            
+                            # ⭐ 工具能力
+                            if '工具能力' in item and isinstance(item['工具能力'], dict) and len(item['工具能力']) > 0:
+                                content_parts.append("\n【工具能力】")
+                                for key, value in item['工具能力'].items():
+                                    content_parts.append(f"  {key}：{value}")
+                            
+                            # ⭐ 配方表（关键信息！）
+                            if '配方表' in item and isinstance(item['配方表'], list) and len(item['配方表']) > 0:
+                                content_parts.append("\n【制作配方】")
+                                for recipe in item['配方表']:
+                                    if isinstance(recipe, dict):
+                                        product = recipe.get('产物', '未知')
+                                        materials = recipe.get('材料', [])
+                                        station = recipe.get('制作站', '未知')
+                                        content_parts.append(f"  制作 {product}：需要 {', '.join(materials) if materials else '无材料'}（制作站：{station}）")
+                            
+                            # URL链接
+                            if 'url' in item:
+                                content_parts.append(f"\n【详细信息】{item['url']}")
+                        
+                        # 处理NPC数据
+                        elif 'NPC名称' in item:
+                            content_parts.append(f"【NPC名称】{item['NPC名称']}")
+                            
+                            if '描述' in item:
+                                content_parts.append(f"\n【描述】{item['描述']}")
+                            
+                            if '生成需求' in item:
+                                content_parts.append(f"\n【生成需求】{item['生成需求']}")
+                            
+                            if '自卫武器' in item:
+                                content_parts.append(f"\n【自卫武器】{item['自卫武器']}")
+                            
+                            if '死亡时掉落' in item:
+                                content_parts.append(f"\n【死亡时掉落】{item['死亡时掉落']}")
+                            
+                            if '头像链接' in item:
+                                content_parts.append(f"\n【头像】{item['头像链接']}")
+                        
+                        # 处理Boss数据
+                        elif 'Boss中文名' in item:
+                            content_parts.append(f"【Boss名称】{item['Boss中文名']}")
+                            
+                            if '英文标题' in item:
+                                content_parts.append(f"\n【英文名】{item['英文标题']}")
+                            
+                            if '召唤方式' in item:
+                                content_parts.append(f"\n【召唤方式】{item['召唤方式']}")
+                            
+                            if '详细描述' in item and item['详细描述']:
+                                content_parts.append(f"\n【详细描述】{item['详细描述']}")
+                            
+                            # ⭐ 掉落列表（关键信息！）
+                            if '掉落列表' in item and isinstance(item['掉落列表'], list) and len(item['掉落列表']) > 0:
+                                content_parts.append(f"\n【掉落物品】{', '.join(item['掉落列表'])}")
+                            
+                            if '头像链接' in item:
+                                content_parts.append(f"\n【头像】{item['头像链接']}")
+                        
+                        # 处理事件数据
+                        elif '事件中文名' in item:
+                            content_parts.append(f"【事件名称】{item['事件中文名']}")
+                            
+                            if '英文标题' in item:
+                                content_parts.append(f"\n【英文名】{item['英文标题']}")
+                            
+                            if '触发方式' in item:
+                                content_parts.append(f"\n【触发方式】{item['触发方式']}")
+                            
+                            if '详细描述' in item:
+                                content_parts.append(f"\n【详细描述】{item['详细描述']}")
+                            
+                            if '版本标签' in item and isinstance(item['版本标签'], list):
+                                content_parts.append(f"\n【版本】{', '.join(item['版本标签'])}")
+                            
+                            if '封面图链接' in item:
+                                content_parts.append(f"\n【封面图】{item['封面图链接']}")
+                        
+                        # 合并所有内容
+                        if content_parts:
+                            item['content'] = "".join(content_parts)
+                    
                     # 检查并修正character_id（避免RAG报告中的问题）
                     if 'character_id' not in item or item['character_id'] != character_id:
                         logger.debug(f"  🔧 修正character_id: {item.get('character_id')} -> {character_id}")

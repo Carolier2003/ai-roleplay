@@ -210,8 +210,8 @@ public class CharacterKnowledgeRAGService {
             log.info("🔍 [优化参数] 配置: query={}, topK={}->{}, threshold={}, filter=character_id=={}", 
                     query, topK, optimizedTopK, optimizedThreshold, characterId);
             
-            // ⏱️ 执行带超时的向量检索
-            List<Document> similarDocuments = performTimeoutVectorSearch(searchRequest, 10);
+            // ⏱️ 执行带超时的向量检索（20秒超时，适应大数据集）
+            List<Document> similarDocuments = performTimeoutVectorSearch(searchRequest, 20);
             long vectorSearchTime = System.currentTimeMillis() - startTime;
             log.info("⚡ [向量搜索] 完成，耗时: {}ms, 返回文档数量: {}", vectorSearchTime, similarDocuments.size());
             
