@@ -38,9 +38,9 @@
               v-if="shouldShowTextContent" 
               class="content" 
               :class="{ 'with-voice': hasAudioUrl }"
-              :key="`content-${message.id}-${forceRefreshCounter}-${message.timestamp}`"
+              :key="`content-${message.id}-${message.streaming}-${message.content.length}`"
             >
-              <div :key="`markdown-${message.id}-${forceRefreshCounter}`" v-html="safeContent"></div>
+              <div v-html="safeContent"></div>
               <span v-if="message.streaming" class="typing-cursor-inline">▍</span>
             </div>
             
@@ -132,52 +132,9 @@ marked.setOptions({
   smartypants: true   // 启用智能标点符号
 })
 
-// 强制刷新计数器，用于解决Markdown渲染延迟问题
-const forceRefreshCounter = ref(0)
-
-// 监听消息内容变化，增加刷新频率
-watch(() => props.message.content, (newContent, oldContent) => {
-  if (newContent !== oldContent && !props.message.isUser) {
-    // 对于AI消息，每次内容变化都强制刷新
-    forceRefreshCounter.value++
-    
-    // 使用nextTick确保DOM更新
-    nextTick(() => {
-      // 再次强制刷新以确保Markdown渲染
-      setTimeout(() => {
-        forceRefreshCounter.value++
-      }, 50)
-    })
-  }
-}, { immediate: true })
-
-// 监听流式状态变化
-watch(() => props.message.streaming, (isStreaming, wasStreaming) => {
-  console.log(`[ChatMessage] 🔍 流式状态变化监听 - ID: ${props.message.id}`)
-  console.log(`[ChatMessage] 当前streaming: ${isStreaming}, 之前streaming: ${wasStreaming}`)
-  console.log(`[ChatMessage] 是否为用户消息: ${props.message.isUser}`)
-  console.log(`[ChatMessage] 触发条件检查: !isUser=${!props.message.isUser}, wasStreaming=${wasStreaming}, !isStreaming=${!isStreaming}`)
-  
-  if (!props.message.isUser && wasStreaming && !isStreaming) {
-    console.log(`[ChatMessage] 🎯 触发条件满足！开始静态重渲染流程 - ID: ${props.message.id}`)
-    console.log(`[ChatMessage] 消息内容长度: ${props.message.content.length}`)
-    
-    // 🔥 直接触发静态重渲染，不再使用复杂的延迟逻辑
-    console.log('[ChatMessage] 🚀 立即开始静态内容一次性重新渲染...')
-    
-    // 稍微延迟一下，确保流式状态完全稳定
-    setTimeout(() => {
-      console.log('[ChatMessage] 🔥 执行静态重渲染...')
-      performStaticRerender()
-    }, 100)
-  } else {
-    console.log(`[ChatMessage] ❌ 触发条件不满足，跳过静态重渲染`)
-  }
-}, { immediate: false })
-
 // Markdown预处理函数
 const preprocessMarkdown = (content: string): string => {
-  return content
+  let processed = content
     // 将中文破折号转换为标准连字符（用于列表）
     .replace(/^([\s]*)—(\s+)/gm, '$1- $2')
     // 将行中的中文破折号也转换（如果前面有空格的话）
@@ -185,31 +142,26 @@ const preprocessMarkdown = (content: string): string => {
     // 处理其他可能的列表符号
     .replace(/^([\s]*)•(\s+)/gm, '$1- $2')
     .replace(/(\n[\s]*)•(\s+)/g, '$1- $2')
+  
+  // ⚠️ 核心修复: 在明显的语义断点处插入双换行
+  // 策略1: 在句号/感叹号后面紧跟中文或大写字母时,插入双换行(更保守的段落分隔)
+  // 排除: a) 感叹号后面紧跟另一个标点(如"！它"这种情况视为同一段落)
+  //       b) 中间有括号、引号等(如"。（"不分段）
+  processed = processed.replace(/([。！])(?=[\u4e00-\u9fa5A-Z])/g, '$1\n\n')
+  
+  // 策略2: 将已有的单换行转为双换行(如果AI确实输出了换行的话)
+  processed = processed.replace(/(\S)\n(?!\n)(?![\->*#])/g, '$1\n\n')
+  
+  return processed
 }
 
-// 添加静态渲染状态
-const isStaticRerendering = ref(false)
-const staticRenderedContent = ref('')
-// 添加强制更新触发器
-const forceUpdateTrigger = ref(0)
-
+// Markdown渲染逻辑,直接根据streaming状态切换
 const safeContent = computed(() => {
-  // 添加多个依赖项确保完全重新计算
-  const refreshKey = forceRefreshCounter.value
-  const messageTimestamp = props.message.timestamp
+  // 直接依赖props.message的streaming和content,确保响应式更新
   const isStreaming = props.message.streaming
-  const updateTrigger = forceUpdateTrigger.value  // 强制更新触发器
   let content = props.message.content
   
-  // 调试日志：追踪计算触发
-  console.log(`[ChatMessage] safeContent重新计算 - ID: ${props.message.id}, 刷新计数: ${refreshKey}, 流式状态: ${isStreaming}, 静态重渲染: ${isStaticRerendering.value}`)
-  
-  // 🎯 关键改进：如果已完成静态重渲染，完全替换原流式内容
-  if (isStaticRerendering.value && staticRenderedContent.value) {
-    console.log(`[ChatMessage] ✅ 使用静态重渲染内容替换原流式输出 - ID: ${props.message.id}`)
-    console.log(`[ChatMessage] 静态内容长度: ${staticRenderedContent.value.length}, 原内容长度: ${content.length}`)
-    return staticRenderedContent.value
-  }
+  console.log(`[ChatMessage] safeContent计算 - ID: ${props.message.id}, 流式: ${isStreaming}, 内容长度: ${content.length}`)
   
   // 如果是用户消息，只进行简单的HTML转义
   if (props.message.isUser) {
@@ -222,7 +174,7 @@ const safeContent = computed(() => {
       .replace(/\n/g, '<br>')
   }
   
-  // 如果是AI消息，使用渲染策略
+  // AI消息: 根据streaming状态选择渲染方式
   try {
     // 预处理Markdown内容
     content = preprocessMarkdown(content)
@@ -230,10 +182,7 @@ const safeContent = computed(() => {
     let htmlContent: string
     
     if (isStreaming) {
-      // 🔄 流式输出时：使用简化渲染，减少计算开销
-      console.log(`[ChatMessage] 流式渲染模式（简化） - ID: ${props.message.id}`)
-      
-      // 流式时使用最简单的渲染，只处理基本格式
+      // 流式输出时: 使用简化渲染,减少计算开销
       htmlContent = content
         .replace(/\n/g, '<br>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -243,19 +192,8 @@ const safeContent = computed(() => {
         .replace(/^## (.*$)/gm, '<h2>$1</h2>')
         .replace(/^# (.*$)/gm, '<h1>$1</h1>')
     } else {
-      // 🎯 非流式时：使用完整的Markdown渲染
-      console.log(`[ChatMessage] 完整渲染模式 - ID: ${props.message.id}`)
-      
-      // 重新初始化marked配置，确保干净的解析状态
-      marked.setOptions({
-        breaks: true,
-        gfm: true,
-        sanitize: false,
-        smartypants: true,
-        pedantic: false,
-        silent: false
-      })
-      
+      // 非流式时: 使用完整的Markdown渲染
+      console.log(`[ChatMessage] 执行marked.parse()完整渲染 - ID: ${props.message.id}`)
       htmlContent = marked.parse(content) as string
     }
     
@@ -266,7 +204,6 @@ const safeContent = computed(() => {
       .replace(/javascript:/gi, '')
       .replace(/on\w+\s*=/gi, '')
     
-    console.log(`[ChatMessage] Markdown渲染完成 - ID: ${props.message.id}, 内容长度: ${result.length}, 模式: ${isStreaming ? '流式（简化）' : '完整'}`)
     return result
   } catch (error) {
     console.error('[ChatMessage] Markdown解析失败:', error)
@@ -443,180 +380,6 @@ const shouldShowTextContent = computed(() => {
   return true
 })
 
-// 🔧 调试用：手动触发静态重渲染（可以在浏览器控制台调用）
-if (typeof window !== 'undefined') {
-  window.triggerStaticRerender = (messageId: string) => {
-    if (props.message.id === messageId) {
-      console.log('🔧 [DEBUG] 手动触发静态重渲染:', messageId)
-      performStaticRerender()
-    }
-  }
-}
-
-// 🎯 静态内容一次性重新渲染方法 - 完全替换流式输出内容
-const performStaticRerender = async () => {
-  console.log('🔥🔥🔥 [ChatMessage] 静态重渲染函数被调用！🔥🔥🔥')
-  console.log(`[ChatMessage] 消息ID: ${props.message.id}`)
-  console.log(`[ChatMessage] 消息内容: ${props.message.content.substring(0, 100)}...`)
-  console.log(`[ChatMessage] 当前streaming状态: ${props.message.streaming}`)
-  console.log(`[ChatMessage] 当前isStaticRerendering: ${isStaticRerendering.value}`)
-  console.log('[ChatMessage] 开始静态内容一次性重新渲染，将完全替换流式输出...')
-  
-  try {
-    // 🔄 第1步: 预渲染静态内容
-    console.log('[ChatMessage] 第1步: 预渲染静态内容')
-    
-    // 获取完整的静态内容
-    const finalContent = props.message.content
-    
-    // 使用全新的marked实例进行静态渲染，完全避免状态污染
-    const staticMarked = new marked.Marked({
-      breaks: true,
-      gfm: true,
-      sanitize: false,
-      smartypants: true,
-      pedantic: false,
-      silent: false
-    })
-    
-    // 预处理内容
-    const processedContent = preprocessMarkdown(finalContent)
-    
-    // 进行完整的静态渲染
-    const staticHtml = staticMarked.parse(processedContent) as string
-    
-    // XSS防护
-    const safeStaticHtml = staticHtml
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-      .replace(/javascript:/gi, '')
-      .replace(/on\w+\s*=/gi, '')
-    
-    console.log('[ChatMessage] 静态内容预渲染完成，内容长度:', safeStaticHtml.length)
-    console.log('[ChatMessage] 原始流式内容长度:', props.message.content.length)
-    
-    // 🔄 第2步: 完全替换流式内容
-    console.log('[ChatMessage] 第2步: 完全替换流式输出内容')
-    
-    // 等待字体加载完成
-    if (document.fonts && document.fonts.ready) {
-      await document.fonts.ready
-    }
-    
-    // 保存静态渲染结果，准备替换
-    staticRenderedContent.value = safeStaticHtml
-    
-    // 🎯 关键步骤：启用静态重渲染模式，这将完全替换原来的流式内容
-    isStaticRerendering.value = true
-    
-    // 🔒 确保消息状态完全脱离流式模式
-    if (props.message.streaming) {
-      console.log('[ChatMessage] 检测到消息仍处于流式状态，正在强制结束流式模式')
-      // 通过chatStore更新消息状态，确保streaming为false
-      chatStore.updateMessage(props.message.id, { streaming: false })
-    }
-    
-    // 🔥 多重强制更新机制，确保Vue响应式系统检测到变化
-    forceRefreshCounter.value = Date.now() + Math.random() * 10000
-    forceUpdateTrigger.value = Date.now() + Math.random() * 10000
-    
-    console.log('[ChatMessage] 已切换到静态渲染模式，原流式内容已被完全替换')
-    console.log('[ChatMessage] 消息流式状态已确保关闭，现在完全使用静态渲染内容')
-    console.log('[ChatMessage] 强制更新触发器已激活:', forceUpdateTrigger.value)
-    
-    // 🔄 第3步: 强制DOM更新并直接替换内容
-    await nextTick()
-    
-    console.log('[ChatMessage] 第3步: 强制DOM更新并直接替换内容')
-    
-    // 🎯 关键改进：直接操作DOM确保内容被替换
-    const messageElement = document.querySelector(`[data-message-id="${props.message.id}"]`)
-    if (messageElement) {
-      const contentElement = messageElement.querySelector('.content')
-      if (contentElement) {
-        console.log('[ChatMessage] 找到内容元素，准备直接替换DOM内容')
-        console.log('[ChatMessage] 替换前DOM内容长度:', contentElement.innerHTML.length)
-        
-        // 🔥 直接替换DOM内容，确保静态内容被显示
-        contentElement.innerHTML = safeStaticHtml
-        
-        console.log('[ChatMessage] ✅ DOM内容已直接替换')
-        console.log('[ChatMessage] 替换后DOM内容长度:', contentElement.innerHTML.length)
-        
-        // 强制浏览器重新计算布局
-        contentElement.offsetHeight
-        contentElement.offsetWidth
-      }
-    }
-    
-    // 再次强制Vue响应式更新，确保状态同步
-    setTimeout(() => {
-      forceRefreshCounter.value = Date.now() + Math.random() * 10000
-      forceUpdateTrigger.value = Date.now() + Math.random() * 10000
-      
-      nextTick(() => {
-        // 🔄 第4步: 验证替换效果并进行最终优化
-        console.log('[ChatMessage] 第4步: 验证内容替换效果')
-        
-        if (messageElement) {
-          const contentElement = messageElement.querySelector('.content')
-          if (contentElement) {
-            console.log('[ChatMessage] ✅ 验证：当前显示的是静态渲染内容')
-            console.log('[ChatMessage] 最终DOM内容长度:', contentElement.innerHTML.length)
-            
-            // 触发样式重新计算，确保静态内容的完美显示
-            const computedStyle = window.getComputedStyle(contentElement)
-            computedStyle.getPropertyValue('font-family')
-            computedStyle.getPropertyValue('line-height')
-            computedStyle.getPropertyValue('font-size')
-            
-            // 🎯 额外的软加载机制：确保所有样式都正确应用
-            const allElements = contentElement.querySelectorAll('*')
-            allElements.forEach(el => {
-              // 触发每个元素的样式重新计算
-              const style = window.getComputedStyle(el)
-              style.getPropertyValue('display')
-              style.getPropertyValue('position')
-            })
-            
-            // 🔥 终极软加载机制：临时隐藏并重新显示整个消息元素
-            const originalDisplay = messageElement.style.display
-            messageElement.style.display = 'none'
-            messageElement.offsetHeight // 强制重新计算
-            messageElement.style.display = originalDisplay
-            
-            // 最终的强制更新
-            forceRefreshCounter.value = Date.now() + Math.random() * 10000
-            forceUpdateTrigger.value = Date.now() + Math.random() * 10000
-            
-            console.log('[ChatMessage] 🔥 终极软加载机制已执行，确保内容完全更新')
-          }
-        }
-        
-        // 触发全局重新布局
-        window.dispatchEvent(new Event('resize'))
-        
-        // 如果有第三方渲染器，重新渲染静态内容
-        if (window.MathJax && window.MathJax.typesetPromise && messageElement) {
-          window.MathJax.typesetPromise([messageElement]).then(() => {
-            console.log('[ChatMessage] MathJax对静态内容重新渲染完成')
-          })
-        }
-        
-        console.log('[ChatMessage] ✅ 静态内容替换完成！')
-        console.log('[ChatMessage] ✅ 原流式输出已被完全替换为高质量静态渲染内容')
-        console.log('[ChatMessage] ✅ 已获得页面重新加载后的完美排版效果！')
-      })
-    }, 100)
-    
-  } catch (error) {
-    console.error('[ChatMessage] 静态重新渲染失败:', error)
-    // 如果静态渲染失败，回退到普通模式，保持原流式内容
-    isStaticRerendering.value = false
-    staticRenderedContent.value = ''
-    console.log('[ChatMessage] 已回退到原流式内容显示')
-  }
-}
 </script>
 
 <style scoped>
