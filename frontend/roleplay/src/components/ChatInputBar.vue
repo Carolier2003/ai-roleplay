@@ -1,24 +1,6 @@
 <template>
   <div class="chat-input-bar">
-    <!-- RAG功能开关（仅用于测试） -->
-    <div class="rag-toggle-container">
-      <n-tooltip placement="top">
-        <template #trigger>
-          <n-switch
-            v-model:value="enableRag"
-            size="small"
-          >
-            <template #checked>
-              RAG
-            </template>
-            <template #unchecked>
-              基础
-            </template>
-          </n-switch>
-        </template>
-        <span>{{ enableRag ? 'RAG知识检索已启用' : '基础角色模式（无RAG）' }}</span>
-      </n-tooltip>
-    </div>
+    <!-- RAG功能开关已移除，默认开启 -->
 
     <div class="input-container">
       <!-- 语音转文字按钮 (左边) -->
@@ -178,13 +160,8 @@ const chatStore = useChatStore()
 const authStore = useAuthStore()
 const message = useMessage()
 
-// 获取RAG开关状态
-const { enableRag } = storeToRefs(chatStore)
-
-// 监听RAG状态变化
-watch(enableRag, (newVal) => {
-  console.log('[ChatInputBar] RAG状态切换为:', newVal ? '✓ 启用' : '✗ 禁用')
-})
+// RAG开关状态已移除，直接使用store中的状态（默认开启）
+// const { enableRag } = storeToRefs(chatStore)
 
 // TTS播放器
 const { addToQueue, stopPlaying, clearQueue } = useTTSPlayer()

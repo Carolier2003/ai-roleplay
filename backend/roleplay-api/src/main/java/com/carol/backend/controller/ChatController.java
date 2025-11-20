@@ -144,20 +144,25 @@ public class ChatController {
                     .voice(characterVoice)
                     .build();
             } else {
-                // 普通对话 - 创建用户消息
+                // 普通对话 - 同步历史记录到messageWindowChatMemory
+                syncHistoryToMessageWindowChatMemory(conversationId);
+                
+                // 创建用户消息
                 UserMessage userMessage = new UserMessage(request.getMessage());
                 
-                // 保存用户消息到自定义存储
+                // 保存用户消息到自定义存储和messageWindowChatMemory
                 customMessageStorageService.saveMessage(conversationId, userMessage, true);
+                messageWindowChatMemory.add(conversationId, userMessage);
                 
                 response = chatClient.prompt(new Prompt(List.of(userMessage)))
                         .advisors(advisor -> advisor.param(CONVERSATION_ID, conversationId))
                         .call()
                         .content();
                 
-                // 保存AI回复到自定义存储（暂时不包含audioUrl）
+                // 保存AI回复到自定义存储和messageWindowChatMemory（暂时不包含audioUrl）
                 AssistantMessage assistantMessage = new AssistantMessage(response);
                 customMessageStorageService.saveMessage(conversationId, assistantMessage, false);
+                messageWindowChatMemory.add(conversationId, assistantMessage);
             }
             
             log.info("AI回复: conversationId={}, response={}", conversationId, response);
@@ -419,24 +424,31 @@ public class ChatController {
                 );
             }
 
-            // 4. 创建用户消息
+            // 4. 同步历史记录到messageWindowChatMemory（确保MessageChatMemoryAdvisor能读取到）
+            syncHistoryToMessageWindowChatMemory(conversationId);
+
+            // 5. 创建用户消息
             UserMessage userMessage = new UserMessage(request.getMessage());
 
-            // 5. 使用Prompt进行对话
+            // 6. 使用Prompt进行对话
             Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
 
-            // 6. 保存用户消息到自定义存储
+            // 7. 保存用户消息到自定义存储和messageWindowChatMemory
             customMessageStorageService.saveMessage(conversationId, userMessage, true);
+            // 同时保存到messageWindowChatMemory，确保MessageChatMemoryAdvisor能读取到
+            messageWindowChatMemory.add(conversationId, userMessage);
 
-            // 7. 调用ChatClient，包含会话记忆
+            // 8. 调用ChatClient，包含会话记忆
             String response = chatClient.prompt(prompt)
                     .advisors(advisor -> advisor.param(CONVERSATION_ID, conversationId))
                     .call()
                     .content();
             
-            // 8. 保存AI回复到自定义存储
+            // 9. 保存AI回复到自定义存储和messageWindowChatMemory
             AssistantMessage assistantMessage = new AssistantMessage(response);
             customMessageStorageService.saveMessage(conversationId, assistantMessage, false);
+            // 同时保存到messageWindowChatMemory
+            messageWindowChatMemory.add(conversationId, assistantMessage);
 
             log.info("[handleCharacterChat] 角色 {} 回复成功: conversationId={}, RAG模式: {}",
                 character.getName(), conversationId, request.getEnableRag());
@@ -499,14 +511,19 @@ public class ChatController {
                     );
                 }
 
-                // 4. 创建用户消息
+                // 4. 同步历史记录到messageWindowChatMemory（确保MessageChatMemoryAdvisor能读取到）
+                syncHistoryToMessageWindowChatMemory(conversationId);
+
+                // 5. 创建用户消息
                 UserMessage userMessage = new UserMessage(request.getMessage());
 
-                // 5. 使用Prompt进行流式对话
+                // 6. 使用Prompt进行流式对话
                 Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
 
-                // 6. 保存用户消息到自定义存储
+                // 7. 保存用户消息到自定义存储和messageWindowChatMemory
                 customMessageStorageService.saveMessage(conversationId, userMessage, true);
+                // 同时保存到messageWindowChatMemory，确保MessageChatMemoryAdvisor能读取到
+                messageWindowChatMemory.add(conversationId, userMessage);
 
                 log.info("[handleCharacterStreamChat] 角色 {} 流式回复开始: conversationId={}, RAG模式: {}",
                     character.getName(), conversationId, request.getEnableRag());
@@ -534,6 +551,8 @@ public class ChatController {
                                     if (!fullResponse.isEmpty()) {
                                         AssistantMessage assistantMessage = new AssistantMessage(fullResponse);
                                         customMessageStorageService.saveMessage(conversationId, assistantMessage, false);
+                                        // 同时保存到messageWindowChatMemory
+                                        messageWindowChatMemory.add(conversationId, assistantMessage);
                                         log.info("[handleCharacterStreamChat] 保存AI流式回复: conversationId={}, length={}", 
                                                 conversationId, fullResponse.length());
                                     }
@@ -592,6 +611,8 @@ public class ChatController {
                             if (!fullResponse.isEmpty()) {
                                 AssistantMessage assistantMessage = new AssistantMessage(fullResponse);
                                 customMessageStorageService.saveMessage(conversationId, assistantMessage, false);
+                                // 同时保存到messageWindowChatMemory
+                                messageWindowChatMemory.add(conversationId, assistantMessage);
                                 log.info("[handleStreamingWithTTS] 保存AI流式回复: conversationId={}, length={}", 
                                         conversationId, fullResponse.length());
                                 
@@ -872,6 +893,53 @@ public class ChatController {
         } catch (Exception e) {
             log.error("[updateVoiceDuration] 更新语音时长失败: {}", e.getMessage(), e);
             throw new RuntimeException("更新语音时长失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 同步历史记录到messageWindowChatMemory
+     * 从customMessageStorageService读取历史记录，并添加到messageWindowChatMemory中
+     * 确保MessageChatMemoryAdvisor能够读取到历史记录
+     */
+    private void syncHistoryToMessageWindowChatMemory(String conversationId) {
+        try {
+            // 检查messageWindowChatMemory中是否已有记录
+            List<Message> existingMessages = messageWindowChatMemory.get(conversationId);
+            if (!existingMessages.isEmpty()) {
+                log.debug("[syncHistory] messageWindowChatMemory中已有 {} 条记录，跳过同步", existingMessages.size());
+                return;
+            }
+
+            // 从customMessageStorageService读取历史记录
+            List<CustomMessageStorageService.StoredMessage> customMessages = 
+                customMessageStorageService.getMessages(conversationId);
+            
+            if (customMessages.isEmpty()) {
+                log.debug("[syncHistory] customMessageStorageService中没有历史记录，跳过同步");
+                return;
+            }
+
+            log.info("[syncHistory] 开始同步历史记录: conversationId={}, count={}", 
+                    conversationId, customMessages.size());
+
+            // 将自定义存储的消息转换为Spring AI的Message对象并添加到messageWindowChatMemory
+            for (CustomMessageStorageService.StoredMessage storedMessage : customMessages) {
+                Message message;
+                if (storedMessage.getIsUser()) {
+                    message = new UserMessage(storedMessage.getContent());
+                } else {
+                    message = new AssistantMessage(storedMessage.getContent());
+                }
+                messageWindowChatMemory.add(conversationId, message);
+            }
+
+            log.info("[syncHistory] 历史记录同步完成: conversationId={}, count={}", 
+                    conversationId, customMessages.size());
+
+        } catch (Exception e) {
+            log.error("[syncHistory] 同步历史记录失败: conversationId={}, error={}", 
+                    conversationId, e.getMessage(), e);
+            // 不抛出异常，避免影响主流程
         }
     }
 }
