@@ -55,6 +55,7 @@ export interface StreamResponse {
   voice?: string
   duration?: number
   success?: boolean
+  languageType?: string
 }
 
 /**
@@ -62,9 +63,9 @@ export interface StreamResponse {
  */
 export const getCharacterList = async (): Promise<Character[]> => {
   console.log('[chatApi] 获取角色列表')
-  
+
   const response = await axios.get('/api/characters')
-  
+
   // API直接返回角色数组，不是包装格式
   if (Array.isArray(response.data)) {
     console.log('[chatApi] 获取角色列表成功:', response.data)
@@ -83,9 +84,9 @@ export const getCharacterList = async (): Promise<Character[]> => {
  */
 export const sendMessage = async (data: SendMessageRequest): Promise<SendMessageResponse> => {
   console.log('[chatApi] 发送聊天消息:', data)
-  
+
   const response = await axios.post('/api/chat/message', data)
-  
+
   if (response.data.code === 200) {
     console.log('[chatApi] 消息发送成功:', response.data.data)
     return response.data.data
@@ -105,7 +106,7 @@ export const sendStreamMessage = async (
   onComplete?: () => void
 ): Promise<void> => {
   console.log('[chatApi] 发送流式聊天消息:', data)
-  
+
   // 优先尝试使用 fetch + ReadableStream，如果失败则回退到 EventSource
   try {
     await sendStreamMessageWithFetch(data, onMessage, onError, onComplete)
@@ -125,18 +126,18 @@ const sendStreamMessageWithFetch = async (
   onComplete?: () => void
 ): Promise<void> => {
   let reader: ReadableStreamDefaultReader<Uint8Array> | null = null
-  
+
   try {
     // 获取 token（游客模式可以为空）
     const token = localStorage.getItem('ACCESS_TOKEN')
-    
+
     // 构建请求头
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'Accept': 'text/event-stream',
       'Cache-Control': 'no-cache'
     }
-    
+
     // 如果有token则添加Authorization头
     if (token) {
       headers['Authorization'] = `Bearer ${token}`
@@ -163,7 +164,7 @@ const sendStreamMessageWithFetch = async (
 
     while (true) {
       const { done, value } = await reader.read()
-      
+
       if (done) {
         console.log('[chatApi] 流式响应完成 (done=true)')
         onComplete?.()
@@ -173,16 +174,16 @@ const sendStreamMessageWithFetch = async (
       // 解码数据块
       const chunk = decoder.decode(value, { stream: true })
       buffer += chunk
-      
+
       // 按行分割处理
       const lines = buffer.split('\n')
       buffer = lines.pop() || '' // 保留最后一个不完整的行
-      
+
       for (const line of lines) {
         processStreamLine(line, onMessage, onComplete)
       }
     }
-    
+
   } catch (error) {
     console.error('[chatApi] fetch 流式消息发送失败:', error)
     onError?.(error as Error)
@@ -225,29 +226,29 @@ const processStreamLine = (
   onComplete?: () => void
 ) => {
   const trimmedLine = line.trim()
-  
+
   if (!trimmedLine) {
     return // 跳过空行
   }
-  
+
   console.log('[chatApi] 处理行:', trimmedLine)
-  
+
   // 处理 Server-Sent Events 格式
   if (trimmedLine.startsWith('data:')) {
     let content = trimmedLine.slice(5).trim() // 移除 'data:' 前缀
-    
+
     // 处理重复的 data: 前缀（后端可能发送 "data:data:content"）
     while (content.startsWith('data:')) {
       content = content.slice(5).trim()
     }
-    
+
     // 处理结束标记
     if (content === '[DONE]') {
       console.log('[chatApi] 收到结束标记 [DONE]')
       onComplete?.()
       return
     }
-    
+
     // 检查是否为错误消息
     if (content.startsWith('error:')) {
       const errorMessage = content.substring(6) // 移除 'error:' 前缀
@@ -259,17 +260,17 @@ const processStreamLine = (
       onMessage(streamData)
       return
     }
-    
+
     // 处理空的 data: 行
     if (!content) {
       return
     }
-    
+
     // 尝试解析 JSON，如果失败则当作纯文本处理
     try {
       const jsonData = JSON.parse(content)
       console.log('[chatApi] 解析JSON数据:', jsonData)
-      
+
       // 处理 TTS 事件
       if (jsonData.type === 'tts') {
         const streamData: StreamResponse = {
@@ -310,7 +311,7 @@ const processStreamLine = (
   } else if (trimmedLine.startsWith('event:')) {
     const eventType = trimmedLine.slice(6).trim()
     console.log('[chatApi] 收到事件:', eventType)
-    
+
     if (eventType === 'close' || eventType === 'end') {
       console.log('[chatApi] 收到关闭事件')
       onComplete?.()
@@ -335,11 +336,11 @@ export interface ChatHistoryResponse {
  */
 export const getChatHistory = async (characterId: number): Promise<ChatHistoryResponse> => {
   console.log('[chatApi] 获取对话历史:', { characterId })
-  
+
   const response = await axios.get('/api/chat/history', {
     params: { characterId }
   })
-  
+
   // 直接返回后端数据，不包装在code中
   if (response.data && response.data.messages) {
     console.log('[chatApi] 获取对话历史成功:', {
@@ -347,11 +348,11 @@ export const getChatHistory = async (characterId: number): Promise<ChatHistoryRe
       hasMore: response.data.hasMore,
       sourceStats: response.data.sourceStats
     })
-    
+
     // 清理消息内容的辅助函数
     const cleanMessageContent = (content: string): string => {
       if (!content) return content;
-      
+
       // 如果内容包含原始对象字符串，尝试提取实际内容
       if (content.includes('UserMessage{') || content.includes('AssistantMessage[')) {
         // 尝试从UserMessage中提取content
@@ -359,78 +360,78 @@ export const getChatHistory = async (characterId: number): Promise<ChatHistoryRe
         if (userMatch) {
           return userMatch[1];
         }
-        
+
         // 尝试从AssistantMessage中提取textContent - 精确匹配格式
         // 匹配: textC内容, metadata=...
         const assistantMatch = content.match(/textC([^,]+?)(?=, metadata|$)/);
         if (assistantMatch) {
           return assistantMatch[1].trim();
         }
-        
+
         // 尝试匹配完整的AssistantMessage格式 - 更精确的匹配
         const assistantMatch2 = content.match(/AssistantMessage\s*\[[^\]]*textC([^,]+?)(?=, metadata|$)/);
         if (assistantMatch2) {
           return assistantMatch2[1].trim();
         }
-        
+
         // 尝试匹配到metadata之前的所有内容 - 使用非贪婪匹配
         const assistantMatch3 = content.match(/textC(.+?)(?=, metadata|$)/);
         if (assistantMatch3) {
           return assistantMatch3[1].trim();
         }
-        
+
         // 尝试匹配到字符串结尾的所有内容
         const assistantMatch4 = content.match(/textC(.+)$/);
         if (assistantMatch4) {
           return assistantMatch4[1].trim();
         }
-        
+
         // 尝试匹配到metadata之前的所有内容 - 更宽泛的匹配
         const assistantMatch5 = content.match(/textC(.+?)(?=, metadata)/);
         if (assistantMatch5) {
           return assistantMatch5[1].trim();
         }
-        
+
         // 尝试匹配到metadata之前的所有内容 - 最宽泛的匹配
         const assistantMatch6 = content.match(/textC(.+?)(?=, metadata)/);
         if (assistantMatch6) {
           return assistantMatch6[1].trim();
         }
-        
+
         // 尝试匹配到metadata之前的所有内容 - 最宽泛的匹配
         const assistantMatch7 = content.match(/textC(.+?)(?=, metadata)/);
         if (assistantMatch7) {
           return assistantMatch7[1].trim();
         }
-        
+
         // 尝试匹配到metadata之前的所有内容 - 最宽泛的匹配
         const assistantMatch8 = content.match(/textC(.+?)(?=, metadata)/);
         if (assistantMatch8) {
           return assistantMatch8[1].trim();
         }
-        
+
         // 尝试匹配到metadata之前的所有内容 - 最宽泛的匹配
         const assistantMatch9 = content.match(/textC(.+?)(?=, metadata)/);
         if (assistantMatch9) {
           return assistantMatch9[1].trim();
         }
-        
+
         // 尝试匹配到metadata之前的所有内容 - 最宽泛的匹配
         const assistantMatch10 = content.match(/textC(.+?)(?=, metadata)/);
         if (assistantMatch10) {
           return assistantMatch10[1].trim();
         }
-        
+
         // 尝试匹配到metadata之前的所有内容 - 最宽泛的匹配
         const assistantMatch11 = content.match(/textC(.+?)(?=, metadata)/);
         if (assistantMatch11) {
           return assistantMatch11[1].trim();
         }
-        
+
         // 如果无法提取，返回清理后的内容
         return content.replace(/UserMessage\{[^}]+\}/g, '').replace(/AssistantMessage\[[^\]]+\]/g, '').trim();
       }
-      
+
       return content;
     };
 
@@ -449,7 +450,7 @@ export const getChatHistory = async (characterId: number): Promise<ChatHistoryRe
       voice: msg.voice,
       languageType: msg.languageType
     }))
-    
+
     return {
       messages,
       total: response.data.total,
@@ -467,9 +468,9 @@ export const getChatHistory = async (characterId: number): Promise<ChatHistoryRe
  */
 export const clearCurrentCharacterChat = async (characterId: number) => {
   console.log('[chatApi] 清空当前角色聊天记录:', characterId)
-  
+
   const response = await axios.delete(`/api/chat/conversation/${characterId}`)
-  
+
   console.log('[chatApi] 清空当前角色聊天记录成功')
   return response.data
 }
@@ -479,9 +480,9 @@ export const clearCurrentCharacterChat = async (characterId: number) => {
  */
 export const clearAllChats = async () => {
   console.log('[chatApi] 清空所有聊天记录')
-  
+
   const response = await axios.delete('/api/chat/conversation/all')
-  
+
   console.log('[chatApi] 清空所有聊天记录成功')
   return response.data
 }
@@ -491,9 +492,9 @@ export const clearAllChats = async () => {
  */
 export const deleteConversation = async (conversationId: string) => {
   console.log('[chatApi] 删除对话:', conversationId)
-  
+
   const response = await axios.delete(`/api/chat/conversation/${conversationId}`)
-  
+
   if (response.data.code === 200) {
     console.log('[chatApi] 删除对话成功')
     return response.data.data
@@ -524,9 +525,9 @@ export interface UpdateVoiceDurationResponse {
  */
 export const updateVoiceDuration = async (data: UpdateVoiceDurationRequest): Promise<UpdateVoiceDurationResponse> => {
   console.log('[chatApi] 更新语音时长:', data)
-  
+
   const response = await axios.post('/api/chat/update-voice-duration', data)
-  
+
   if (response.data.success !== undefined) {
     // 后端直接返回结果对象，不包装在code中
     console.log('[chatApi] 更新语音时长成功:', response.data)

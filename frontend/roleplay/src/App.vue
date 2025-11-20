@@ -22,8 +22,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="h-full w-full bg-gray-50 text-gray-900 font-sans antialiased">
-    <RouterView />
+  <div class="min-h-screen bg-gray-50 font-sans text-gray-900 relative overflow-hidden">
+    <!-- Global Animated Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+      <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-400/30 blur-[100px] animate-blob"></div>
+      <div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-400/30 blur-[100px] animate-blob animation-delay-2000"></div>
+      <div class="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] rounded-full bg-pink-400/30 blur-[100px] animate-blob animation-delay-4000"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="relative z-10">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 

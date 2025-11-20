@@ -77,29 +77,28 @@
       </div>
     </div>
     
-    <!-- 聊呗标识栏 -->
+    <!-- Echo AI 标识栏 -->
     <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center text-2xl">
-        <div class="flex flex-col items-center justify-center font-mono">
-          <div class="text-[8px] mb-[1px] tracking-widest">◉ ◉</div>
-          <div class="text-[8px]">◡</div>
-        </div>
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 shadow-lg shadow-violet-500/30 text-white flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
       </div>
       <div class="flex-1">
-        <div class="text-base font-bold bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">
-          聊呗
+        <div class="text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+          Echo AI
         </div>
-        <div class="text-xs text-gray-400">
-          AI角色扮演
+        <div class="text-xs text-gray-400 font-medium tracking-wide">
+          Your AI Soulmate
         </div>
       </div>
     </div>
     
-    <!-- Kimi风格个人中心弹窗 (暂时禁用，等待迁移) -->
-    <!-- <KimiProfileCenter
+    <!-- Kimi风格个人中心弹窗 -->
+    <KimiProfileCenter
       v-model:visible="showKimiProfile"
       @success="onKimiProfileSuccess"
-    /> -->
+    />
     
   </div>
 </template>
@@ -108,7 +107,7 @@
 import { ref, computed, nextTick } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
-// import KimiProfileCenter from './KimiProfileCenter.vue'
+import KimiProfileCenter from './KimiProfileCenter.vue'
 
 const authStore = useAuthStore()
 const chatStore = useChatStore()
@@ -158,8 +157,7 @@ const statusText = computed(() => {
 // 方法
 const editProfile = () => {
   console.log('[UserModule] 打开Kimi风格个人中心')
-  // showKimiProfile.value = true
-  message.warning('个人中心功能正在升级维护中，请稍后再试')
+  showKimiProfile.value = true
   showSettings.value = false // 关闭设置面板
 }
 

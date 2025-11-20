@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full max-w-5xl mx-auto">
-    <div class="flex items-center gap-3 p-3 bg-white rounded-[24px] border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300 focus-within:shadow-lg focus-within:border-indigo-500 transition-all duration-200 min-h-[56px]">
+  <div class="p-4">
+    <div class="max-w-4xl mx-auto bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/50 p-2 flex items-end gap-2 transition-all duration-300 hover:shadow-xl hover:bg-white/90">
       <!-- 语音转文字按钮 (左边) -->
       <button
         class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none"
@@ -78,7 +78,7 @@
           ref="inputRef"
           v-model="inputText"
           :placeholder="getPlaceholder()"
-          :disabled="voiceMode === 'voiceTranscribing' || isVoiceCallActive"
+          :disabled="(voiceMode as string) === 'voiceTranscribing' || isVoiceCallActive"
           @keydown="handleKeydown"
           rows="1"
           class="w-full bg-transparent border-none focus:ring-0 p-2 text-base text-gray-800 placeholder-gray-400 resize-none overflow-hidden min-h-[24px] max-h-[80px]"
@@ -939,19 +939,19 @@ const processVoiceMessage = async (audioBlob: Blob) => {
     
     // 添加用户语音消息到聊天记录
     const userMessage = chatStore.addMessage({
-      characterId: chatStore.currentCharacterId,
+      characterId: chatStore.currentCharacterId || 0,
       content: voiceMessageContent,
       isUser: true,
       isVoiceMessage: true,
-      voiceDuration: voiceMessageDuration.value
+      voiceDuration: Math.round(voiceMessageDuration.value) || 0
     })
     
     // 调用后端API更新语音时长
     try {
       const updateRequest: UpdateVoiceDurationRequest = {
         messageContent: voiceMessageContent,
-        voiceDuration: voiceMessageDuration.value,
-        characterId: chatStore.currentCharacterId
+        voiceDuration: Math.round(voiceMessageDuration.value) || 0,
+        characterId: chatStore.currentCharacterId || 0
       }
       
       console.log('[ChatInputBar] 更新语音时长到后端:', updateRequest)
@@ -972,7 +972,7 @@ const processVoiceMessage = async (audioBlob: Blob) => {
     
     // 实际发送识别的文本给AI（但不显示在界面上）
     const requestData: SendMessageRequest = {
-      characterId: chatStore.currentCharacterId,
+      characterId: chatStore.currentCharacterId || 0,
       message: recognizedText,  // 发送实际的文字内容给AI
       enableTts: true,  // 语音消息模式始终启用TTS
       enableRag: chatStore.enableRag,  // ✅ 传递RAG开关状态
@@ -983,7 +983,7 @@ const processVoiceMessage = async (audioBlob: Blob) => {
     
     // 创建AI回复消息（流式）
     const aiMessage = chatStore.addMessage({
-      characterId: chatStore.currentCharacterId,
+      characterId: chatStore.currentCharacterId || 0,
       content: '',
       isUser: false,
       streaming: true

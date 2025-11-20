@@ -8,7 +8,7 @@
       <img
         v-if="!message.isUser"
         :src="characterAvatar"
-        class="w-8 h-8 rounded-lg object-cover flex-shrink-0 shadow-sm"
+        class="w-8 h-8 rounded-lg object-cover flex-shrink-0 shadow-sm transition-transform duration-300 group-hover:scale-110"
         alt="Avatar"
       />
       
@@ -21,16 +21,15 @@
           {{ characterName }}
         </div>
 
-        <!-- 消息气泡 -->
-        <div 
-          class="relative px-4 py-3 rounded-2xl shadow-sm border text-base leading-relaxed break-words overflow-hidden"
-          :class="[
-            message.isUser 
-              ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-transparent rounded-br-none' 
-              : 'bg-white text-gray-800 border-gray-100 rounded-bl-none',
-            message.streaming ? 'border-indigo-300 ring-2 ring-indigo-100' : ''
-          ]"
-        >
+          <div 
+            class="relative px-4 py-3 rounded-2xl shadow-sm border text-base leading-relaxed break-words overflow-hidden transition-all duration-300"
+            :class="[
+              message.isUser 
+                ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-transparent rounded-br-none shadow-md shadow-indigo-500/20' 
+                : 'bg-white/80 backdrop-blur-sm text-gray-800 border-white/50 rounded-bl-none shadow-sm hover:bg-white/90 hover:shadow-md',
+              message.streaming ? 'border-indigo-300 ring-2 ring-indigo-100' : ''
+            ]"
+          >
           <!-- 语音消息显示波形 -->
           <VoiceWaveform 
             v-if="hasAudioUrl"

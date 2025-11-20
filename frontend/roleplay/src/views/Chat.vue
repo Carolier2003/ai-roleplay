@@ -18,8 +18,8 @@
       <ChatSidebar />
     </div>
 
-    <!-- 主聊天区域 -->
-    <div class="flex-1 flex flex-col min-w-0 h-full relative">
+    <!-- 聊天区域 -->
+    <div class="flex-1 flex flex-col min-w-0 bg-transparent relative">
       <!-- 移动端顶部栏 -->
       <div class="md:hidden flex items-center justify-between p-3 bg-white border-b border-gray-200">
         <button 
