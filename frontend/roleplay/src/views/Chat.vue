@@ -493,6 +493,15 @@ onMounted(async () => {
 
 .header-avatar {
   border: 2px solid var(--primary-500, #1677ff);
+  border-radius: 50% !important;
+  /* ✨ 确保是完美的圆形 */
+  overflow: hidden;
+}
+
+.character-avatar {
+  border-radius: 50% !important;
+  /* ✨ 确保是完美的圆形 */
+  overflow: hidden;
 }
 
 .header-name {

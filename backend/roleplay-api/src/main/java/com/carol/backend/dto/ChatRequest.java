@@ -38,4 +38,10 @@ public class ChatRequest {
      */
     private String languageType;
     
+    /**
+     * 是否启用RAG知识检索（可选，默认true）
+     * 用于测试对比RAG增强效果
+     */
+    private Boolean enableRag = true;
+
 }

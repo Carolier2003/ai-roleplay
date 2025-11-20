@@ -50,6 +50,8 @@ export const useChatStore = defineStore('chat', () => {
   const currentPlayingId = ref<string | null>(null)
   // ✅优化 自动滚动 - 添加正在流式输出的消息ID
   const streamingId = ref<string | null>(null)
+  // RAG开关状态（默认开启）
+  const enableRag = ref<boolean>(true)
   
   // ✅优化 自动滚动 - 滚动到底部的方法
   const scrollToBottom = (smooth = true) => {
@@ -360,6 +362,12 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
+  // 切换RAG功能
+  const toggleRag = () => {
+    enableRag.value = !enableRag.value
+    console.log('[ChatStore] RAG功能已', enableRag.value ? '启用' : '禁用')
+  }
+
   return {
     // 状态
     currentCharacterId,
@@ -371,6 +379,7 @@ export const useChatStore = defineStore('chat', () => {
     streamingId,       // ✅优化 自动滚动
     scrollToBottom,    // ✅优化 自动滚动 - 滚动方法
     appendToStream,    // ✅优化 自动滚动 - 流式追加方法
+    enableRag,         // RAG开关状态
     
     // 计算属性
     currentCharacter,
@@ -390,6 +399,7 @@ export const useChatStore = defineStore('chat', () => {
     loadCharacters,
     loadMessages,
     clearCurrentCharacterMessages,
-    clearAllMessages
+    clearAllMessages,
+    toggleRag       // RAG切换方法
   }
 })
