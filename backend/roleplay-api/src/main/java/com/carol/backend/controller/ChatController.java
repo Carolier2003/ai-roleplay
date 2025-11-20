@@ -70,6 +70,9 @@ public class ChatController {
     private final CustomMessageStorageService customMessageStorageService;
 
     private static final int DEFAULT_MAX_MESSAGES = 100;
+    
+    // 同步状态缓存：记录已经同步过的conversationId，避免重复检查
+    private final java.util.Set<String> syncedConversations = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
 
     public ChatController(ChatClient.Builder chatClientBuilder, 
                          MessageWindowChatMemory messageWindowChatMemory,
@@ -350,6 +353,8 @@ public class ChatController {
         
         try {
             messageWindowChatMemory.clear(conversationId);
+            // 清除同步缓存，允许重新同步
+            clearSyncCache(conversationId);
             log.info("会话历史已清除: conversationId={}", conversationId);
         } catch (Exception e) {
             log.error("清除会话历史失败: conversationId={}, error={}", conversationId, e.getMessage(), e);
@@ -729,9 +734,16 @@ public class ChatController {
         }
         
         try {
+            // 生成conversationId用于清除同步缓存
+            ChatRequest tempRequest = new ChatRequest();
+            tempRequest.setCharacterId(characterId);
+            String conversationId = generateConversationId(tempRequest, userId);
+            
             boolean success = conversationHistoryService.clearConversation(characterId, userId);
             
             if (success) {
+                // 清除同步缓存，允许重新同步
+                clearSyncCache(conversationId);
                 log.info("[clearConversationNew] 对话清空成功");
             } else {
                 log.warn("[clearConversationNew] 对话清空失败");
@@ -761,7 +773,10 @@ public class ChatController {
             boolean success = conversationHistoryService.clearAllConversations(userId);
             
             if (success) {
-                log.info("[clearAllConversations] 所有对话清空成功");
+                // 清空所有该用户的同步缓存（通过前缀匹配）
+                String userIdPrefix = "user_" + userId + "_";
+                syncedConversations.removeIf(convId -> convId.startsWith(userIdPrefix));
+                log.info("[clearAllConversations] 所有对话清空成功，同步缓存已清除");
             } else {
                 log.warn("[clearAllConversations] 所有对话清空失败");
                 throw new RuntimeException("所有对话清空失败");
@@ -897,32 +912,44 @@ public class ChatController {
     }
 
     /**
-     * 同步历史记录到messageWindowChatMemory
-     * 从customMessageStorageService读取历史记录，并添加到messageWindowChatMemory中
-     * 确保MessageChatMemoryAdvisor能够读取到历史记录
+     * 同步历史记录到messageWindowChatMemory（优化版）
+     * 只在第一次调用时同步历史记录，后续消息通过messageWindowChatMemory.add()直接保存
+     * 优化策略：
+     * 1. 使用缓存机制，避免重复检查已同步的会话
+     * 2. 只在messageWindowChatMemory为空且customMessageStorageService有历史记录时才同步
+     * 3. 同步后标记为已同步，后续消息通过add()方法直接保存，无需同步
      */
     private void syncHistoryToMessageWindowChatMemory(String conversationId) {
         try {
-            // 检查messageWindowChatMemory中是否已有记录
-            List<Message> existingMessages = messageWindowChatMemory.get(conversationId);
-            if (!existingMessages.isEmpty()) {
-                log.debug("[syncHistory] messageWindowChatMemory中已有 {} 条记录，跳过同步", existingMessages.size());
+            // 优化1: 如果已经同步过，直接返回（避免重复检查Redis）
+            if (syncedConversations.contains(conversationId)) {
+                log.debug("[syncHistory] 会话 {} 已同步过，跳过检查", conversationId);
                 return;
             }
 
-            // 从customMessageStorageService读取历史记录
+            // 优化2: 快速检查messageWindowChatMemory中是否已有记录
+            List<Message> existingMessages = messageWindowChatMemory.get(conversationId);
+            if (!existingMessages.isEmpty()) {
+                log.debug("[syncHistory] messageWindowChatMemory中已有 {} 条记录，标记为已同步", existingMessages.size());
+                syncedConversations.add(conversationId);
+                return;
+            }
+
+            // 优化3: 只在messageWindowChatMemory为空时，才从customMessageStorageService同步历史记录
             List<CustomMessageStorageService.StoredMessage> customMessages = 
                 customMessageStorageService.getMessages(conversationId);
             
             if (customMessages.isEmpty()) {
-                log.debug("[syncHistory] customMessageStorageService中没有历史记录，跳过同步");
+                log.debug("[syncHistory] 自定义存储中没有历史记录，标记为已同步");
+                syncedConversations.add(conversationId);
                 return;
             }
 
-            log.info("[syncHistory] 开始同步历史记录: conversationId={}, count={}", 
+            log.info("[syncHistory] 首次同步历史记录: conversationId={}, count={}", 
                     conversationId, customMessages.size());
 
             // 将自定义存储的消息转换为Spring AI的Message对象并添加到messageWindowChatMemory
+            // 注意：只同步历史记录，当前消息会通过add()方法单独保存
             for (CustomMessageStorageService.StoredMessage storedMessage : customMessages) {
                 Message message;
                 if (storedMessage.getIsUser()) {
@@ -933,6 +960,9 @@ public class ChatController {
                 messageWindowChatMemory.add(conversationId, message);
             }
 
+            // 标记为已同步，后续消息通过add()方法直接保存，无需再次同步
+            syncedConversations.add(conversationId);
+            
             log.info("[syncHistory] 历史记录同步完成: conversationId={}, count={}", 
                     conversationId, customMessages.size());
 
@@ -940,6 +970,15 @@ public class ChatController {
             log.error("[syncHistory] 同步历史记录失败: conversationId={}, error={}", 
                     conversationId, e.getMessage(), e);
             // 不抛出异常，避免影响主流程
+            // 失败时不标记为已同步，下次会重试
         }
+    }
+    
+    /**
+     * 清除会话的同步缓存（用于清空对话时调用）
+     */
+    private void clearSyncCache(String conversationId) {
+        syncedConversations.remove(conversationId);
+        log.debug("[syncHistory] 清除同步缓存: conversationId={}", conversationId);
     }
 }
