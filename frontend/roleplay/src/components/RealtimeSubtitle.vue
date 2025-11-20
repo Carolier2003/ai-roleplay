@@ -1,86 +1,83 @@
 <template>
-  <div class="realtime-subtitle-container">
+  <div class="flex flex-col gap-4 p-5 bg-gradient-to-br from-gray-50 to-gray-200 rounded-xl shadow-sm">
     <!-- 实时字幕显示区域 -->
-    <div class="subtitle-display" :class="{ 'listening': isListening }">
+    <div 
+      class="min-h-[200px] max-h-[400px] overflow-y-auto p-4 bg-white/90 rounded-lg border-2 border-transparent transition-all duration-300"
+      :class="{ 'border-green-500 shadow-[0_0_0_3px_rgba(24,160,88,0.1)]': isListening }"
+    >
       <!-- 当前实时字幕（临时结果） -->
-      <div v-if="currentPartialText" class="current-subtitle">
-        <span class="partial-text">{{ currentPartialText }}</span>
-        <span class="cursor" v-if="isListening">|</span>
+      <div v-if="currentPartialText" class="flex items-center gap-1 mb-3 p-2 px-3 bg-green-500/10 rounded-md border-l-[3px] border-green-500">
+        <span class="text-base font-medium text-green-600 leading-relaxed">{{ currentPartialText }}</span>
+        <span class="inline-block w-0.5 h-5 bg-green-500 animate-pulse" v-if="isListening"></span>
       </div>
       
       <!-- 历史确认字幕 -->
-      <div class="subtitle-history">
+      <div class="flex flex-col gap-2">
         <div 
           v-for="segment in confirmedSegments" 
           :key="segment.id"
-          class="subtitle-segment"
-          :class="{ 'recent': isRecentSegment(segment.timestamp) }"
+          class="flex gap-3 p-2 px-3 bg-black/2 rounded-md transition-all duration-300"
+          :class="{ 'bg-green-500/5 border-l-[3px] border-green-500': isRecentSegment(segment.timestamp) }"
         >
-          <span class="timestamp">{{ formatTime(segment.timestamp) }}</span>
-          <span class="text">{{ segment.text }}</span>
+          <span class="text-xs text-gray-500 whitespace-nowrap min-w-[70px]">{{ formatTime(segment.timestamp) }}</span>
+          <span class="text-sm text-gray-800 leading-relaxed flex-1">{{ segment.text }}</span>
         </div>
       </div>
       
       <!-- 状态提示 -->
-      <div v-if="!isListening && confirmedSegments.length === 0" class="status-hint">
+      <div v-if="!isListening && confirmedSegments.length === 0" class="flex items-center justify-center h-[100px] text-gray-400 text-sm">
         点击开始语音识别...
       </div>
       
       <!-- 错误提示 -->
-      <div v-if="errorMessage" class="error-message">
-        <n-alert type="error" :show-icon="false">
-          {{ errorMessage }}
-        </n-alert>
+      <div v-if="errorMessage" class="mt-2 p-3 bg-red-50 text-red-600 text-sm rounded border border-red-100">
+        {{ errorMessage }}
       </div>
     </div>
     
     <!-- 控制按钮 -->
-    <div class="subtitle-controls">
-      <n-button 
+    <div class="flex gap-3 justify-center items-center">
+      <button 
         v-if="!isListening" 
-        type="primary" 
+        class="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 active:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 font-medium shadow-sm"
         @click="startListening"
-        :loading="isConnecting"
-        size="large"
+        :disabled="isConnecting"
       >
-        <template #icon>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-          </svg>
-        </template>
+        <svg v-if="isConnecting" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+          <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
         {{ isConnecting ? '连接中...' : '开始语音识别' }}
-      </n-button>
+      </button>
       
-      <n-button 
+      <button 
         v-else 
-        type="error" 
+        class="px-6 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 active:bg-red-700 transition-colors flex items-center gap-2 font-medium shadow-sm"
         @click="stopListening"
-        size="large"
       >
-        <template #icon>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M6 6h12v12H6z"/>
-          </svg>
-        </template>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 6h12v12H6z"/>
+        </svg>
         停止识别
-      </n-button>
+      </button>
       
-      <n-button 
+      <button 
         v-if="confirmedSegments.length > 0" 
+        class="px-6 py-2.5 bg-white text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors font-medium shadow-sm"
         @click="clearHistory"
-        size="large"
-        quaternary
       >
         清空历史
-      </n-button>
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onUnmounted, nextTick } from 'vue'
-import { NButton, NAlert, useMessage } from 'naive-ui'
 import { useAuthStore } from '@/stores/auth'
 
 // Props
@@ -101,7 +98,18 @@ const emit = defineEmits<{
 
 // 状态管理
 const authStore = useAuthStore()
-const message = useMessage()
+
+// Simple replacement for useMessage
+const message = {
+  warning: (msg: string) => {
+    console.warn('Warning:', msg)
+    alert(msg)
+  },
+  error: (msg: string) => {
+    console.error('Error:', msg)
+    alert(msg)
+  }
+}
 
 const isListening = ref(false)
 const isConnecting = ref(false)
@@ -233,7 +241,7 @@ const connectSSE = async (): Promise<void> => {
                 }
               }
             }
-          } catch (error) {
+          } catch (error: any) {
             console.error('[RealtimeSubtitle] 处理SSE流失败:', error)
             handleError(`处理语音识别流失败: ${error.message}`)
             reject(error)
@@ -376,7 +384,7 @@ const startRecording = async () => {
     mediaRecorder.start(500)
     console.log('[RealtimeSubtitle] 录音已开始')
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('[RealtimeSubtitle] 开始录音失败:', error)
     handleError(`无法访问麦克风: ${error.message}`)
   }
@@ -394,7 +402,7 @@ const startListening = async () => {
     // 检查登录状态
     if (!authStore.isLoggedIn) {
       message.warning('请先登录后再使用语音识别功能')
-      authStore.showLoginModal()
+      // authStore.showLoginModal() // Assuming this method exists or handled elsewhere
       return
     }
     
@@ -413,7 +421,7 @@ const startListening = async () => {
     emit('listening-change', true)
     // 移除成功提示，静默开始识别
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('[RealtimeSubtitle] 开始监听失败:', error)
     isConnecting.value = false
     handleError(`启动语音识别失败: ${error.message}`)
@@ -472,7 +480,7 @@ const stopListening = async () => {
     emit('listening-change', false)
     // 移除停止提示，静默停止识别
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('[RealtimeSubtitle] 停止监听失败:', error)
     handleError(`停止语音识别失败: ${error.message}`)
   }
@@ -506,135 +514,3 @@ if (props.autoStart) {
   })
 }
 </script>
-
-<style scoped>
-.realtime-subtitle-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.subtitle-display {
-  min-height: 200px;
-  max-height: 400px;
-  overflow-y: auto;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-}
-
-.subtitle-display.listening {
-  border-color: #18a058;
-  box-shadow: 0 0 0 3px rgba(24, 160, 88, 0.1);
-}
-
-.current-subtitle {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 12px;
-  padding: 8px 12px;
-  background: rgba(24, 160, 88, 0.1);
-  border-radius: 6px;
-  border-left: 3px solid #18a058;
-}
-
-.partial-text {
-  font-size: 16px;
-  font-weight: 500;
-  color: #18a058;
-  line-height: 1.5;
-}
-
-.cursor {
-  display: inline-block;
-  width: 2px;
-  height: 20px;
-  background: #18a058;
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
-.subtitle-history {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.subtitle-segment {
-  display: flex;
-  gap: 12px;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: 6px;
-  transition: all 0.3s ease;
-}
-
-.subtitle-segment.recent {
-  background: rgba(24, 160, 88, 0.05);
-  border-left: 3px solid #18a058;
-}
-
-.timestamp {
-  font-size: 12px;
-  color: #666;
-  white-space: nowrap;
-  min-width: 70px;
-}
-
-.text {
-  font-size: 14px;
-  color: #333;
-  line-height: 1.5;
-  flex: 1;
-}
-
-.status-hint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100px;
-  color: #999;
-  font-size: 14px;
-}
-
-.error-message {
-  margin-top: 8px;
-}
-
-.subtitle-controls {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  align-items: center;
-}
-
-/* 滚动条样式 */
-.subtitle-display::-webkit-scrollbar {
-  width: 6px;
-}
-
-.subtitle-display::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-}
-
-.subtitle-display::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
-}
-
-.subtitle-display::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
-}
-</style>

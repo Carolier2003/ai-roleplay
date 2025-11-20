@@ -1,13 +1,15 @@
 <template>
-  <div class="voice-wave" ref="waveContainer">
-    <div class="wave-bars">
+  <div class="w-full h-full flex items-center justify-center" ref="waveContainer">
+    <div class="flex items-center justify-center gap-[2px] h-full">
       <div
         v-for="i in 20"
         :key="i"
-        class="wave-bar"
+        class="w-[3px] min-h-[4px] rounded-[2px] transition-[height] duration-100 ease-linear bg-gradient-to-t from-indigo-600 to-indigo-400"
+        :class="{ 'animate-wave-idle': !recording }"
         :style="{ 
           height: recording ? `${waveHeights[i - 1]}%` : '20%',
-          animationDelay: `${i * 50}ms`
+          animationDelay: `${i * 50}ms`,
+          animationDirection: i % 2 === 0 ? 'normal' : 'reverse'
         }"
       ></div>
     </div>
@@ -119,35 +121,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.voice-wave {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wave-bars {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  height: 100%;
-}
-
-.wave-bar {
-  width: 3px;
-  background: linear-gradient(to top, var(--primary-600), var(--primary-400));
-  border-radius: 2px;
-  transition: height 0.1s ease;
-  min-height: 4px;
-  animation: waveIdle 2s ease-in-out infinite;
-}
-
-.wave-bar:nth-child(odd) {
-  animation-direction: reverse;
-}
-
 @keyframes waveIdle {
   0%, 100% {
     opacity: 0.6;
@@ -159,17 +132,7 @@ onUnmounted(() => {
   }
 }
 
-/* 录音时的活跃动画 */
-.voice-wave:has(.wave-bar[style*="height"]) .wave-bar {
-  animation: waveActive 0.3s ease-in-out infinite alternate;
-}
-
-@keyframes waveActive {
-  from {
-    opacity: 0.7;
-  }
-  to {
-    opacity: 1;
-  }
+.animate-wave-idle {
+  animation: waveIdle 2s ease-in-out infinite;
 }
 </style>

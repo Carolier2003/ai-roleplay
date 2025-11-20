@@ -1,32 +1,51 @@
 <template>
-  <div class="kimi-message" :class="{ 'user-message': message.isUser }">
-    <div class="message-bubble" :class="{ streaming: message.streaming }">
-      <div class="message-content" v-html="renderedContent"></div>
+  <div class="flex flex-col mb-4 animate-slide-in" :class="{ 'items-end': message.isUser }">
+    <div 
+      class="relative max-w-[85%] md:max-w-[70%] px-4 py-3 rounded-[18px] break-words transition-all duration-300 group"
+      :class="[
+        message.isUser 
+          ? 'bg-blue-600 text-white rounded-br-md shadow-md shadow-blue-600/30' 
+          : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-600 rounded-bl-md shadow-sm',
+        message.streaming ? 'border-blue-500 shadow-[0_0_0_2px_rgba(59,130,246,0.1)]' : ''
+      ]"
+    >
+      <div class="text-sm leading-relaxed message-content" v-html="renderedContent"></div>
       
       <!-- 消息操作菜单 -->
-      <div v-if="!message.isUser && !message.streaming" class="message-actions">
-        <n-dropdown
-          :options="messageActions"
-          @select="handleActionSelect"
-          trigger="click"
-          placement="bottom-end"
-        >
-          <n-button text size="small" class="action-trigger">
-            <template #icon>
-              <svg viewBox="0 0 24 24" width="14" height="14">
-                <path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z" fill="currentColor"/>
-              </svg>
-            </template>
-          </n-button>
-        </n-dropdown>
+      <div v-if="!message.isUser && !message.streaming" class="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div class="relative">
+          <button 
+            @click="toggleMenu" 
+            class="w-6 h-6 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-full flex items-center justify-center shadow-sm text-gray-500 dark:text-gray-300 hover:text-blue-600 hover:border-blue-600 dark:hover:text-blue-400 dark:hover:border-blue-400 transition-colors"
+          >
+            <svg viewBox="0 0 24 24" width="14" height="14">
+              <path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z" fill="currentColor"/>
+            </svg>
+          </button>
+          
+          <!-- Dropdown Menu -->
+          <div v-if="showMenu" class="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-100 dark:border-gray-700 py-1 z-10 overflow-hidden">
+            <button 
+              v-for="action in messageActions" 
+              :key="action.key"
+              @click="handleActionSelect(action.key)"
+              class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+            >
+              <component :is="action.icon" class="w-4 h-4" />
+              {{ action.label }}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
+    
+    <!-- 点击外部关闭菜单遮罩 -->
+    <div v-if="showMenu" class="fixed inset-0 z-0" @click="showMenu = false"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, h } from 'vue'
-import { NButton, NDropdown } from 'naive-ui'
+import { computed, h, ref } from 'vue'
 import { marked } from 'marked'
 import type { ChatMessage } from '@/stores/chat'
 
@@ -43,6 +62,12 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+const showMenu = ref(false)
+
+const toggleMenu = () => {
+  showMenu.value = !showMenu.value
+}
 
 // 配置 marked 选项
 marked.setOptions({
@@ -109,28 +134,29 @@ const messageActions = [
   {
     label: '重新生成',
     key: 'regenerate',
-    icon: () => h('svg', { viewBox: '0 0 24 24', width: 16, height: 16 }, [
-      h('path', { d: 'M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z', fill: 'currentColor' })
+    icon: () => h('svg', { viewBox: '0 0 24 24', width: 16, height: 16, fill: 'currentColor' }, [
+      h('path', { d: 'M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z' })
     ])
   },
   {
     label: '复制',
     key: 'copy',
-    icon: () => h('svg', { viewBox: '0 0 24 24', width: 16, height: 16 }, [
-      h('path', { d: 'M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z', fill: 'currentColor' })
+    icon: () => h('svg', { viewBox: '0 0 24 24', width: 16, height: 16, fill: 'currentColor' }, [
+      h('path', { d: 'M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z' })
     ])
   },
   {
     label: '删除',
     key: 'delete',
-    icon: () => h('svg', { viewBox: '0 0 24 24', width: 16, height: 16 }, [
-      h('path', { d: 'M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z', fill: 'currentColor' })
+    icon: () => h('svg', { viewBox: '0 0 24 24', width: 16, height: 16, fill: 'currentColor' }, [
+      h('path', { d: 'M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z' })
     ])
   }
 ]
 
 // 处理操作选择
 const handleActionSelect = (key: string) => {
+  showMenu.value = false
   switch (key) {
     case 'regenerate':
       emit('regenerate', props.message.id)
@@ -147,104 +173,29 @@ const handleActionSelect = (key: string) => {
 </script>
 
 <style scoped>
-.kimi-message {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 16px;
-  animation: messageSlideIn 0.3s ease-out;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.kimi-message.user-message {
-  align-items: flex-end;
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
 }
 
-.message-bubble {
-  max-width: 70%;
-  padding: 12px 16px;
-  border-radius: 18px;
-  position: relative;
-  word-wrap: break-word;
-  transition: all 0.3s ease;
-}
-
-/* 用户消息样式 */
-.user-message .message-bubble {
-  background: #1677ff;
-  color: white;
-  border-bottom-right-radius: 6px;
-  box-shadow: 0 1px 3px rgba(22, 119, 255, 0.3);
-}
-
-/* AI消息样式 */
-.kimi-message:not(.user-message) .message-bubble {
-  background: white;
-  color: #1f2937;
-  border: 1px solid #e5e7eb;
-  border-bottom-left-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-:global(.dark) .kimi-message:not(.user-message) .message-bubble {
-  background: #374151;
-  color: #f9fafb;
-  border-color: #4b5563;
-}
-
-/* 流式输入状态 */
-.message-bubble.streaming {
-  border-color: #1677ff;
-  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
-}
-
-.message-content {
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-/* 消息操作 */
-.message-actions {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.kimi-message:hover .message-actions {
-  opacity: 1;
-}
-
-.action-trigger {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: #6b7280;
-}
-
-.action-trigger:hover {
-  color: #1677ff;
-  border-color: #1677ff;
-}
-
-:global(.dark) .action-trigger {
-  background: #4b5563;
-  border-color: #6b7280;
-  color: #d1d5db;
-}
-
-
-/* Markdown 样式 */
+/* Markdown Styles */
 .message-content :deep(h1),
 .message-content :deep(h2),
 .message-content :deep(h3),
 .message-content :deep(h4),
 .message-content :deep(h5),
 .message-content :deep(h6) {
-  margin: 12px 0 6px 0;
+  margin: 0.75em 0 0.375em 0;
   font-weight: 600;
   line-height: 1.4;
 }
@@ -254,33 +205,28 @@ const handleActionSelect = (key: string) => {
 .message-content :deep(h3) { font-size: 1.1em; }
 
 .message-content :deep(p) {
-  margin: 6px 0;
+  margin: 0.375em 0;
   line-height: 1.6;
 }
 
 .message-content :deep(ul),
 .message-content :deep(ol) {
-  margin: 6px 0;
-  padding-left: 16px;
+  margin: 0.375em 0;
+  padding-left: 1em;
 }
 
 .message-content :deep(li) {
-  margin: 2px 0;
+  margin: 0.125em 0;
   line-height: 1.5;
 }
 
 .message-content :deep(blockquote) {
-  margin: 8px 0;
-  padding: 6px 12px;
+  margin: 0.5em 0;
+  padding: 0.375em 0.75em;
   border-left: 3px solid #e5e7eb;
   background: #f9fafb;
   border-radius: 0 4px 4px 0;
   font-style: italic;
-}
-
-.user-message .message-content :deep(blockquote) {
-  border-left-color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.1);
 }
 
 :global(.dark) .message-content :deep(blockquote) {
@@ -290,14 +236,10 @@ const handleActionSelect = (key: string) => {
 
 .message-content :deep(code) {
   background: #f3f4f6;
-  padding: 2px 4px;
+  padding: 0.125em 0.25em;
   border-radius: 3px;
   font-family: 'Fira Code', 'Consolas', monospace;
   font-size: 0.9em;
-}
-
-.user-message .message-content :deep(code) {
-  background: rgba(255, 255, 255, 0.2);
 }
 
 :global(.dark) .message-content :deep(code) {
@@ -305,8 +247,8 @@ const handleActionSelect = (key: string) => {
 }
 
 .message-content :deep(pre) {
-  margin: 8px 0;
-  padding: 8px;
+  margin: 0.5em 0;
+  padding: 0.5em;
   background: #1f2937;
   color: #f9fafb;
   border-radius: 6px;
@@ -322,43 +264,12 @@ const handleActionSelect = (key: string) => {
   color: inherit;
 }
 
-.message-content :deep(strong) {
-  font-weight: 600;
-}
-
-.message-content :deep(em) {
-  font-style: italic;
-}
-
 .message-content :deep(a) {
-  color: #1677ff;
+  color: #2563eb;
   text-decoration: underline;
 }
 
-.user-message .message-content :deep(a) {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* 动画 */
-@keyframes messageSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .message-bubble {
-    max-width: 85%;
-  }
-  
-  .message-content {
-    font-size: 13px;
-  }
+:global(.dark) .message-content :deep(a) {
+  color: #60a5fa;
 }
 </style>

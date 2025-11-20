@@ -1,31 +1,37 @@
 <template>
-  <div class="simple-avatar-uploader">
+  <div class="flex flex-col items-center gap-3">
     <!-- 头像显示区域 -->
     <div 
-      class="avatar-container"
+      class="relative cursor-pointer transition-transform duration-300 hover:scale-105 group"
+      :class="{ 'cursor-not-allowed': uploading }"
       @click="triggerFileInput"
-      :class="{ 'uploading': uploading }"
+      :style="{ width: `${size}px`, height: `${size}px` }"
     >
-      <n-avatar
-        :size="size"
-        :src="currentAvatarUrl"
-        class="profile-avatar"
+      <div 
+        class="w-full h-full rounded-full overflow-hidden border-[3px] border-gray-100 transition-colors duration-300 group-hover:border-green-500"
       >
-        <div v-if="!currentAvatarUrl" class="avatar-fallback">
-          <div class="avatar-eyes">◉ ◉</div>
-          <div class="avatar-mouth">◡</div>
+        <img 
+          v-if="currentAvatarUrl" 
+          :src="currentAvatarUrl" 
+          class="w-full h-full object-cover"
+          alt="Avatar"
+        />
+        <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-mono">
+          <div class="text-xl mb-1 tracking-widest">◉ ◉</div>
+          <div class="text-base">◡</div>
         </div>
-      </n-avatar>
+      </div>
       
       <!-- 上传遮罩 -->
-      <div class="upload-overlay">
-        <n-spin v-if="uploading" size="small" />
-        <n-icon v-else size="20" color="#fff">
-          <svg viewBox="0 0 24 24">
-            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" fill="currentColor"/>
-          </svg>
-        </n-icon>
-        <span class="upload-text">{{ uploading ? '上传中...' : '点击更换' }}</span>
+      <div 
+        class="absolute inset-0 bg-black/60 rounded-full flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 gap-1"
+        :class="{ 'opacity-100': uploading, 'group-hover:opacity-100': !uploading }"
+      >
+        <div v-if="uploading" class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        <svg v-else viewBox="0 0 24 24" class="w-5 h-5 text-white">
+          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" fill="currentColor"/>
+        </svg>
+        <span class="text-white text-xs font-medium">{{ uploading ? '上传中...' : '点击更换' }}</span>
       </div>
     </div>
     
@@ -35,21 +41,20 @@
       type="file"
       accept="image/*"
       @change="handleFileSelect"
-      style="display: none"
+      class="hidden"
     />
     
     <!-- 提示文本 -->
-    <div class="upload-hint">
-      <n-text depth="3" style="font-size: 12px;">
+    <div class="text-center max-w-[200px]">
+      <span class="text-xs text-gray-400">
         点击头像更换，支持 JPG、PNG 格式，最大 5MB
-      </n-text>
+      </span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { NAvatar, NIcon, NSpin, NText, useMessage } from 'naive-ui'
 import { useAuthStore } from '@/stores/auth'
 import { AvatarAPI, AvatarUtils } from '@/api/avatar'
 import type { AvatarUploadResponse } from '@/api/avatar'
@@ -69,8 +74,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-const message = useMessage()
 const authStore = useAuthStore()
+
+// Simple replacement for useMessage
+const message = {
+  success: (msg: string) => console.log('Success:', msg),
+  error: (msg: string) => {
+    console.error('Error:', msg)
+    alert(msg)
+  }
+}
 
 // 响应式数据
 const fileInputRef = ref<HTMLInputElement>()
@@ -138,93 +151,3 @@ const handleFileSelect = async (event: Event) => {
   }
 }
 </script>
-
-<style scoped>
-.simple-avatar-uploader {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.avatar-container {
-  position: relative;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.avatar-container:hover {
-  transform: scale(1.05);
-}
-
-.avatar-container.uploading {
-  cursor: not-allowed;
-}
-
-.profile-avatar {
-  border: 3px solid #f0f0f0;
-  transition: all 0.3s ease;
-}
-
-.avatar-container:hover .profile-avatar {
-  border-color: #18a058;
-}
-
-.avatar-fallback {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: monospace;
-  width: 100%;
-  height: 100%;
-}
-
-.avatar-eyes {
-  font-size: 20px;
-  margin-bottom: 4px;
-  letter-spacing: 4px;
-}
-
-.avatar-mouth {
-  font-size: 16px;
-}
-
-.upload-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: all 0.3s ease;
-  gap: 4px;
-}
-
-.avatar-container:hover .upload-overlay {
-  opacity: 1;
-}
-
-.avatar-container.uploading .upload-overlay {
-  opacity: 1;
-}
-
-.upload-text {
-  color: #fff;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.upload-hint {
-  text-align: center;
-  max-width: 200px;
-}
-</style>

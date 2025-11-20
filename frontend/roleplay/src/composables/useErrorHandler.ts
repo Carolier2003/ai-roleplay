@@ -4,9 +4,31 @@
  */
 
 import { ref } from 'vue'
-import { useMessage, useDialog } from 'naive-ui'
 import { ErrorHandler, type FrontendError } from '@/utils/errorHandler'
 import { useAuthStore } from '@/stores/auth'
+
+// Simple replacement for Naive UI message/dialog
+const message = {
+  error: (msg: string) => {
+    console.error('Error:', msg)
+    alert(msg)
+  },
+  warning: (msg: string) => {
+    console.warn('Warning:', msg)
+    alert(msg)
+  }
+}
+
+const dialog = {
+  warning: (options: any) => {
+    if (confirm(options.content)) {
+      options.onPositiveClick?.()
+    }
+  },
+  error: (options: any) => {
+    alert(options.content)
+  }
+}
 
 /**
  * 错误处理组合式函数
@@ -14,22 +36,14 @@ import { useAuthStore } from '@/stores/auth'
 export function useErrorHandler() {
   const loading = ref(false)
   const error = ref<FrontendError | null>(null)
-  
+
   // 安全地初始化服务
   let authStore: any = null
-  let message: any = null
-  let dialog: any = null
-  
+
   const initServices = () => {
     try {
       if (!authStore) {
         authStore = useAuthStore()
-      }
-      if (!message) {
-        message = useMessage()
-      }
-      if (!dialog) {
-        dialog = useDialog()
       }
       return true
     } catch (error) {
@@ -44,7 +58,7 @@ export function useErrorHandler() {
   const handleError = (apiError: any, context?: string): FrontendError => {
     const frontendError = ErrorHandler.handleError(apiError, context)
     error.value = frontendError
-    
+
     // 根据错误类型进行不同处理
     switch (frontendError.type) {
       case 'auth':
@@ -60,7 +74,7 @@ export function useErrorHandler() {
         handleSystemError(frontendError)
         break
     }
-    
+
     return frontendError
   }
 
@@ -69,25 +83,21 @@ export function useErrorHandler() {
    */
   const handleAuthError = (error: FrontendError) => {
     console.log('[useErrorHandler] 处理认证错误:', error)
-    
+
     if (!initServices()) {
       console.error('[useErrorHandler] 无法初始化服务，直接输出错误:', error.userMessage)
       return
     }
-    
+
     // 显示登录弹窗
     if (error.shouldLogin) {
       authStore.showLoginModal()
       // 不显示错误消息，直接弹出登录框
       return
     }
-    
+
     // 其他认证错误显示消息
-    if (message) {
-      message.error(error.userMessage)
-    } else {
-      console.error('[useErrorHandler] 认证错误:', error.userMessage)
-    }
+    message.error(error.userMessage)
   }
 
   /**
@@ -95,49 +105,36 @@ export function useErrorHandler() {
    */
   const handleBusinessError = (error: FrontendError) => {
     console.log('[useErrorHandler] 处理业务错误:', error)
-    
+
     if (!initServices()) {
       console.error('[useErrorHandler] 无法初始化服务，直接输出错误:', error.userMessage)
       return
     }
-    
+
     // 特殊处理某些业务错误
     if (error.code === 2000) { // 用户不存在
-      if (dialog) {
-        dialog.warning({
-          title: '用户不存在',
-          content: error.userMessage,
-          positiveText: '确定'
-        })
-      } else {
-        console.error('[useErrorHandler] 用户不存在:', error.userMessage)
-      }
+      dialog.warning({
+        title: '用户不存在',
+        content: error.userMessage,
+        positiveText: '确定'
+      })
       return
     }
-    
+
     if (error.code === 5000) { // 角色不存在
-      if (dialog) {
-        dialog.warning({
-          title: '角色不存在',
-          content: error.userMessage + '，页面将自动刷新',
-          positiveText: '确定',
-          onPositiveClick: () => {
-            window.location.reload()
-          }
-        })
-      } else {
-        console.error('[useErrorHandler] 角色不存在:', error.userMessage)
-        window.location.reload()
-      }
+      dialog.warning({
+        title: '角色不存在',
+        content: error.userMessage + '，页面将自动刷新',
+        positiveText: '确定',
+        onPositiveClick: () => {
+          window.location.reload()
+        }
+      })
       return
     }
-    
+
     // 默认显示错误消息
-    if (message) {
-      message.error(error.userMessage)
-    } else {
-      console.error('[useErrorHandler] 业务错误:', error.userMessage)
-    }
+    message.error(error.userMessage)
   }
 
   /**
@@ -145,21 +142,17 @@ export function useErrorHandler() {
    */
   const handleNetworkError = (error: FrontendError) => {
     console.log('[useErrorHandler] 处理网络错误:', error)
-    
+
     if (!initServices()) {
       console.error('[useErrorHandler] 无法初始化服务，直接输出错误:', error.userMessage)
       return
     }
-    
-    if (dialog) {
-      dialog.error({
-        title: '网络连接失败',
-        content: error.userMessage + '，请检查网络连接后重试',
-        positiveText: '确定'
-      })
-    } else {
-      console.error('[useErrorHandler] 网络错误:', error.userMessage)
-    }
+
+    dialog.error({
+      title: '网络连接失败',
+      content: error.userMessage + '，请检查网络连接后重试',
+      positiveText: '确定'
+    })
   }
 
   /**
@@ -167,21 +160,17 @@ export function useErrorHandler() {
    */
   const handleSystemError = (error: FrontendError) => {
     console.log('[useErrorHandler] 处理系统错误:', error)
-    
+
     if (!initServices()) {
       console.error('[useErrorHandler] 无法初始化服务，直接输出错误:', error.userMessage)
       return
     }
-    
-    if (dialog) {
-      dialog.error({
-        title: '系统错误',
-        content: error.userMessage,
-        positiveText: '确定'
-      })
-    } else {
-      console.error('[useErrorHandler] 系统错误:', error.userMessage)
-    }
+
+    dialog.error({
+      title: '系统错误',
+      content: error.userMessage,
+      positiveText: '确定'
+    })
   }
 
   /**
@@ -196,12 +185,12 @@ export function useErrorHandler() {
     }
   ): Promise<T | null> => {
     const { showLoading = false, silent = false } = options || {}
-    
+
     try {
       if (showLoading) {
         loading.value = true
       }
-      
+
       const result = await apiCall()
       error.value = null // 清除之前的错误
       return result
@@ -252,17 +241,17 @@ export function useErrorHandler() {
     // 状态
     loading,
     error,
-    
+
     // 方法
     handleError,
     withErrorHandling,
     clearError,
-    
+
     // 检查方法
     isError,
     isAuthError,
     isNetworkError,
-    
+
     // 工具方法
     getUserMessage: (apiError: any) => ErrorHandler.getUserMessage(apiError),
     isErrorCode: (apiError: any, code: number) => ErrorHandler.isErrorCode(apiError, code)

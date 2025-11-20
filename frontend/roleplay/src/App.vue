@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
-import { NConfigProvider, NMessageProvider, NDialogProvider } from 'naive-ui'
 import { useTheme } from '@/composables/useTheme'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
 
-const { yuanbaoTheme, injectCSSVariables } = useTheme()
+const { injectCSSVariables } = useTheme()
 const authStore = useAuthStore()
 const chatStore = useChatStore()
 
@@ -23,32 +22,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <NConfigProvider :theme="yuanbaoTheme">
-    <NMessageProvider>
-      <NDialogProvider>
-        <RouterView />
-      </NDialogProvider>
-    </NMessageProvider>
-  </NConfigProvider>
+  <div class="h-full w-full bg-gray-50 text-gray-900 font-sans antialiased">
+    <RouterView />
+  </div>
 </template>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: var(--gray-50, #f9fafb);
-}
-
-#app {
-  height: 100%;
-}
-
 /* 滚动条全局样式 */
 ::-webkit-scrollbar {
   width: 6px;
@@ -56,15 +35,14 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--gray-100, #f3f4f6);
+  @apply bg-gray-100;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--gray-300, #d1d5db);
-  border-radius: 3px;
+  @apply bg-gray-300 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gray-400, #9ca3af);
+  @apply bg-gray-400;
 }
 </style>

@@ -1,204 +1,131 @@
 <template>
-  <n-modal
-    :show="visible"
-    @update:show="(value: boolean) => $emit('update:visible', value)"
-    :mask-closable="true"
-    preset="card"
-    title="个人中心"
-    class="kimi-profile-modal"
-    style="width: 480px"
-  >
-    <div class="kimi-profile-content">
-      <!-- 头像区域 -->
-      <div class="avatar-section">
-        <!-- 头像预览显示 -->
-        <div class="avatar-preview-container">
-          <div 
-            class="avatar-display"
-            @click="triggerFileInput"
-          >
-            <n-avatar
-              :size="80"
-              :src="displayAvatarUrl"
-              class="profile-avatar"
-              :class="{ 'has-preview': !!avatarPreview.previewUrl.value }"
-              @error="handleAvatarError"
-              @load="handleAvatarLoad"
-            >
-              <template #fallback>
-                <div class="avatar-fallback">
-                  <div class="avatar-eyes">◉ ◉</div>
-                  <div class="avatar-mouth">◡</div>
+  <Teleport to="body">
+    <div v-if="visible" class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 backdrop-blur-sm p-4 sm:p-0" @click.self="$emit('update:visible', false)">
+      <div class="relative w-full max-w-md transform rounded-2xl bg-white p-6 text-left shadow-xl transition-all sm:my-8">
+        <!-- Close button -->
+        <button @click="$emit('update:visible', false)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="text-center mb-6">
+          <h3 class="text-xl font-bold leading-6 text-gray-900">个人中心</h3>
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <!-- 头像区域 -->
+          <div class="flex flex-col items-center">
+            <div class="relative mb-4">
+              <div 
+                class="relative w-20 h-20 rounded-full overflow-hidden border-[3px] border-gray-100 cursor-pointer group transition-all duration-300 hover:scale-105"
+                :class="{ 'border-green-500 shadow-[0_0_0_2px_rgba(24,160,88,0.2)]': !!avatarPreview.previewUrl.value }"
+                @click="triggerFileInput"
+              >
+                <img 
+                  v-if="displayAvatarUrl" 
+                  :src="displayAvatarUrl" 
+                  class="w-full h-full object-cover"
+                  @error="handleAvatarError"
+                  @load="handleAvatarLoad"
+                  alt="Avatar"
+                />
+                <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-mono">
+                  <div class="text-xl mb-1 tracking-widest">◉ ◉</div>
+                  <div class="text-base">◡</div>
                 </div>
-              </template>
-            </n-avatar>
-            
-            
-            <!-- 上传图标悬停效果 -->
-            <div class="upload-overlay">
-              <n-icon size="24" color="white">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2C13.1 2 14 2.9 14 4V10H16L12 14L8 10H10V4C10 2.9 10.9 2 12 2ZM21 15V18C21 19.1 20.1 20 19 20H5C3.9 20 3 19.1 3 18V15C3 13.9 3.9 13 5 13H7.14L8.83 14.83L12 18L15.17 14.83L16.86 13H19C20.1 13 21 13.9 21 15ZM19 16C18.4 16 18 16.4 18 17C18 17.6 18.4 18 19 18C19.6 18 20 17.6 20 17C20 16.4 19.6 16 19 16Z" fill="currentColor"/>
-                </svg>
-              </n-icon>
+                
+                <!-- 上传图标悬停效果 -->
+                <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C13.1 2 14 2.9 14 4V10H16L12 14L8 10H10V4C10 2.9 10.9 2 12 2ZM21 15V18C21 19.1 20.1 20 19 20H5C3.9 20 3 19.1 3 18V15C3 13.9 3.9 13 5 13H7.14L8.83 14.83L12 18L15.17 14.83L16.86 13H19C20.1 13 21 13.9 21 15ZM19 16C18.4 16 18 16.4 18 17C18 17.6 18.4 18 19 18C19.6 18 20 17.6 20 17C20 16.4 19.6 16 19 16Z" fill="currentColor"/>
+                  </svg>
+                </div>
+                
+                <!-- 加载状态 -->
+                <div v-if="avatarPreview.isLoading.value" class="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
+                  <div class="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              </div>
+              
+              <!-- 文件输入 -->
+              <input
+                ref="fileInputRef"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                @change="handleFileSelect"
+                class="hidden"
+              />
             </div>
-            
-            <!-- 加载状态 -->
-            <div v-if="avatarPreview.isLoading.value" class="loading-overlay">
-              <n-spin size="small" />
+          </div>
+
+          <!-- 昵称区域 -->
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium text-gray-700">昵称</label>
+            <div class="relative">
+              <input
+                v-model="localProfile.displayName"
+                type="text"
+                placeholder="请输入昵称"
+                maxlength="50"
+                @input="handleNicknameChange"
+                @blur="handleNicknameSave"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow"
+              />
+              <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center text-xs">
+                <div v-if="nicknameSaving" class="flex items-center text-gray-400">
+                  <div class="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mr-1"></div>
+                  <span>保存中...</span>
+                </div>
+                <div v-else-if="nicknameSaved" class="flex items-center text-green-600">
+                  <svg class="w-3.5 h-3.5 mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+                  </svg>
+                  <span>已保存</span>
+                </div>
+                <span v-else class="text-gray-400">{{ localProfile.displayName.length }}/50</span>
+              </div>
             </div>
           </div>
-          
-          <!-- 文件输入 -->
-          <input
-            ref="fileInputRef"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            @change="handleFileSelect"
-            style="display: none"
-          />
-        </div>
-        
-        
-      </div>
 
-      <!-- 昵称区域 -->
-      <div class="nickname-section">
-        <div class="section-label">昵称</div>
-        <div class="nickname-input-container">
-          <n-input
-            v-model:value="localProfile.displayName"
-            placeholder="请输入昵称"
-            maxlength="50"
-            show-count
-            @input="handleNicknameChange"
-            @blur="handleNicknameSave"
-            class="nickname-input"
-          />
-          <div v-if="nicknameSaving" class="saving-indicator">
-            <n-spin size="small" />
-            <span>保存中...</span>
-          </div>
-          <div v-else-if="nicknameSaved" class="saved-indicator">
-            <n-icon size="14" color="#18a058">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
-              </svg>
-            </n-icon>
-            <span>已保存</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 邮箱区域 -->
-      <div class="email-section">
-        <div class="section-label">邮箱</div>
-        <n-input
-          v-model:value="localProfile.email"
-          placeholder="请输入邮箱地址"
-          @blur="handleEmailChange"
-          class="email-input"
-        />
-      </div>
-
-      <!-- 暂时隐藏数据库中不存在的字段 -->
-      <!-- 个人简介区域 -->
-      <!-- <div class="bio-section">
-        <div class="section-label">个人简介</div>
-        <n-input
-          v-model:value="localProfile.bio"
-          type="textarea"
-          placeholder="介绍一下自己吧..."
-          maxlength="200"
-          show-count
-          :autosize="{ minRows: 3, maxRows: 5 }"
-          @blur="handleBioChange"
-          class="bio-input"
-        />
-      </div> -->
-
-      <!-- 其他信息区域 -->
-      <!-- <div class="other-info-section">
-        <div class="info-row">
-          <div class="info-item">
-            <div class="section-label">性别</div>
-            <n-select
-              v-model:value="localProfile.gender"
-              placeholder="请选择性别"
-              :options="genderOptions"
-              @update:value="handleGenderChange"
-              class="gender-select"
+          <!-- 邮箱区域 -->
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium text-gray-700">邮箱</label>
+            <input
+              v-model="localProfile.email"
+              type="email"
+              placeholder="请输入邮箱地址"
+              @blur="handleEmailChange"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow"
             />
           </div>
-          <div class="info-item">
-            <div class="section-label">生日</div>
-            <n-date-picker
-              v-model:formatted-value="localProfile.birthday"
-              value-format="yyyy-MM-dd"
-              type="date"
-              placeholder="请选择生日"
-              clearable
-              :is-date-disabled="(ts: number) => ts > Date.now()"
-              @update:formatted-value="handleBirthdayChange"
-              class="birthday-picker"
-            />
-          </div>
-        </div>
-        
-        <div class="info-row">
-          <div class="info-item full-width">
-            <div class="section-label">手机号</div>
-            <n-input
-              v-model:value="localProfile.phoneNumber"
-              placeholder="请输入手机号码"
-              maxlength="11"
-              @blur="handlePhoneChange"
-              class="phone-input"
-            />
-          </div>
-        </div>
-      </div> -->
 
-      <!-- 操作按钮区域 -->
-      <div class="action-section">
-        <n-button
-          type="primary"
-          size="large"
-          :loading="saving"
-          @click="handleSaveAll"
-          class="save-btn"
-        >
-          保存
-        </n-button>
-        
-        <n-button
-          type="error"
-          size="large"
-          @click="handleLogout"
-          class="logout-btn"
-        >
-          退出登录
-        </n-button>
+          <!-- 操作按钮区域 -->
+          <div class="flex flex-col gap-3 mt-4">
+            <button
+              @click="handleSaveAll"
+              :disabled="saving"
+              class="w-full py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center gap-2"
+            >
+              <div v-if="saving" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              保存
+            </button>
+            
+            <button
+              @click="handleLogout"
+              class="w-full py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 active:bg-red-200 transition-colors font-medium"
+            >
+              退出登录
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </n-modal>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, watch, computed, nextTick } from 'vue'
-import {
-  NModal,
-  NInput,
-  NButton,
-  NAvatar,
-  NSelect,
-  NDatePicker,
-  NText,
-  NIcon,
-  NSpin,
-  useMessage,
-  useDialog
-} from 'naive-ui'
 import { useAuthStore } from '@/stores/auth'
 import { GENDER_OPTIONS } from '@/api/profile'
 import type { UpdateProfileRequest } from '@/api/profile'
@@ -218,8 +145,27 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const authStore = useAuthStore()
-const message = useMessage()
-const dialog = useDialog()
+
+// Simple replacement for useMessage and useDialog
+const message = {
+  warning: (msg: string) => {
+    console.warn('Warning:', msg)
+    alert(msg)
+  },
+  error: (msg: string) => {
+    console.error('Error:', msg)
+    alert(msg)
+  },
+  success: (msg: string) => console.log('Success:', msg)
+}
+
+const dialog = {
+  warning: (options: any) => {
+    if (confirm(options.content)) {
+      options.onPositiveClick?.()
+    }
+  }
+}
 
 // 状态
 const saving = ref(false)
@@ -265,11 +211,6 @@ const localProfile = reactive<UpdateProfileRequest>({
   displayName: '',
   email: '',
   avatarUrl: ''
-  // 暂时注释掉数据库中不存在的字段
-  // bio: '',
-  // gender: 'U',
-  // birthday: '',
-  // phoneNumber: ''
 })
 
 // 原始数据（用于比较是否有变更）
@@ -277,11 +218,6 @@ const originalProfile = reactive<UpdateProfileRequest>({
   displayName: '',
   email: '',
   avatarUrl: ''
-  // 暂时注释掉数据库中不存在的字段
-  // bio: '',
-  // gender: 'U',
-  // birthday: '',
-  // phoneNumber: ''
 })
 
 // 监听弹窗显示状态
@@ -306,11 +242,6 @@ const loadUserProfile = async () => {
         displayName: userInfo.displayName || '',
         email: userInfo.email || '',
         avatarUrl: userInfo.avatarUrl || ''
-        // 暂时注释掉数据库中不存在的字段
-        // bio: userInfo.bio || '',
-        // gender: userInfo.gender || 'U',
-        // birthday: userInfo.birthday || '',
-        // phoneNumber: userInfo.phoneNumber || ''
       }
       
       Object.assign(localProfile, profileData)
@@ -324,11 +255,6 @@ const loadUserProfile = async () => {
         displayName: profile.displayName || '',
         email: profile.email || '',
         avatarUrl: profile.avatarUrl || ''
-        // 暂时注释掉数据库中不存在的字段
-        // bio: profile.bio || '',
-        // gender: profile.gender || 'U',
-        // birthday: profile.birthday || '',
-        // phoneNumber: profile.phoneNumber || ''
       }
       
       Object.assign(localProfile, profileData)
@@ -381,11 +307,6 @@ const handleNicknameSave = async () => {
       displayName: localProfile.displayName,
       email: originalProfile.email,
       avatarUrl: originalProfile.avatarUrl
-      // 暂时注释掉数据库中不存在的字段
-      // bio: originalProfile.bio,
-      // gender: originalProfile.gender,
-      // birthday: originalProfile.birthday,
-      // phoneNumber: originalProfile.phoneNumber
     })
     
     originalProfile.displayName = localProfile.displayName
@@ -470,80 +391,9 @@ const handleAvatarError = (error: Event) => {
   }
 }
 
-// === 原有的头像处理方法（保留兼容性） ===
-
-// 头像URL变更处理
-const handleAvatarUrlChange = () => {
-  showAvatarInput.value = false
-  
-  // 验证头像URL格式
-  if (localProfile.avatarUrl && localProfile.avatarUrl.trim()) {
-    const url = localProfile.avatarUrl.trim()
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      message.warning('头像URL必须以 http:// 或 https:// 开头')
-      localProfile.avatarUrl = originalProfile.avatarUrl
-      return
-    }
-  }
-  
-  if (localProfile.avatarUrl !== originalProfile.avatarUrl) {
-    console.log('[KimiProfileCenter] 头像URL已变更，等待保存:', localProfile.avatarUrl)
-  }
-}
-
-// 头像上传成功处理
-const handleAvatarUploadSuccess = (response: AvatarUploadResponse) => {
-  console.log('[KimiProfileCenter] 头像上传成功:', response)
-  
-  // 更新本地头像URL
-  localProfile.avatarUrl = response.avatarUrl
-  originalProfile.avatarUrl = response.avatarUrl
-  
-  message.success('头像上传成功！')
-}
-
-// 头像上传失败处理
-const handleAvatarUploadError = (error: any) => {
-  console.error('[KimiProfileCenter] 头像上传失败:', error)
-  // 错误消息已在AvatarUploader组件中处理
-}
-
-// 头像删除成功处理
-const handleAvatarDeleteSuccess = () => {
-  console.log('[KimiProfileCenter] 头像删除成功')
-  
-  // 更新本地头像URL
-  localProfile.avatarUrl = ''
-  originalProfile.avatarUrl = ''
-  
-  message.success('头像删除成功！')
-}
-
-// 头像删除失败处理
-const handleAvatarDeleteError = (error: any) => {
-  console.error('[KimiProfileCenter] 头像删除失败:', error)
-  // 错误消息已在AvatarUploader组件中处理
-}
-
 // 其他字段变更处理
 const handleEmailChange = () => {
   console.log('[KimiProfileCenter] 邮箱已变更，等待保存')
-}
-
-const handleBioChange = () => {
-  console.log('[KimiProfileCenter] 个人简介已变更，等待保存')
-}
-
-const handleGenderChange = () => {
-  console.log('[KimiProfileCenter] 性别已变更，等待保存')
-}
-
-const handleBirthdayChange = () => {
-  console.log('[KimiProfileCenter] 生日已变更，等待保存')
-}
-
-const handlePhoneChange = () => {
-  console.log('[KimiProfileCenter] 手机号已变更，等待保存')
 }
 
 // 保存所有更改
@@ -656,288 +506,3 @@ const handleLogout = () => {
   })
 }
 </script>
-
-<style scoped>
-.kimi-profile-content {
-  padding: 8px 0;
-}
-
-/* 头像区域 */
-.avatar-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 32px;
-}
-
-.avatar-preview-container {
-  position: relative;
-  margin-bottom: 16px;
-}
-
-.avatar-display {
-  position: relative;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.avatar-display:hover {
-  transform: scale(1.05);
-}
-
-.profile-avatar {
-  border: 3px solid #f0f0f0;
-  transition: all 0.3s ease;
-}
-
-.profile-avatar:hover {
-  border-color: #18a058;
-}
-
-.profile-avatar.has-preview {
-  border-color: #18a058;
-  box-shadow: 0 0 0 2px rgba(24, 160, 88, 0.2);
-}
-
-/* 上传图标悬停效果 */
-.upload-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 3;
-}
-
-.avatar-display:hover .upload-overlay {
-  opacity: 1;
-}
-
-/* 加载状态 */
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  z-index: 5;
-}
-
-
-.avatar-fallback {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: monospace;
-  width: 100%;
-  height: 100%;
-}
-
-.avatar-eyes {
-  font-size: 20px;
-  margin-bottom: 4px;
-  letter-spacing: 4px;
-}
-
-.avatar-mouth {
-  font-size: 16px;
-}
-
-.avatar-edit-btn {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 28px;
-  height: 28px;
-  background: #18a058;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: white;
-  transition: all 0.3s ease;
-}
-
-.avatar-edit-btn:hover {
-  background: #36ad6a;
-  transform: scale(1.1);
-}
-
-.avatar-url-toggle {
-  margin-top: 8px;
-}
-
-.avatar-input-section {
-  width: 100%;
-  max-width: 300px;
-}
-
-/* 表单区域 */
-.nickname-section,
-.email-section,
-.bio-section,
-.other-info-section {
-  margin-bottom: 24px;
-}
-
-.section-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.nickname-input-container {
-  position: relative;
-}
-
-.nickname-input,
-.email-input,
-.bio-input,
-.phone-input {
-  width: 100%;
-}
-
-.saving-indicator,
-.saved-indicator {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: #666;
-}
-
-.saved-indicator {
-  color: #18a058;
-}
-
-/* 其他信息区域 */
-.info-row {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.info-row:last-child {
-  margin-bottom: 0;
-}
-
-.info-item {
-  flex: 1;
-}
-
-.info-item.full-width {
-  flex: none;
-  width: 100%;
-}
-
-.gender-select,
-.birthday-picker {
-  width: 100%;
-}
-
-/* 操作按钮区域 */
-.action-section {
-  margin-top: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.save-btn,
-.logout-btn {
-  width: 100%;
-  height: 44px;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.logout-btn {
-  background: #d03050;
-  border-color: #d03050;
-}
-
-.logout-btn:hover {
-  background: #e63946;
-  border-color: #e63946;
-}
-
-.logout-btn:focus {
-  background: #d03050;
-  border-color: #d03050;
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .kimi-profile-modal {
-    width: 90vw !important;
-    max-width: 400px !important;
-  }
-  
-  .info-row {
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .info-item {
-    width: 100%;
-  }
-}
-
-/* 输入框样式优化 */
-:deep(.n-input) {
-  transition: all 0.3s ease;
-}
-
-:deep(.n-input:hover) {
-  border-color: #18a058;
-}
-
-:deep(.n-input.n-input--focus) {
-  border-color: #18a058;
-  box-shadow: 0 0 0 2px rgba(24, 160, 88, 0.2);
-}
-
-:deep(.n-select) {
-  transition: all 0.3s ease;
-}
-
-:deep(.n-date-picker) {
-  width: 100%;
-}
-
-/* 模态框样式 */
-:deep(.n-card) {
-  border-radius: 16px;
-}
-
-:deep(.n-card-header) {
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-:deep(.n-card__content) {
-  padding: 24px;
-}
-</style>

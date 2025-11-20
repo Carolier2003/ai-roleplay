@@ -1,126 +1,133 @@
 <template>
-  <div class="user-module">
+  <div class="bg-white rounded-xl p-4 mb-4 shadow-sm border border-gray-100">
     <!-- 用户信息区域 -->
-    <div class="user-info">
-      <div class="user-avatar-container">
-        <n-avatar
-          :size="48"
-          :round="authStore.isLoggedIn"
-          :src="userAvatar"
-          class="user-avatar"
-          :class="{ 'guest-avatar': !authStore.isLoggedIn }"
-          @error="handleAvatarError"
-          @load="handleAvatarLoad"
+    <div class="flex items-center gap-3">
+      <div class="flex-shrink-0">
+        <div 
+          class="w-12 h-12 rounded-full border-2 border-gray-200 overflow-hidden transition-transform duration-300 hover:scale-105 hover:border-blue-500 relative"
+          :class="{ 'rounded-xl': !authStore.isLoggedIn }"
         >
-          <template #fallback>
-            <div class="avatar-fallback" :class="{ 'guest-fallback': !authStore.isLoggedIn, 'user-fallback': authStore.isLoggedIn }">
-              <div v-if="!authStore.isLoggedIn" class="guest-avatar-content">
-                <div class="avatar-eyes">• •</div>
-                <div class="avatar-mouth">‿</div>
-              </div>
-              <div v-else class="user-avatar-content">
-                <div class="avatar-eyes">◉ ◉</div>
-                <div class="avatar-mouth">◡</div>
-              </div>
+          <img 
+            v-if="userAvatar" 
+            :src="userAvatar" 
+            class="w-full h-full object-cover"
+            @error="handleAvatarError"
+            alt="User Avatar"
+          />
+             <div v-else class="w-full h-full flex flex-col items-center justify-center text-white font-mono"
+               :class="authStore.isLoggedIn ? 'bg-gradient-to-br from-indigo-500 to-purple-600' : 'bg-gradient-to-br from-orange-400 to-yellow-300'">
+            <div v-if="!authStore.isLoggedIn" class="flex flex-col items-center">
+              <div class="text-xs mb-0.5 tracking-widest">• •</div>
+              <div class="text-[10px]">‿</div>
             </div>
-          </template>
-        </n-avatar>
-      </div>
-      
-      <div class="user-details">
-        <div class="user-name">{{ displayName }}</div>
-        <div class="user-status">
-          <span class="status-dot" :class="statusClass"></span>
-          <span class="status-text">{{ statusText }}</span>
+            <div v-else class="flex flex-col items-center">
+              <div class="text-xs mb-0.5 tracking-widest">◉ ◉</div>
+              <div class="text-[10px]">◡</div>
+            </div>
+          </div>
         </div>
-        
-        <!-- 聊天次数显示已移除 -->
       </div>
       
-      <div class="user-actions">
-        <n-button
+      <div class="flex-1 min-w-0">
+        <div class="text-base font-semibold text-gray-800 mb-1 truncate">
+          {{ displayName }}
+        </div>
+        <div class="flex items-center gap-1.5 text-xs text-gray-500">
+          <span class="w-2 h-2 rounded-full flex-shrink-0" :class="authStore.isLoggedIn ? 'bg-green-500' : 'bg-gray-400'"></span>
+          <span>{{ statusText }}</span>
+        </div>
+      </div>
+      
+      <div class="flex-shrink-0">
+        <button
           v-if="authStore.isLoggedIn"
-          text
-          size="small"
           @click="showSettings = !showSettings"
-          class="settings-btn"
+          class="text-gray-500 hover:text-blue-500 p-1 rounded-full hover:bg-gray-100 transition-colors"
         >
-          <template #icon>
-            <span>⚙️</span>
-          </template>
-        </n-button>
-        <n-button
+          <span class="text-xl">⚙️</span>
+        </button>
+        <button
           v-else
-          size="small"
-          type="primary"
           @click="authStore.showLoginModal()"
-          class="login-btn"
+          class="px-3 py-1 text-xs font-medium text-white bg-blue-500 rounded-full hover:bg-blue-600 transition-colors shadow-sm"
         >
           登录
-        </n-button>
+        </button>
       </div>
     </div>
     
     <!-- 设置面板 -->
-    <div v-if="showSettings && authStore.isLoggedIn" class="settings-panel">
-      <div class="settings-header">
-        <span>设置选项</span>
+    <div v-if="showSettings && authStore.isLoggedIn" class="mt-4 pt-4 border-t border-gray-100">
+      <div class="text-sm font-semibold text-gray-700 mb-3">
+        设置选项
       </div>
       
-      <div class="settings-list">
-        <div class="setting-item" @click="editProfile">
-          <span class="setting-icon">👤</span>
-          <span class="setting-label">个人资料</span>
-          <span class="setting-action">编辑</span>
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" @click="editProfile">
+          <span class="w-5 text-center text-base">👤</span>
+          <span class="flex-1 text-sm text-gray-700">个人资料</span>
+          <span class="text-xs text-gray-500">编辑</span>
         </div>
         
-        
-        <div class="setting-item" @click="logout">
-          <span class="setting-icon">🚪</span>
-          <span class="setting-label">退出登录</span>
-          <span class="setting-action danger">退出</span>
+        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group" @click="logout">
+          <span class="w-5 text-center text-base">🚪</span>
+          <span class="flex-1 text-sm text-gray-700">退出登录</span>
+          <span class="text-xs text-red-500 group-hover:text-red-600">退出</span>
         </div>
       </div>
     </div>
     
     <!-- 聊呗标识栏 -->
-    <div class="brand-section">
-      <div class="brand-logo">
-        <div class="brand-avatar-content">
-          <div class="brand-eyes">◉ ◉</div>
-          <div class="brand-mouth">◡</div>
+    <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/30 text-white flex items-center justify-center text-2xl">
+        <div class="flex flex-col items-center justify-center font-mono">
+          <div class="text-[8px] mb-[1px] tracking-widest">◉ ◉</div>
+          <div class="text-[8px]">◡</div>
         </div>
       </div>
-      <div class="brand-text">
-        <div class="brand-name">聊呗</div>
-        <div class="brand-desc">AI角色扮演</div>
+      <div class="flex-1">
+        <div class="text-base font-bold bg-gradient-to-br from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+          聊呗
+        </div>
+        <div class="text-xs text-gray-400">
+          AI角色扮演
+        </div>
       </div>
     </div>
     
-    <!-- Kimi风格个人中心弹窗 -->
-    <KimiProfileCenter
+    <!-- Kimi风格个人中心弹窗 (暂时禁用，等待迁移) -->
+    <!-- <KimiProfileCenter
       v-model:visible="showKimiProfile"
       @success="onKimiProfileSuccess"
-    />
+    /> -->
     
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, nextTick } from 'vue'
-import { NAvatar, NButton, useMessage, useDialog } from 'naive-ui'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
-import KimiProfileCenter from './KimiProfileCenter.vue'
+// import KimiProfileCenter from './KimiProfileCenter.vue'
 
 const authStore = useAuthStore()
 const chatStore = useChatStore()
-const message = useMessage()
-const dialog = useDialog()
+
+// Simple replacement for useMessage/useDialog
+const message = {
+  success: (msg: string) => console.log('Success:', msg),
+  error: (msg: string) => {
+    console.error('Error:', msg)
+    alert(msg)
+  },
+  warning: (msg: string) => {
+    console.warn('Warning:', msg)
+    alert(msg)
+  }
+}
 
 const showSettings = ref(false)
 const showKimiProfile = ref(false)
-// 聊天统计相关代码已移除
 
 // 计算属性
 const displayName = computed(() => {
@@ -144,10 +151,6 @@ const userAvatar = computed(() => {
   return undefined // 使用 fallback 模板中的头像
 })
 
-const statusClass = computed(() => {
-  return authStore.isLoggedIn ? 'online' : 'offline'
-})
-
 const statusText = computed(() => {
   return authStore.isLoggedIn ? '在线' : '游客模式'
 })
@@ -155,13 +158,14 @@ const statusText = computed(() => {
 // 方法
 const editProfile = () => {
   console.log('[UserModule] 打开Kimi风格个人中心')
-  showKimiProfile.value = true
+  // showKimiProfile.value = true
+  message.warning('个人中心功能正在升级维护中，请稍后再试')
   showSettings.value = false // 关闭设置面板
 }
 
-
-
 const logout = async () => {
+  if (!confirm('确定要退出登录吗？')) return
+
   try {
     await authStore.logout()
     showSettings.value = false
@@ -183,13 +187,6 @@ const logout = async () => {
 const onKimiProfileSuccess = () => {
   console.log('[UserModule] Kimi个人中心更新成功')
   message.success('个人资料更新成功')
-  
-  // 可以在这里做一些额外的处理，比如刷新用户信息显示
-}
-
-// 头像加载成功处理
-const handleAvatarLoad = () => {
-  console.log('[UserModule] 头像加载成功:', userAvatar.value)
 }
 
 // 头像加载失败处理
@@ -212,253 +209,5 @@ const handleAvatarError = (error: Event) => {
 </script>
 
 <style scoped>
-.user-module {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar-container {
-  flex-shrink: 0;
-}
-
-.user-avatar {
-  border: 2px solid #e5e7eb;
-  transition: all 0.3s ease;
-}
-
-.user-avatar:hover {
-  transform: scale(1.05);
-  border-color: #3b82f6;
-}
-
-.avatar-fallback {
-  font-size: 24px;
-  color: #9ca3af;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-.guest-fallback {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
-  color: #fff;
-}
-
-.user-fallback {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-}
-
-.guest-avatar-content,
-.user-avatar-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: monospace;
-}
-
-.avatar-eyes {
-  font-size: 12px;
-  margin-bottom: 2px;
-  letter-spacing: 2px;
-}
-
-.avatar-mouth {
-  font-size: 10px;
-}
-
-.guest-avatar {
-  border-radius: 12px !important;
-}
-
-.user-details {
-  flex: 1;
-  min-width: 0;
-}
-
-.user-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.user-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #6b7280;
-  margin-bottom: 2px;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.status-dot.online {
-  background-color: #10b981;
-}
-
-.status-dot.offline {
-  background-color: #9ca3af;
-}
-
-.chat-limit,
-.chat-stats {
-  font-size: 11px;
-  color: #9ca3af;
-}
-
-.chat-limit {
-  color: #f59e0b;
-}
-
-.user-actions {
-  flex-shrink: 0;
-}
-
-.settings-btn {
-  color: #6b7280;
-}
-
-.settings-btn:hover {
-  color: #3b82f6;
-}
-
-.login-btn {
-  font-size: 12px;
-  height: 28px;
-}
-
-.settings-panel {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.settings-header {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 12px;
-}
-
-.settings-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.setting-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.setting-item:hover {
-  background-color: #f3f4f6;
-}
-
-.setting-icon {
-  font-size: 16px;
-  width: 20px;
-  text-align: center;
-}
-
-.setting-label {
-  flex: 1;
-  font-size: 14px;
-  color: #374151;
-}
-
-.setting-action {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.setting-action.danger {
-  color: #ef4444;
-}
-
-.brand-section {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.brand-logo {
-  font-size: 24px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  color: white;
-}
-
-.brand-avatar-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: monospace;
-}
-
-.brand-eyes {
-  font-size: 8px;
-  margin-bottom: 1px;
-  letter-spacing: 1px;
-}
-
-.brand-mouth {
-  font-size: 8px;
-}
-
-.brand-text {
-  flex: 1;
-}
-
-.brand-name {
-  font-size: 16px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 2px;
-}
-
-.brand-desc {
-  font-size: 12px;
-  color: #9ca3af;
-}
+/* Tailwind classes handle styling */
 </style>

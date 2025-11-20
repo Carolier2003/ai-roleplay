@@ -1,129 +1,110 @@
 <template>
-  <div class="chat-input-bar">
-    <!-- RAG功能开关已移除，默认开启 -->
-
-    <div class="input-container">
+  <div class="w-full max-w-5xl mx-auto">
+    <div class="flex items-center gap-3 p-3 bg-white rounded-[24px] border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300 focus-within:shadow-lg focus-within:border-indigo-500 transition-all duration-200 min-h-[56px]">
       <!-- 语音转文字按钮 (左边) -->
-      <n-button
-        circle
-        size="large"
-        :type="voiceMode === 'voiceRecording' ? 'primary' : 'default'"
-        class="voice-to-text-btn"
+      <button
+        class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none"
+        :class="voiceMode === 'voiceRecording' ? 'bg-indigo-500 text-white animate-pulse shadow-lg shadow-indigo-200' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'"
         @click="toggleRecording"
         :title="voiceMode === 'voiceRecording' ? '点击停止录音' : '点击开始录音'"
       >
-        <template #icon>
-          <span v-if="voiceMode === 'text'" class="text-icon">T</span>
-          <svg v-else-if="voiceMode === 'voiceRecording'" viewBox="0 0 24 24" width="20" height="20">
-            <!-- 录音中显示停止图标 -->
-            <rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>
-          </svg>
-          <svg v-else viewBox="0 0 24 24" width="20" height="20">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
-          </svg>
-        </template>
-      </n-button>
+        <span v-if="voiceMode === 'text'" class="text-lg font-bold">T</span>
+        <svg v-else-if="voiceMode === 'voiceRecording'" viewBox="0 0 24 24" width="20" height="20">
+          <rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>
+        </svg>
+        <svg v-else viewBox="0 0 24 24" width="20" height="20">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
+        </svg>
+      </button>
 
       <!-- 麦克风按钮 (切换语音消息模式) -->
-      <n-button
-        circle
-        size="large"
-        :type="isVoiceMessageMode ? 'primary' : 'default'"
-        class="microphone-btn"
+      <button
+        class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none"
+        :class="isVoiceMessageMode ? 'bg-indigo-500 text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'"
         @click="toggleVoiceMessageMode"
         :title="isVoiceMessageMode ? '切换到文字输入' : '切换到语音消息'"
       >
-        <template #icon>
-          <svg v-if="!isVoiceMessageMode" viewBox="0 0 24 24" width="20" height="20">
-            <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" fill="currentColor"/>
-          </svg>
-          <svg v-else viewBox="0 0 24 24" width="20" height="20">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
-          </svg>
-        </template>
-      </n-button>
+        <svg v-if="!isVoiceMessageMode" viewBox="0 0 24 24" width="20" height="20">
+          <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" fill="currentColor"/>
+        </svg>
+        <svg v-else viewBox="0 0 24 24" width="20" height="20">
+          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+        </svg>
+      </button>
 
       <!-- 统一的输入区域 -->
-      <div class="unified-input-area">
+      <div class="flex-1 min-h-[40px] flex items-center bg-gray-50 rounded-[20px] px-4 mx-1">
         <!-- 语音转文字状态提示 -->
-        <div v-if="voiceMode === 'voiceTranscribing'" class="status-display">
-          <n-spin size="small" />
+        <div v-if="voiceMode === 'voiceTranscribing'" class="w-full flex items-center justify-center gap-2 text-sm text-indigo-600">
+          <div class="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
           <span>正在转换语音...</span>
         </div>
 
         <!-- 语音波形 -->
-        <div v-else-if="voiceMode === 'voiceRecording'" class="status-display">
+        <div v-else-if="voiceMode === 'voiceRecording'" class="w-full flex items-center justify-center gap-2 text-sm text-indigo-600">
           <VoiceWave :recording="voiceMode === 'voiceRecording'" />
         </div>
 
         <!-- 语音通话状态 -->
-        <div v-else-if="isVoiceCallActive" class="status-display voice-call-status">
-          <div class="voice-call-indicator">
-            <div class="pulse-dot"></div>
+        <div v-else-if="isVoiceCallActive" class="w-full flex items-center justify-center gap-2 text-sm text-green-600">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span>语音通话中...</span>
           </div>
         </div>
 
         <!-- 语音消息模式：长按录音按钮 -->
-        <div v-else-if="isVoiceMessageMode" class="voice-message-container">
-          <n-button
-            :type="isRecordingVoiceMessage ? 'primary' : 'default'"
-            class="voice-message-btn"
+        <div v-else-if="isVoiceMessageMode" class="w-full flex items-center justify-center">
+          <button
+            class="w-full h-10 rounded-full text-sm transition-all duration-200 focus:outline-none select-none"
+            :class="isRecordingVoiceMessage ? 'bg-indigo-500 text-white animate-pulse shadow-md' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 active:bg-gray-100'"
             @mousedown="startVoiceMessageRecording"
             @mouseup="stopVoiceMessageRecording"
             @mouseleave="stopVoiceMessageRecording"
             @touchstart="startVoiceMessageRecording"
             @touchend="stopVoiceMessageRecording"
           >
-            <template v-if="isRecordingVoiceMessage">
-              <div class="recording-indicator">
-                <div class="pulse-dot"></div>
-                <span>松开发送</span>
-              </div>
-            </template>
-            <template v-else>
-              <span>按住说话</span>
-            </template>
-          </n-button>
+            <div v-if="isRecordingVoiceMessage" class="flex items-center justify-center gap-2">
+              <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <span>松开发送</span>
+            </div>
+            <span v-else>按住说话</span>
+          </button>
         </div>
 
         <!-- 文本输入框 -->
-        <n-input
+        <textarea
           v-else
           ref="inputRef"
-          v-model:value="inputText"
-          type="textarea"
+          v-model="inputText"
           :placeholder="getPlaceholder()"
-          :autosize="{ minRows: 1, maxRows: 3 }"
           :disabled="voiceMode === 'voiceTranscribing' || isVoiceCallActive"
           @keydown="handleKeydown"
-          class="message-input"
-        />
+          rows="1"
+          class="w-full bg-transparent border-none focus:ring-0 p-2 text-base text-gray-800 placeholder-gray-400 resize-none overflow-hidden min-h-[24px] max-h-[80px]"
+          style="field-sizing: content;"
+        ></textarea>
       </div>
 
-
       <!-- 发送/终止按钮 -->
-      <n-button
-        circle
-        size="large"
-        :type="sendButtonState.type === 'send' ? 'primary' : 'error'"
+      <button
+        class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+        :class="sendButtonState.type === 'send' ? 'bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95' : 'bg-red-500 text-white hover:bg-red-600 active:scale-95'"
         :disabled="sendButtonState.disabled"
-        :loading="sendButtonState.loading"
         @click="handleButtonClick"
-        class="send-btn"
       >
-        <template #icon>
+        <div v-if="sendButtonState.loading" class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        <template v-else>
           <!-- 发送图标 -->
           <svg v-if="sendButtonState.icon === 'send'" viewBox="0 0 24 24" width="20" height="20">
             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
           </svg>
-
           <!-- 终止图标 -->
           <svg v-else-if="sendButtonState.icon === 'stop'" viewBox="0 0 24 24" width="20" height="20">
             <path d="M6 6h12v12H6z" fill="currentColor"/>
           </svg>
         </template>
-      </n-button>
+      </button>
     </div>
   </div>
 </template>
@@ -131,7 +112,6 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { NButton, NInput, NSpin, NTooltip, NSwitch, useMessage } from 'naive-ui'
 import VoiceWave from './VoiceWave.vue'
 import VoiceCallButton from './VoiceCallButton.vue'
 import { useChatStore } from '@/stores/chat'
@@ -158,15 +138,25 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 const chatStore = useChatStore()
 const authStore = useAuthStore()
-const message = useMessage()
 
-// RAG开关状态已移除，直接使用store中的状态（默认开启）
-// const { enableRag } = storeToRefs(chatStore)
+// Simple replacement for useMessage
+const message = {
+  success: (msg: string) => console.log('Success:', msg),
+  error: (msg: string) => {
+    console.error('Error:', msg)
+    alert(msg)
+  },
+  warning: (msg: string) => {
+    console.warn('Warning:', msg)
+    alert(msg)
+  },
+  info: (msg: string) => console.log('Info:', msg)
+}
 
 // TTS播放器
 const { addToQueue, stopPlaying, clearQueue } = useTTSPlayer()
 
-const inputRef = ref<InstanceType<typeof NInput>>()
+const inputRef = ref<HTMLTextAreaElement>()
 const inputText = ref('')
 const mediaRecorder = ref<MediaRecorder | null>(null)
 const audioChunks = ref<Blob[]>([])
@@ -321,9 +311,6 @@ const handleSend = async () => {
   
   const content = inputText.value.trim()
   if (!content) return
-  
-  // 游客模式可以直接聊天，不需要强制登录
-  // 注释掉登录检查，允许游客聊天
   
   // 检查是否选择了角色
   if (!chatStore.currentCharacterId) {
@@ -1168,277 +1155,8 @@ const processVoiceMessage = async (audioBlob: Blob) => {
     }
   }
 }
-
 </script>
 
 <style scoped>
-.chat-input-bar {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.input-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: white;
-  border-radius: 24px;
-  border: 1px solid var(--gray-200);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s ease;
-  min-height: 56px;
-}
-
-.input-container:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-  border-color: var(--primary-300);
-}
-
-.input-container:focus-within {
-  box-shadow: 0 6px 20px rgba(22, 119, 255, 0.15);
-  border-color: var(--primary-500);
-}
-
-.voice-to-text-btn {
-  flex-shrink: 0;
-  width: 40px !important;
-  height: 40px !important;
-  transition: all 0.2s ease;
-}
-
-.voice-to-text-btn:active {
-  transform: scale(0.95);
-}
-
-.text-icon {
-  font-size: 18px;
-  font-weight: bold;
-  color: currentColor;
-}
-
-.microphone-btn {
-  flex-shrink: 0;
-  width: 40px !important;
-  height: 40px !important;
-  transition: all 0.2s ease;
-}
-
-.microphone-btn:active {
-  transform: scale(0.95);
-}
-
-.microphone-btn.n-button--primary {
-  animation: microphone-pulse 1.5s ease-in-out infinite;
-}
-
-.unified-input-area {
-  flex: 1;
-  min-height: 40px;
-  display: flex;
-  align-items: center;
-  background: var(--gray-50);
-  border-radius: 20px;
-  padding: 8px 16px;
-  margin: 0 4px;
-}
-
-.status-display {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 14px;
-  color: var(--primary-color);
-}
-
-.voice-call-status {
-  color: var(--success-color);
-}
-
-.voice-call-indicator {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pulse-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--success-color);
-  border-radius: 50%;
-  animation: pulse-dot 1.5s ease-in-out infinite;
-}
-
-.voice-message-container {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.voice-message-btn {
-  width: 100% !important;
-  height: 40px !important;
-  border-radius: 20px !important;
-  font-size: 14px !important;
-  transition: all 0.2s ease !important;
-}
-
-.voice-message-btn.n-button--primary {
-  animation: voice-message-pulse 1.5s ease-in-out infinite;
-}
-
-.recording-indicator {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.message-input {
-  border: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
-  width: 100%;
-}
-
-.message-input :deep(.n-input__input-el) {
-  font-size: 16px !important;
-  line-height: 1.5 !important;
-  padding: 8px 0 !important;
-  min-height: 24px !important;
-}
-
-.message-input :deep(.n-input__textarea-el) {
-  font-size: 16px !important;
-  line-height: 1.5 !important;
-  padding: 8px 0 !important;
-  min-height: 24px !important;
-  resize: none !important;
-}
-
-.send-btn {
-  flex-shrink: 0;
-  width: 40px !important;
-  height: 40px !important;
-  transition: all 0.2s ease;
-}
-
-.send-btn:not(:disabled):hover {
-  transform: scale(1.05);
-}
-
-.send-btn:not(:disabled):active {
-  transform: scale(0.95);
-}
-
-
-/* 移动端适配 */
-@media (max-width: 768px) {
-  .chat-input-bar {
-    max-width: 100%;
-    margin: 0;
-  }
-  
-  .input-container {
-    padding: 12px 16px;
-    gap: 12px;
-    border-radius: 20px;
-    min-height: 48px;
-  }
-  
-  .voice-btn,
-  .send-btn {
-    width: 36px !important;
-    height: 36px !important;
-  }
-  
-  .voice-wave-container {
-    min-height: 36px;
-    margin: 0 2px;
-    padding: 6px 12px;
-  }
-  
-  .text-input-container {
-    margin: 0 2px;
-  }
-  
-  .message-input :deep(.n-input__textarea-el) {
-    font-size: 16px !important;
-    padding: 6px 0 !important;
-  }
-}
-
-/* 录音状态动画 */
-.voice-to-text-btn.n-button--primary {
-  animation: recording-pulse 1.5s ease-in-out infinite;
-}
-
-
-@keyframes recording-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(22, 119, 255, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(22, 119, 255, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(22, 119, 255, 0);
-  }
-}
-
-@keyframes microphone-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(22, 119, 255, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(22, 119, 255, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(22, 119, 255, 0);
-  }
-}
-
-@keyframes pulse-dot {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(1.2);
-  }
-}
-
-@keyframes voice-message-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(22, 119, 255, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(22, 119, 255, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(22, 119, 255, 0);
-  }
-}
-
-/* RAG开关样式 */
-.rag-toggle-container {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #666;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
+/* No custom styles needed, all handled by Tailwind */
 </style>
-

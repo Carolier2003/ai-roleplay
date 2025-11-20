@@ -5,8 +5,7 @@ import App from './App.vue'
 import router from './router'
 
 // 通用字体和样式
-import 'vfonts/Lato.css'
-import 'vfonts/FiraCode.css'
+import './style.css'
 
 console.log('[main.ts] 开始创建Vue应用')
 

@@ -1,101 +1,114 @@
 <template>
-  <n-modal 
-    v-model:show="loginModalVisible" 
-    :closable="true" 
-    :mask-closable="true"
-    class="login-modal"
-    @update:show="handleModalClose"
-  >
-    <n-card 
-      :title="isLogin ? '登录' : '注册'" 
-      size="huge"
-      class="login-card"
-      :style="{ width: themeConfig.login.width }"
-    >
-      <n-form 
-        ref="formRef" 
-        :model="form" 
-        :rules="rules"
-        @keyup.enter="handleSubmit"
-      >
-        <n-form-item label="账号" path="userAccount">
-          <n-input 
-            v-model:value="form.userAccount" 
-            placeholder="请输入6-20位字母数字账号"
-            :style="{ height: '36px' }"
-            :disabled="loading"
-          />
-        </n-form-item>
-        
-        <n-form-item label="密码" path="userPassword">
-          <n-input 
-            v-model:value="form.userPassword" 
-            type="password"
-            placeholder="请输入8-20位密码"
-            :style="{ height: '36px' }"
-            :disabled="loading"
-            show-password-on="click"
-          />
-        </n-form-item>
-        
-        <n-form-item 
-          v-if="!isLogin" 
-          label="确认密码" 
-          path="confirmPassword"
-        >
-          <n-input 
-            v-model:value="form.confirmPassword" 
-            type="password"
-            placeholder="请再次输入密码"
-            :style="{ height: '36px' }"
-            :disabled="loading"
-            show-password-on="click"
-          />
-        </n-form-item>
-      </n-form>
-      
-      <template #footer>
-        <div class="login-footer">
-          <n-button 
-            type="primary" 
-            size="large" 
-            block 
-            @click="handleSubmit"
-            :loading="loading"
-            :disabled="!isFormValid || (cooldown > 0 && !isLogin)"
-            :style="{ height: themeConfig.login.btnHeight }"
-          >
-            {{ getSubmitButtonText() }}
-          </n-button>
-          
-          <div class="switch-tip">
-            {{ isLogin ? '还没有账号？' : '已有账号？' }}
-            <a @click="switchMode" class="switch-link">
-              {{ isLogin ? '立即注册' : '去登录' }}
-            </a>
-          </div>
+  <Teleport to="body">
+    <div v-if="loginModalVisible" class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 backdrop-blur-sm p-4 sm:p-0" @click.self="handleModalClose(false)">
+      <div class="relative w-full max-w-md transform rounded-2xl bg-white/80 backdrop-blur-xl p-8 text-left shadow-2xl transition-all border border-white/20 sm:my-8">
+        <!-- Close button -->
+        <button @click="handleModalClose(false)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="text-center mb-8">
+          <h3 class="text-2xl font-bold leading-6 text-gray-900">{{ isLogin ? '欢迎回来' : '创建账号' }}</h3>
+          <p class="mt-2 text-sm text-gray-500">{{ isLogin ? '请登录您的账号以继续' : '注册一个新账号开始体验' }}</p>
         </div>
-      </template>
-    </n-card>
-  </n-modal>
+
+        <form @submit.prevent="handleSubmit" class="space-y-6">
+          <div>
+            <label for="account" class="block text-sm font-medium text-gray-700">账号</label>
+            <div class="mt-1">
+              <input
+                id="account"
+                v-model="form.userAccount"
+                type="text"
+                required
+                placeholder="请输入6-20位字母数字账号"
+                class="block w-full rounded-lg border border-gray-300 bg-white/50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition-all duration-200"
+                :disabled="loading"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">密码</label>
+            <div class="mt-1">
+              <input
+                id="password"
+                v-model="form.userPassword"
+                type="password"
+                required
+                placeholder="请输入8-20位密码"
+                class="block w-full rounded-lg border border-gray-300 bg-white/50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition-all duration-200"
+                :disabled="loading"
+              />
+            </div>
+          </div>
+
+          <div v-if="!isLogin">
+            <label for="confirmPassword" class="block text-sm font-medium text-gray-700">确认密码</label>
+            <div class="mt-1">
+              <input
+                id="confirmPassword"
+                v-model="form.confirmPassword"
+                type="password"
+                required
+                placeholder="请再次输入密码"
+                class="block w-full rounded-lg border border-gray-300 bg-white/50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition-all duration-200"
+                :disabled="loading"
+              />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              :disabled="loading || !isFormValid || (cooldown > 0 && !isLogin)"
+              class="flex w-full justify-center rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform active:scale-[0.98]"
+            >
+              <svg v-if="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {{ getSubmitButtonText() }}
+            </button>
+          </div>
+        </form>
+
+        <div class="mt-6 text-center text-sm">
+          <span class="text-gray-500">
+            {{ isLogin ? '还没有账号？' : '已有账号？' }}
+          </span>
+          <button @click="switchMode" class="font-semibold text-indigo-600 hover:text-indigo-500 ml-1 focus:outline-none">
+            {{ isLogin ? '立即注册' : '去登录' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { NModal, NCard, NForm, NFormItem, NInput, NButton, useMessage } from 'naive-ui'
-import type { FormInst, FormRules } from 'naive-ui'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
-import { useTheme } from '@/composables/useTheme'
 import type { RegisterRequest, LoginRequest } from '@/api/auth'
 
-const { themeConfig } = useTheme()
 const authStore = useAuthStore()
 const chatStore = useChatStore()
-const message = useMessage()
 
-// 表单引用
-const formRef = ref<FormInst>()
+// Simple replacement for useMessage
+const message = {
+  success: (msg: string) => {
+    console.log('Success:', msg)
+    alert(msg)
+  },
+  error: (msg: string) => {
+    console.error('Error:', msg)
+    alert(msg)
+  },
+  info: (msg: string) => console.log('Info:', msg)
+}
 
 // 状态
 const isLogin = ref(true)
@@ -129,35 +142,6 @@ const isFormValid = computed(() => {
   }
 })
 
-// 表单验证规则
-const rules: FormRules = {
-  userAccount: [
-    { required: true, message: '请输入账号' },
-    { min: 6, max: 20, message: '账号长度必须在6-20位之间' },
-    { pattern: /^[a-zA-Z0-9]{6,20}$/, message: '账号必须是6-20位字母数字' }
-  ],
-  userPassword: [
-    { required: true, message: '请输入密码' },
-    { min: 8, max: 20, message: '密码长度必须在8-20位之间' }
-  ],
-  confirmPassword: [
-    { 
-      required: true, 
-      message: '请确认密码',
-      trigger: ['blur', 'input']
-    },
-    {
-      validator: (rule, value) => {
-        if (value !== form.value.userPassword) {
-          return new Error('两次输入的密码不一致')
-        }
-        return true
-      },
-      trigger: ['blur', 'input']
-    }
-  ]
-}
-
 // 方法
 const switchMode = () => {
   isLogin.value = !isLogin.value
@@ -167,8 +151,6 @@ const switchMode = () => {
     userPassword: '',
     confirmPassword: ''
   }
-  // 重置验证
-  formRef.value?.restoreValidation()
 }
 
 // 处理模态框关闭
@@ -185,9 +167,6 @@ const handleModalClose = (visible: boolean) => {
     
     // 重置到登录模式
     isLogin.value = true
-    
-    // 重置验证状态
-    formRef.value?.restoreValidation()
     
     // 清除加载状态
     loading.value = false
@@ -218,9 +197,6 @@ const handleSubmit = async () => {
   if (loading.value || (cooldown.value > 0 && !isLogin.value)) return
   
   try {
-    // 表单验证
-    await formRef.value?.validate()
-    
     loading.value = true
     
     if (isLogin.value) {
@@ -257,7 +233,6 @@ const handleSubmit = async () => {
       
       // 注册成功后自动切换到登录模式并填充账号
       const registeredAccount = form.value.userAccount
-      const registeredPassword = form.value.userPassword
       
       isLogin.value = true
       
@@ -337,66 +312,10 @@ watch(loginModalVisible, (visible) => {
     }
     isLogin.value = true
     cooldown.value = 0
-    formRef.value?.restoreValidation()
   }
 })
 </script>
 
 <style scoped>
-.login-modal :deep(.n-card) {
-  border-radius: v-bind('themeConfig.login.radius');
-}
-
-.login-card {
-  max-width: 90vw;
-}
-
-.login-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.switch-tip {
-  text-align: center;
-  font-size: 14px;
-  color: var(--gray-600, #6b7280);
-}
-
-.switch-link {
-  color: var(--primary-500, #1677ff);
-  cursor: pointer;
-  text-decoration: none;
-  margin-left: 4px;
-}
-
-.switch-link:hover {
-  text-decoration: underline;
-}
-
-/* 输入框样式 */
-:deep(.n-input) {
-  border-radius: 8px;
-}
-
-:deep(.n-input .n-input__input-el) {
-  background-color: transparent !important;
-  padding: 8px 12px !important;
-  line-height: 1.4 !important;
-}
-
-:deep(.n-input:not(.n-input--disabled):hover .n-input__border) {
-  border-color: #d1d5db;
-}
-
-:deep(.n-input:not(.n-input--disabled).n-input--focus .n-input__border) {
-  border-color: #d1d5db;
-  box-shadow: none;
-}
-
-/* 按钮样式 */
-:deep(.n-button--primary-type) {
-  border-radius: 8px;
-  font-weight: 500;
-}
+/* Tailwind classes handle styling */
 </style>

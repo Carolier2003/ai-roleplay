@@ -1,90 +1,79 @@
 <template>
-  <div class="login-page">
-    <div class="login-container">
-      <div class="login-header">
-        <h1>AI 角色扮演</h1>
-        <p>请登录您的账户</p>
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4">
+    <div class="w-full max-w-md bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-8 transform transition-all hover:scale-[1.01]">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">AI 角色扮演</h1>
+        <p class="text-gray-500">请登录您的账户</p>
       </div>
       
-      <n-form 
-        ref="formRef" 
-        :model="form" 
-        :rules="rules"
-        @keyup.enter="handleSubmit"
-        class="login-form"
-      >
-        <n-form-item label="账号" path="userAccount">
-          <n-input 
-            v-model:value="form.userAccount" 
+      <form @submit.prevent="handleSubmit" class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">账号</label>
+          <input 
+            v-model="form.userAccount" 
+            type="text"
             placeholder="请输入6-20位字母数字账号"
-            size="large"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all bg-white/50"
             :disabled="loading"
           />
-        </n-form-item>
+          <p v-if="errors.userAccount" class="mt-1 text-xs text-red-500">{{ errors.userAccount }}</p>
+        </div>
         
-        <n-form-item label="密码" path="userPassword">
-          <n-input 
-            v-model:value="form.userPassword" 
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+          <input 
+            v-model="form.userPassword" 
             type="password"
             placeholder="请输入8-20位密码"
-            size="large"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all bg-white/50"
             :disabled="loading"
-            show-password-on="click"
           />
-        </n-form-item>
+          <p v-if="errors.userPassword" class="mt-1 text-xs text-red-500">{{ errors.userPassword }}</p>
+        </div>
         
-        <n-form-item 
-          v-if="!isLogin" 
-          label="确认密码" 
-          path="confirmPassword"
-        >
-          <n-input 
-            v-model:value="form.confirmPassword" 
+        <div v-if="!isLogin" class="animate-fade-in">
+          <label class="block text-sm font-medium text-gray-700 mb-1">确认密码</label>
+          <input 
+            v-model="form.confirmPassword" 
             type="password"
             placeholder="请再次输入密码"
-            size="large"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all bg-white/50"
             :disabled="loading"
-            show-password-on="click"
           />
-        </n-form-item>
+          <p v-if="errors.confirmPassword" class="mt-1 text-xs text-red-500">{{ errors.confirmPassword }}</p>
+        </div>
         
-        <n-button 
-          type="primary" 
-          size="large" 
-          block 
-          @click="handleSubmit"
-          :loading="loading"
-          :disabled="!isFormValid"
-          class="submit-btn"
+        <button 
+          type="submit" 
+          class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+          :disabled="loading || !isFormValid"
         >
+          <svg v-if="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
           {{ isLogin ? '登录' : '注册' }}
-        </n-button>
+        </button>
         
-        <div class="switch-tip">
+        <div class="text-center text-sm text-gray-500 mt-6">
           {{ isLogin ? '还没有账号？' : '已有账号？' }}
-          <a @click="switchMode" class="switch-link">
+          <a @click="switchMode" class="text-indigo-600 hover:text-indigo-800 font-medium cursor-pointer hover:underline transition-colors">
             {{ isLogin ? '立即注册' : '去登录' }}
           </a>
         </div>
-      </n-form>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { NForm, NFormItem, NInput, NButton, useMessage } from 'naive-ui'
-import type { FormInst, FormRules } from 'naive-ui'
 import { useAuthStore } from '@/stores/auth'
 import type { LoginRequest, RegisterRequest } from '@/api/auth'
 
 const router = useRouter()
-const message = useMessage()
 const authStore = useAuthStore()
-
-// 表单引用
-const formRef = ref<FormInst>()
 
 // 状态
 const isLogin = ref(true)
@@ -97,41 +86,60 @@ const form = ref({
   confirmPassword: ''
 })
 
-// 表单验证规则
-const rules: FormRules = {
-  userAccount: [
-    { required: true, message: '请输入账号', trigger: 'blur' },
-    { min: 6, max: 20, message: '账号长度为6-20位', trigger: 'blur' },
-    { pattern: /^[a-zA-Z0-9]+$/, message: '账号只能包含字母和数字', trigger: 'blur' }
-  ],
-  userPassword: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 8, max: 20, message: '密码长度为8-20位', trigger: 'blur' }
-  ],
-  confirmPassword: [
-    { 
-      required: true, 
-      message: '请确认密码', 
-      trigger: 'blur',
-      validator: (rule, value) => {
-        if (!isLogin.value && value !== form.value.userPassword) {
-          return new Error('两次输入的密码不一致')
-        }
-        return true
-      }
+// 错误信息
+const errors = reactive({
+  userAccount: '',
+  userPassword: '',
+  confirmPassword: ''
+})
+
+// 验证逻辑
+const validate = () => {
+  let isValid = true
+  errors.userAccount = ''
+  errors.userPassword = ''
+  errors.confirmPassword = ''
+
+  const { userAccount, userPassword, confirmPassword } = form.value
+
+  if (!userAccount) {
+    errors.userAccount = '请输入账号'
+    isValid = false
+  } else if (userAccount.length < 6 || userAccount.length > 20) {
+    errors.userAccount = '账号长度为6-20位'
+    isValid = false
+  } else if (!/^[a-zA-Z0-9]+$/.test(userAccount)) {
+    errors.userAccount = '账号只能包含字母和数字'
+    isValid = false
+  }
+
+  if (!userPassword) {
+    errors.userPassword = '请输入密码'
+    isValid = false
+  } else if (userPassword.length < 8 || userPassword.length > 20) {
+    errors.userPassword = '密码长度为8-20位'
+    isValid = false
+  }
+
+  if (!isLogin.value) {
+    if (!confirmPassword) {
+      errors.confirmPassword = '请确认密码'
+      isValid = false
+    } else if (confirmPassword !== userPassword) {
+      errors.confirmPassword = '两次输入的密码不一致'
+      isValid = false
     }
-  ]
+  }
+
+  return isValid
 }
 
 // 计算属性
 const isFormValid = computed(() => {
+  // 简单的预验证，用于禁用按钮
   const { userAccount, userPassword, confirmPassword } = form.value
-  
   if (!userAccount || !userPassword) return false
-  if (userAccount.length < 6 || userAccount.length > 20) return false
-  if (userPassword.length < 8 || userPassword.length > 20) return false
-  if (!isLogin.value && (!confirmPassword || confirmPassword !== userPassword)) return false
-  
+  if (!isLogin.value && !confirmPassword) return false
   return true
 })
 
@@ -139,14 +147,16 @@ const isFormValid = computed(() => {
 const switchMode = () => {
   isLogin.value = !isLogin.value
   form.value.confirmPassword = ''
+  // 清除错误
+  errors.userAccount = ''
+  errors.userPassword = ''
+  errors.confirmPassword = ''
 }
 
 const handleSubmit = async () => {
-  if (!formRef.value || !isFormValid.value) return
+  if (!validate()) return
   
   try {
-    await formRef.value.validate()
-    
     if (isLogin.value) {
       // 登录
       const loginData: LoginRequest = {
@@ -155,7 +165,8 @@ const handleSubmit = async () => {
       }
       
       await authStore.login(loginData)
-      message.success('登录成功')
+      // 简单的 alert 替代 message
+      // alert('登录成功')
       
       // 跳转到聊天页面
       router.push('/chat/yuanbao')
@@ -168,7 +179,7 @@ const handleSubmit = async () => {
       }
       
       await authStore.register(registerData)
-      message.success('注册成功，请登录')
+      alert('注册成功，请登录')
       
       // 切换到登录模式
       isLogin.value = true
@@ -176,73 +187,24 @@ const handleSubmit = async () => {
       form.value.confirmPassword = ''
     }
   } catch (error: any) {
-    message.error(error.message || (isLogin.value ? '登录失败' : '注册失败'))
+    alert(error.message || (isLogin.value ? '登录失败' : '注册失败'))
   }
 }
 </script>
 
 <style scoped>
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
 }
 
-.login-container {
-  width: 100%;
-  max-width: 400px;
-  background: white;
-  border-radius: 16px;
-  padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-.login-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-.login-header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 8px;
-}
-
-.login-header p {
-  color: #6b7280;
-  font-size: 16px;
-}
-
-.login-form {
-  margin-bottom: 0;
-}
-
-.submit-btn {
-  margin-top: 24px;
-  height: 48px;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.switch-tip {
-  text-align: center;
-  margin-top: 24px;
-  color: #6b7280;
-  font-size: 14px;
-}
-
-.switch-link {
-  color: #1677ff;
-  cursor: pointer;
-  text-decoration: none;
-  margin-left: 4px;
-}
-
-.switch-link:hover {
-  text-decoration: underline;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

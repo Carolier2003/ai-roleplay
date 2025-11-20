@@ -3,44 +3,58 @@
   展示如何在组件中使用统一的错误处理机制
 -->
 <template>
-  <div class="error-handling-example">
-    <h3>错误处理示例</h3>
+  <div class="p-6 border border-gray-200 rounded-lg my-5 bg-white shadow-sm">
+    <h3 class="text-lg font-bold text-gray-900 mb-4">错误处理示例</h3>
     
-    <div class="button-group">
-      <n-button @click="testUserNotFound" type="primary">
+    <div class="flex flex-wrap gap-3 mb-5">
+      <button 
+        @click="testUserNotFound" 
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-sm"
+      >
         测试用户不存在错误
-      </n-button>
+      </button>
       
-      <n-button @click="testNetworkError" type="warning">
+      <button 
+        @click="testNetworkError" 
+        class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors font-medium text-sm"
+      >
         测试网络错误
-      </n-button>
+      </button>
       
-      <n-button @click="testAuthError" type="error">
+      <button 
+        @click="testAuthError" 
+        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors font-medium text-sm"
+      >
         测试认证错误
-      </n-button>
+      </button>
       
-      <n-button @click="testBusinessError" type="info">
+      <button 
+        @click="testBusinessError" 
+        class="px-4 py-2 bg-cyan-500 text-white rounded-md hover:bg-cyan-600 transition-colors font-medium text-sm"
+      >
         测试业务错误
-      </n-button>
+      </button>
     </div>
     
-    <div v-if="errorHandler.loading.value" class="loading">
-      <n-spin size="small" />
-      处理中...
+    <div v-if="errorHandler.loading.value" class="flex items-center gap-2 my-5 text-gray-600">
+      <div class="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
+      <span class="text-sm">处理中...</span>
     </div>
     
-    <div v-if="errorHandler.error.value" class="error-info">
-      <h4>当前错误信息：</h4>
-      <pre>{{ JSON.stringify(errorHandler.error.value, null, 2) }}</pre>
-      <n-button @click="errorHandler.clearError" size="small">
+    <div v-if="errorHandler.error.value" class="my-5 p-4 bg-gray-50 rounded-md border border-gray-200">
+      <h4 class="text-red-600 font-medium mb-2 m-0">当前错误信息：</h4>
+      <pre class="bg-white p-3 rounded border border-gray-200 overflow-x-auto text-xs my-2 font-mono">{{ JSON.stringify(errorHandler.error.value, null, 2) }}</pre>
+      <button 
+        @click="errorHandler.clearError" 
+        class="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 text-xs transition-colors"
+      >
         清除错误
-      </n-button>
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { NButton, NSpin } from 'naive-ui'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
 const errorHandler = useErrorHandler()
@@ -133,48 +147,3 @@ const testBusinessError = async () => {
   )
 }
 </script>
-
-<style scoped>
-.error-handling-example {
-  padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  margin: 20px 0;
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin: 20px 0;
-  flex-wrap: wrap;
-}
-
-.loading {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 20px 0;
-  color: #666;
-}
-
-.error-info {
-  margin: 20px 0;
-  padding: 15px;
-  background: #f5f5f5;
-  border-radius: 4px;
-}
-
-.error-info h4 {
-  margin: 0 0 10px 0;
-  color: #d32f2f;
-}
-
-.error-info pre {
-  background: white;
-  padding: 10px;
-  border-radius: 4px;
-  overflow-x: auto;
-  font-size: 12px;
-  margin: 10px 0;
-}
-</style>
