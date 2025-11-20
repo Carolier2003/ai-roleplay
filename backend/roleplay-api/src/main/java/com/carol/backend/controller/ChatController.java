@@ -291,7 +291,7 @@ public class ChatController {
                     .content()
                     .map(chunk -> {
                         // 收集文本块用于后续保存
-                        completeResponse.append(chunk);
+                        getCompleteResponse(completeResponse).append(chunk);
                         return "data:" + chunk + "\n\n";
                     })
                     .concatWith(
@@ -315,6 +315,10 @@ public class ChatController {
                         );
                     });
         }
+    }
+
+    private static StringBuilder getCompleteResponse(StringBuilder completeResponse) {
+        return completeResponse;
     }
 
     /**

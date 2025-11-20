@@ -128,8 +128,8 @@ const characterAvatar = computed(() => {
 marked.setOptions({
   breaks: true,        // 支持换行符转换为 <br>
   gfm: true,          // 启用 GitHub Flavored Markdown
-  sanitize: false,    // 不自动清理HTML（我们会手动处理）
-  smartypants: true   // 启用智能标点符号
+  breaks: true,        // 支持换行符转换为 <br>
+  gfm: true,          // 启用 GitHub Flavored Markdown
 })
 
 // Markdown预处理函数
@@ -166,6 +166,33 @@ const preprocessMarkdown = (content: string): string => {
   // 策略2: 将已有的单换行转为双换行(如果AI确实输出了换行的话)
   processed = processed.replace(/(\S)\n(?!\n)(?![\->*#])/g, '$1\n\n')
   
+  // ⚠️ 核心修复3: 增强的列表和引用处理 (针对用户反馈的特定Case)
+  
+  // 1. 处理 "Text -Item" (有空格前缀, 但可能缺换行或缺后缀空格)
+  // 排除连字符 (Word-Word), 要求破折号前必须有空格
+  processed = processed.replace(/([^-\n])\s+-\s*([\u4e00-\u9fa5A-Za-z])/g, '$1\n- $2')
+  
+  // 2. 处理 "Text > Quote" (引用缺少换行)
+  // 排除数学比较 (10 > 5) 或简单的变量比较 (a > b), 只针对可能是引用/标题的情况
+  // ⚠️ 核心修复6: 强制标题前换行 (针对 "材料：###🔧")
+  // 必须确保 ### 后面有空格，并且前面有换行
+  processed = processed.replace(/([^\n])\s*(#{1,6})(?=[^#])/g, '$1\n\n$2 ')
+  
+  // ⚠️ 核心修复7: 修复连字符列表 (针对 "弯刀-** 星怒" 或 "弯刀- ** 附魔剑")
+  processed = processed.replace(/([^\n])\s*-\s*(?=[**\u4e00-\u9fa5])/g, '$1\n- ')
+  
+  // ⚠️ 核心修复8: 修复引用 (针对 "剑！）>📌")
+  processed = processed.replace(/([^\n])\s*>\s*(?=[📌\u4e00-\u9fa5])/g, '$1\n\n> ')
+  
+  // ⚠️ 核心修复4: 修复冒号后的列表项 (针对 "合成：-泰拉刃" 或 "合成： -泰拉刃")
+  processed = processed.replace(/([：:])\s*-\s*([\u4e00-\u9fa5A-Za-z])/g, '$1\n- $2')
+  
+  // ⚠️ 核心修复5 (优化): 修复紧凑的加粗文本，同时处理内部空格 (针对 "** 天顶剑 **" 和 "14%**")
+  // 统一策略：找到成对的**, 去除内部首尾空格, 并在外部添加空格
+  // 注意：使用非贪婪匹配 (.*?) 确保不跨越多个加粗块
+  // 排除跨行匹配，因为Markdown加粗通常不跨行
+  processed = processed.replace(/\*\*\s*([^\n]*?)\s*\*\*/g, ' **$1** ')
+  
   return processed
 }
 
@@ -195,21 +222,9 @@ const safeContent = computed(() => {
     
     let htmlContent: string
     
-    if (isStreaming) {
-      // 流式输出时: 使用简化渲染,减少计算开销
-      htmlContent = content
-        .replace(/\n/g, '<br>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/`(.*?)`/g, '<code>$1</code>')
-        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-    } else {
-      // 非流式时: 使用完整的Markdown渲染
-      console.log(`[ChatMessage] 执行marked.parse()完整渲染 - ID: ${props.message.id}`)
-      htmlContent = marked.parse(content) as string
-    }
+    // 始终使用完整的Markdown渲染
+    console.log(`[ChatMessage] 执行marked.parse()完整渲染 - ID: ${props.message.id}`)
+    htmlContent = marked.parse(content) as string
     
     // 基本的XSS防护
     const result = htmlContent
