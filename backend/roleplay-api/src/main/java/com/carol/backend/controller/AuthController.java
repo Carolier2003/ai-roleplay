@@ -5,7 +5,7 @@ import com.carol.backend.dto.LoginRequest;
 import com.carol.backend.dto.LoginResponse;
 import com.carol.backend.dto.RegisterRequest;
 import com.carol.backend.dto.UserResponse;
-import com.carol.backend.service.AuthService;
+import com.carol.backend.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 @RequiredArgsConstructor
 public class AuthController {
     
-    private final AuthService authService;
+    private final IAuthService authService;
     
     /**
      * 用户注册

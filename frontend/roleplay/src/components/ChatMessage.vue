@@ -22,11 +22,11 @@
         </div>
 
           <div 
-            class="relative px-4 py-3 rounded-2xl shadow-sm border text-base leading-relaxed break-words overflow-hidden transition-all duration-300"
+            class="relative rounded-2xl shadow-sm border text-base leading-relaxed break-words transition-all duration-300"
             :class="[
               message.isUser 
-                ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-transparent rounded-br-none shadow-md shadow-indigo-500/20' 
-                : `backdrop-blur-sm text-gray-800 border-white/50 rounded-bl-none shadow-sm hover:shadow-md ${themeClasses}`,
+                ? (hasAudioUrl ? 'bg-transparent border-none shadow-none p-0' : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-transparent rounded-br-none shadow-md shadow-indigo-500/20 px-4 py-3 overflow-hidden')
+                : (hasAudioUrl ? 'bg-transparent border-none shadow-none p-0' : `backdrop-blur-sm text-gray-800 border-white/50 rounded-bl-none shadow-sm hover:shadow-md px-4 py-3 ${themeClasses} overflow-hidden`),
               message.streaming ? 'border-indigo-300 ring-2 ring-indigo-100' : ''
             ]"
           >
@@ -37,7 +37,7 @@
             :is-playing="isPlaying"
             :is-user="message.isUser"
             @click="playVoiceMessage"
-            class="mb-2"
+            class="mb-2 m-1"
           />
           
           <!-- 文字消息内容 -->
@@ -70,12 +70,31 @@ const chatStore = useChatStore()
 const isPlaying = ref(false)
 
 // 语音消息相关计算属性
-const voiceDuration = computed(() => {
+const voiceDuration = ref(0)
+
+watchEffect(() => {
   if (props.message.voiceDuration) {
-    return props.message.voiceDuration
+    voiceDuration.value = props.message.voiceDuration
+  } else {
+    const match = props.message.content.match(/🎵\s*(\d+)"/)
+    if (match) {
+      voiceDuration.value = parseInt(match[1])
+    } else if (props.message.audioUrl) {
+      // 如果没有时长信息，尝试加载音频获取时长
+      const audio = new Audio(props.message.audioUrl)
+      audio.onloadedmetadata = () => {
+        if (audio.duration && isFinite(audio.duration)) {
+          voiceDuration.value = Math.round(audio.duration)
+          // 更新 store 中的时长信息，避免重复加载
+          chatStore.updateMessage(props.message.id, {
+            voiceDuration: voiceDuration.value
+          })
+        }
+      }
+    } else {
+      voiceDuration.value = 3 // 默认值
+    }
   }
-  const match = props.message.content.match(/🎵\s*(\d+)"/)
-  return match ? parseInt(match[1]) : 3
 })
 
 // 角色信息
@@ -271,7 +290,7 @@ onUnmounted(() => {
   }
 })
 
-const hasAudioUrl = computed(() => !!(props.message.audioUrl && !props.message.isUser))
+const hasAudioUrl = computed(() => !!props.message.audioUrl)
 
 const shouldShowTextContent = computed(() => {
   if (props.message.isUser) return true

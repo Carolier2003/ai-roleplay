@@ -3,8 +3,8 @@ package com.carol.backend.controller;
 import com.carol.backend.dto.ApiResponse;
 import com.carol.backend.dto.TtsSynthesisRequest;
 import com.carol.backend.dto.TtsSynthesisResponse;
-import com.carol.backend.service.TtsSynthesisService;
-import com.carol.backend.service.StreamingTtsSynthesisService;
+import com.carol.backend.service.ITtsSynthesisService;
+import com.carol.backend.service.IStreamingTtsSynthesisService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +29,8 @@ import java.util.HashMap;
 @Validated
 public class TtsSynthesisController {
     
-    private final TtsSynthesisService ttsSynthesisService;
-    private final StreamingTtsSynthesisService streamingTtsService;
+    private final ITtsSynthesisService ttsSynthesisService;
+    private final IStreamingTtsSynthesisService streamingTtsService;
     
     /**
      * 同步语音合成 - 返回音频URL

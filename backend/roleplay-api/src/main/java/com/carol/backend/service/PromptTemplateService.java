@@ -18,9 +18,11 @@ import java.util.stream.Collectors;
 
 /**
  * Prompt模板服务
- * 参考spring-ai-alibaba-prompt-example/RoleController.java实现
  * 
- * @author carol
+ * @author jianjl
+ * @version 1.0
+ * @description 参考spring-ai-alibaba-prompt-example/RoleController.java实现，负责生成角色系统提示词
+ * @date 2025-01-15
  */
 @Slf4j
 @Service

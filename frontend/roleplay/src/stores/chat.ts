@@ -55,13 +55,14 @@ export const useChatStore = defineStore('chat', () => {
   const enableRag = ref<boolean>(true)
 
   // ✅优化 自动滚动 - 滚动到底部的方法
-  const scrollToBottom = (smooth = true) => {
+  const scrollToBottom = (smooth = true, force = false) => {
     nextTick(() => {
       const el = document.querySelector('.messages-container') as HTMLElement
       if (!el) return
 
-      // 如果用户滚到离底部超过 50px，就暂停自动滚动
-      if (el.scrollHeight - el.scrollTop - el.clientHeight > 50) return
+      // 如果不是强制滚动，且用户滚到离底部超过 150px，就暂停自动滚动
+      // 阈值从 50px 增加到 150px，避免平滑滚动时的计算误差导致误判
+      if (!force && el.scrollHeight - el.scrollTop - el.clientHeight > 150) return
 
       el.scrollTo({
         top: el.scrollHeight,
@@ -80,7 +81,9 @@ export const useChatStore = defineStore('chat', () => {
     // 强制触发响应式更新
     nextTick(() => {
       // 触发DOM更新
-      scrollToBottom() // 每段都滚动
+      // ❌ 禁用平滑滚动：流式输出时使用 instant 滚动，防止平滑滚动的动画延迟导致 scrollTop 计算滞后，
+      // 从而误触发"用户向上滚动"的检测逻辑，导致自动滚动停止。
+      scrollToBottom(false, false)
     })
   }
 
@@ -147,6 +150,9 @@ export const useChatStore = defineStore('chat', () => {
     if (newMessage.streaming) {
       streamingId.value = newMessage.id
     }
+
+    // 新消息加入时，强制滚动到底部
+    scrollToBottom(true, true)
 
     // 🔍 调试日志：验证消息已添加到列表
     console.log('[ChatStore] 消息已添加到列表，当前总数:', messageList.value.length)

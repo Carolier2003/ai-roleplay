@@ -4,7 +4,7 @@ import com.carol.backend.entity.Conversation;
 import com.carol.backend.entity.ConversationMessage;
 import com.carol.backend.mapper.ConversationMapper;
 import com.carol.backend.mapper.ConversationMessageMapper;
-import com.carol.backend.service.ConversationSyncService;
+import com.carol.backend.service.IConversationSyncService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +37,7 @@ import java.util.Map;
 @Tag(name = "对话数据仓库", description = "对话同步、导出、分析相关接口")
 public class ConversationController {
     
-    private final ConversationSyncService syncService;
+    private final IConversationSyncService syncService;
     private final ConversationMapper conversationMapper;
     private final ConversationMessageMapper conversationMessageMapper;
     

@@ -32,6 +32,8 @@ export interface SendMessageRequest {
   enableTts?: boolean  // ✅ 可选，是否启用语音合成
   enableRag?: boolean  // ✅ 可选，是否启用RAG知识检索
   languageType?: string // ✅ 可选，语言类型
+  audioUrl?: string    // ✅ 可选，音频URL
+  voiceDuration?: number // ✅ 可选，语音时长
   // ✅ 不需要 userId，后端从 JWT token 中获取
 }
 

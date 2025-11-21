@@ -1,7 +1,7 @@
 package com.carol.backend.controller;
 
 import com.carol.backend.entity.CharacterKnowledge;
-import com.carol.backend.service.CharacterKnowledgeRAGService;
+import com.carol.backend.service.ICharacterKnowledgeRAGService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class KnowledgeController {
 
     @Autowired
-    private CharacterKnowledgeRAGService ragService;
+    private ICharacterKnowledgeRAGService ragService;
 
     /**
      * 批量导入知识

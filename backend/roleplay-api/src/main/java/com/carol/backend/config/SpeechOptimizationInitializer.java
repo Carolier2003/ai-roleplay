@@ -1,7 +1,7 @@
 package com.carol.backend.config;
 
-import com.carol.backend.service.SpeechAlertingService;
-import com.carol.backend.service.SpeechResourceManager;
+import com.carol.backend.service.ISpeechAlertingService;
+import com.carol.backend.service.ISpeechResourceManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SpeechOptimizationInitializer implements ApplicationRunner {
     
-    private final SpeechResourceManager resourceManager;
-    private final SpeechAlertingService alertingService;
+    private final ISpeechResourceManager resourceManager;
+    private final ISpeechAlertingService alertingService;
     
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -52,19 +52,19 @@ public class SpeechOptimizationInitializer implements ApplicationRunner {
         alertingService.addAlertListener(record -> {
             switch (record.getSeverity()) {
                 case CRITICAL:
-                    log.error("🚨 [告警-严重] {}: {}", record.getAlertType(), record.getMessage());
+                    log.error("[registerDefaultAlertListeners] 🚨 [告警-严重] {}: {}", record.getAlertType(), record.getMessage());
                     break;
                 case WARNING:
-                    log.warn("⚠️ [告警-警告] {}: {}", record.getAlertType(), record.getMessage());
+                    log.warn("[registerDefaultAlertListeners] ⚠️ [告警-警告] {}: {}", record.getAlertType(), record.getMessage());
                     break;
                 case INFO:
-                    log.info("ℹ️ [告警-信息] {}: {}", record.getAlertType(), record.getMessage());
+                    log.info("[registerDefaultAlertListeners] ℹ️ [告警-信息] {}: {}", record.getAlertType(), record.getMessage());
                     break;
             }
             
             // 如果有详细信息，也记录下来
             if (record.getDetails() != null && !record.getDetails().isEmpty()) {
-                log.info("📋 [告警详情] {}", record.getDetails());
+                log.info("[registerDefaultAlertListeners] 📋 [告警详情] {}", record.getDetails());
             }
         });
         

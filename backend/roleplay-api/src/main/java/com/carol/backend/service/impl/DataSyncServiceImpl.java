@@ -1,8 +1,10 @@
 package com.carol.backend.service.impl;
 
+import com.carol.backend.enums.ErrorCode;
+import com.carol.backend.exception.BusinessException;
 import com.carol.backend.service.IDataSyncService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,14 +16,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 数据同步服务实现类
- * 负责将Redis中的临时数据同步到MySQL持久化存储
+ * 
+ * @author jianjl
+ * @version 1.0
+ * @description 负责将Redis中的临时数据同步到MySQL持久化存储
+ * @date 2025-01-15
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class DataSyncServiceImpl implements IDataSyncService {
     
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     
     // Redis键名常量
     private static final String CHAT_MESSAGES_KEY_PREFIX = "chat:messages:user:";
@@ -77,8 +83,8 @@ public class DataSyncServiceImpl implements IDataSyncService {
             return syncedCount.get();
             
         } catch (Exception e) {
-            log.error("[syncChatMessagesToMysql] 同步聊天消息异常: {}", e.getMessage(), e);
-            throw new RuntimeException("同步聊天消息失败", e);
+            log.error("[syncChatMessagesToMysql] 同步聊天消息异常: error={}", e.getMessage(), e);
+            throw BusinessException.of(ErrorCode.SYSTEM_ERROR, "同步聊天消息失败", e);
         }
     }
     
@@ -127,8 +133,8 @@ public class DataSyncServiceImpl implements IDataSyncService {
             return syncedCount.get();
             
         } catch (Exception e) {
-            log.error("[syncConversationsToMysql] 同步会话数据异常: {}", e.getMessage(), e);
-            throw new RuntimeException("同步会话数据失败", e);
+            log.error("[syncConversationsToMysql] 同步会话数据异常: error={}", e.getMessage(), e);
+            throw BusinessException.of(ErrorCode.SYSTEM_ERROR, "同步会话数据失败", e);
         }
     }
     
@@ -175,8 +181,8 @@ public class DataSyncServiceImpl implements IDataSyncService {
             return syncedCount.get();
             
         } catch (Exception e) {
-            log.error("[syncUserActivityToMysql] 同步用户活动数据异常: {}", e.getMessage(), e);
-            throw new RuntimeException("同步用户活动数据失败", e);
+            log.error("[syncUserActivityToMysql] 同步用户活动数据异常: error={}", e.getMessage(), e);
+            throw BusinessException.of(ErrorCode.SYSTEM_ERROR, "同步用户活动数据失败", e);
         }
     }
     

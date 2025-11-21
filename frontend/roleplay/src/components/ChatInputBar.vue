@@ -978,7 +978,9 @@ const processVoiceMessage = async (audioBlob: Blob) => {
       message: recognizedText,  // 发送实际的文字内容给AI
       enableTts: true,  // 语音消息模式始终启用TTS
       enableRag: chatStore.enableRag,  // ✅ 传递RAG开关状态
-      languageType: "Chinese"
+      languageType: "Chinese",
+      audioUrl: response.audioUrl,
+      voiceDuration: response.audioDuration
     }
     
     console.log('[ChatInputBar] 发送语音消息到后端:', requestData)
@@ -1039,78 +1041,69 @@ const processVoiceMessage = async (audioBlob: Blob) => {
               isVoiceMessage: true
             })
 
-            // 下载并播放音频
-            fetch(chunk.audioUrl)
-              .then(response => response.blob())
-              .then(audioBlob => {
-                console.log('[ChatInputBar] 语音消息TTS音频下载成功，现在同时显示文字和播放语音')
-
-                // 🎯 关键改进：TTS下载完成后，同时显示完整文字内容
-                if (pendingTextContent.value) {
-                  console.log('[ChatInputBar] 语音消息：显示暂存的完整文字内容:', {
-                    messageId: aiMessage.id,
-                    textLength: pendingTextContent.value.length,
-                    textPreview: pendingTextContent.value.substring(0, 50) + '...'
-                  })
-
-                  // 更新消息：显示完整文字内容，并标记为语音消息
-                  chatStore.updateMessage(aiMessage.id, {
-                    content: pendingTextContent.value,
-                    isVoiceMessage: true,
-                    streaming: false  // 确保停止流式状态，光标位于文字末尾
-                  })
-
-                  // 清空暂存的文字内容
-                  pendingTextContent.value = ''
-                }
-
-                // 🎯 关键改进：播放新音频前先停止当前正在播放的音频
-                stopCurrentAudio()
-                
-                const audioUrl = URL.createObjectURL(audioBlob)
-                const audio = new Audio(audioUrl)
-                audio.volume = 1.0
-                
-                // 设置为当前播放的音频
-                currentPlayingAudio.value = audio
-
-                // 监听音频元数据加载，获取时长
-                audio.addEventListener('loadedmetadata', () => {
-                  const duration = Math.round(audio.duration) || 1
-                  console.log('[ChatInputBar] AI语音消息时长:', duration, '秒')
-                  
-                  // 更新语音时长信息
-                  chatStore.updateMessage(aiMessage.id, {
-                    voiceDuration: duration
-                  })
-                })
-                
-                // 监听音频播放结束，清理状态
-                audio.addEventListener('ended', () => {
-                  console.log('[ChatInputBar] 语音消息TTS音频播放完成')
-                  if (currentPlayingAudio.value === audio) {
-                    currentPlayingAudio.value = null
-                  }
-                  URL.revokeObjectURL(audioUrl)
-                })
-
-                // 监听音频播放错误，清理状态
-                audio.addEventListener('error', () => {
-                  console.error('[ChatInputBar] 语音消息TTS音频播放出错')
-                  if (currentPlayingAudio.value === audio) {
-                    currentPlayingAudio.value = null
-                  }
-                  URL.revokeObjectURL(audioUrl)
-                })
-
-                return audio.play().then(() => {
-                  console.log('[ChatInputBar] 语音消息TTS音频开始播放')
-                })
+            // 直接使用URL播放，避免CORS问题导致fetch失败
+            // 🎯 关键改进：TTS下载完成后，同时显示完整文字内容
+            if (pendingTextContent.value) {
+              console.log('[ChatInputBar] 语音消息：显示暂存的完整文字内容:', {
+                messageId: aiMessage.id,
+                textLength: pendingTextContent.value.length,
+                textPreview: pendingTextContent.value.substring(0, 50) + '...'
               })
-              .catch(error => {
-                console.error('[ChatInputBar] 语音消息TTS音频播放失败:', error)
-                message.warning('语音播放失败')
+
+              // 更新消息：显示完整文字内容，并标记为语音消息
+              chatStore.updateMessage(aiMessage.id, {
+                content: pendingTextContent.value,
+                isVoiceMessage: true,
+                streaming: false  // 确保停止流式状态，光标位于文字末尾
               })
+
+              // 清空暂存的文字内容
+              pendingTextContent.value = ''
+            }
+
+            // 🎯 关键改进：播放新音频前先停止当前正在播放的音频
+            stopCurrentAudio()
+            
+            const audio = new Audio(chunk.audioUrl)
+            audio.volume = 1.0
+            
+            // 设置为当前播放的音频
+            currentPlayingAudio.value = audio
+
+            // 监听音频元数据加载，获取时长
+            audio.addEventListener('loadedmetadata', () => {
+              const duration = Math.round(audio.duration) || 1
+              console.log('[ChatInputBar] AI语音消息时长:', duration, '秒')
+              
+              // 更新语音时长信息
+              chatStore.updateMessage(aiMessage.id, {
+                voiceDuration: duration
+              })
+            })
+            
+            // 监听音频播放结束，清理状态
+            audio.addEventListener('ended', () => {
+              console.log('[ChatInputBar] 语音消息TTS音频播放完成')
+              if (currentPlayingAudio.value === audio) {
+                currentPlayingAudio.value = null
+              }
+            })
+
+            // 监听音频播放错误，清理状态
+            audio.addEventListener('error', (e) => {
+              console.error('[ChatInputBar] 语音消息TTS音频播放出错:', e)
+              if (currentPlayingAudio.value === audio) {
+                currentPlayingAudio.value = null
+              }
+              message.warning('语音播放失败')
+            })
+
+            audio.play().then(() => {
+              console.log('[ChatInputBar] 语音消息TTS音频开始播放')
+            }).catch(error => {
+              console.error('[ChatInputBar] 语音消息TTS音频播放失败:', error)
+              message.warning('语音播放失败')
+            })
           }
         } else if (chunk.type === 'end') {
           console.log('[ChatInputBar] 语音消息流式响应结束')

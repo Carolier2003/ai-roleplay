@@ -2,7 +2,7 @@ package com.carol.backend.controller;
 
 import com.carol.backend.entity.Character;
 import com.carol.backend.service.CharacterService;
-import com.carol.backend.service.PromptTemplateService;
+import com.carol.backend.service.IPromptTemplateService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,11 @@ import java.util.Map;
 public class CharacterController {
 
     private final CharacterService characterService;
-    private final PromptTemplateService promptTemplateService;
+    private final IPromptTemplateService promptTemplateService;
 
     @Autowired
     public CharacterController(CharacterService characterService, 
-                              PromptTemplateService promptTemplateService) {
+                              IPromptTemplateService promptTemplateService) {
         this.characterService = characterService;
         this.promptTemplateService = promptTemplateService;
     }

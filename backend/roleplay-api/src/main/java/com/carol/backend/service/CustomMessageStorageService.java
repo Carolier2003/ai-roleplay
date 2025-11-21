@@ -3,12 +3,13 @@ package com.carol.backend.service;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.carol.backend.service.ICustomMessageStorageService;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -19,40 +20,34 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 自定义消息存储服务
- * 在Redis中保存消息内容和时间戳信息
  * 
- * @author carol
+ * @author jianjl
+ * @version 1.0
+ * @description 在Redis中保存消息内容和时间戳信息
+ * @date 2025-01-15
  */
 @Slf4j
 @Service
-public class CustomMessageStorageService {
+@RequiredArgsConstructor
+public class CustomMessageStorageService implements ICustomMessageStorageService {
     
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
-    
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
     
     private static final String MESSAGE_KEY_PREFIX = "chat:messages:";
     private static final int MESSAGE_TTL_DAYS = 30; // 消息保存30天
     
-    /**
-     * 保存消息到Redis
-     */
+    @Override
     public void saveMessage(String conversationId, Message message, boolean isUser) {
         saveMessage(conversationId, message, isUser, null);
     }
     
-    /**
-     * 更新消息的audioUrl和语音时长
-     */
+    @Override
     public void updateMessageAudioUrl(String conversationId, String messageContent, String audioUrl) {
         updateMessageAudioInfo(conversationId, messageContent, audioUrl, null);
     }
     
-    /**
-     * 更新消息的audioUrl和语音时长
-     */
+    @Override
     public void updateMessageAudioInfo(String conversationId, String messageContent, String audioUrl, Integer voiceDuration) {
         try {
             String messageKey = MESSAGE_KEY_PREFIX + conversationId;
@@ -90,10 +85,7 @@ public class CustomMessageStorageService {
         }
     }
     
-    /**
-     * 更新用户消息的语音时长
-     * 专门用于前端录音完成后更新用户消息的语音时长
-     */
+    @Override
     public boolean updateUserMessageVoiceDuration(String conversationId, String messageContent, Integer voiceDuration) {
         try {
             String messageKey = MESSAGE_KEY_PREFIX + conversationId;
@@ -131,16 +123,12 @@ public class CustomMessageStorageService {
         }
     }
     
-    /**
-     * 保存消息到Redis（包含audioUrl）
-     */
+    @Override
     public void saveMessage(String conversationId, Message message, boolean isUser, String audioUrl) {
         saveMessage(conversationId, message, isUser, audioUrl, null);
     }
     
-    /**
-     * 保存消息到Redis（包含audioUrl和语音时长）
-     */
+    @Override
     public void saveMessage(String conversationId, Message message, boolean isUser, String audioUrl, Integer voiceDuration) {
         try {
             String messageKey = MESSAGE_KEY_PREFIX + conversationId;
@@ -164,18 +152,16 @@ public class CustomMessageStorageService {
             // 设置过期时间
             redisTemplate.expire(messageKey, MESSAGE_TTL_DAYS, TimeUnit.DAYS);
             
-            log.info("[CustomMessageStorage] 保存消息: conversationId={}, isUser={}, timestamp={}", 
+            log.info("[saveMessage] 消息保存成功: conversationId={}, isUser={}, timestamp={}", 
                     conversationId, isUser, storedMessage.getTimestamp());
             
         } catch (JsonProcessingException e) {
-            log.error("[CustomMessageStorage] 序列化消息失败: conversationId={}, error={}", 
+            log.error("[saveMessage] 序列化消息失败: conversationId={}, error={}", 
                     conversationId, e.getMessage(), e);
         }
     }
     
-    /**
-     * 从Redis获取消息历史
-     */
+    @Override
     public List<StoredMessage> getMessages(String conversationId) {
         try {
             String messageKey = MESSAGE_KEY_PREFIX + conversationId;
@@ -188,32 +174,32 @@ public class CustomMessageStorageService {
                         StoredMessage message = objectMapper.readValue(messageJson, StoredMessage.class);
                         messages.add(message);
                     } catch (JsonProcessingException e) {
-                        log.warn("[CustomMessageStorage] 反序列化消息失败: {}", e.getMessage());
+                        log.warn("[getMessages] 反序列化消息失败: error={}", e.getMessage());
                     }
                 }
             }
             
-            log.info("[CustomMessageStorage] 获取消息历史: conversationId={}, count={}", 
+            log.info("[getMessages] 获取消息历史成功: conversationId={}, count={}", 
                     conversationId, messages.size());
             return messages;
             
         } catch (Exception e) {
-            log.error("[CustomMessageStorage] 获取消息历史失败: conversationId={}, error={}", 
+            log.error("[getMessages] 获取消息历史失败: conversationId={}, error={}", 
                     conversationId, e.getMessage(), e);
             return new ArrayList<>();
         }
     }
     
-    /**
-     * 清空会话消息
-     */
+    @Override
     public void clearMessages(String conversationId) {
+        log.info("[clearMessages] 清空会话消息: conversationId={}", conversationId);
+        
         try {
             String messageKey = MESSAGE_KEY_PREFIX + conversationId;
             redisTemplate.delete(messageKey);
-            log.info("[CustomMessageStorage] 清空消息: conversationId={}", conversationId);
+            log.info("[clearMessages] 清空消息成功: conversationId={}", conversationId);
         } catch (Exception e) {
-            log.error("[CustomMessageStorage] 清空消息失败: conversationId={}, error={}", 
+            log.error("[clearMessages] 清空消息失败: conversationId={}, error={}", 
                     conversationId, e.getMessage(), e);
         }
     }
@@ -265,7 +251,7 @@ public class CustomMessageStorageService {
             }
         }
         
-        log.warn("[CustomMessageStorage] 无法提取消息内容，返回原始字符串: messageType={}", 
+        log.warn("[extractMessageContent] 无法提取消息内容，返回原始字符串: messageType={}", 
                 message.getClass().getSimpleName());
         return fullString;
     }

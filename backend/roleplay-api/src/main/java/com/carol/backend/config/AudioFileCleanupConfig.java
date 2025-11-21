@@ -1,6 +1,6 @@
 package com.carol.backend.config;
 
-import com.carol.backend.service.AudioFileService;
+import com.carol.backend.service.IAudioFileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,7 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 @ConditionalOnProperty(name = "app.audio.cleanup.enabled", havingValue = "true", matchIfMissing = true)
 public class AudioFileCleanupConfig {
     
-    private final AudioFileService audioFileService;
+    private final IAudioFileService audioFileService;
     
     /**
      * 每天凌晨2点清理7天前的音频文件

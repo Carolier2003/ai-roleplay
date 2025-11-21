@@ -13,7 +13,10 @@ import java.util.List;
 /**
  * 角色服务实现类
  * 
- * @author carol
+ * @author jianjl
+ * @version 1.0
+ * @description 角色相关的业务逻辑服务实现
+ * @date 2025-01-15
  */
 @Slf4j
 @Service
@@ -21,34 +24,40 @@ public class CharacterServiceImpl extends ServiceImpl<CharacterMapper, Character
 
     @Override
     public List<Character> getAllCharacters() {
-        log.info("获取所有角色列表");
+        log.info("[getAllCharacters] 获取所有角色列表");
         try {
-            return baseMapper.selectAllCharactersOrderByCreated();
+            List<Character> characters = baseMapper.selectAllCharactersOrderByCreated();
+            log.info("[getAllCharacters] 获取成功: count={}", characters.size());
+            return characters;
         } catch (Exception e) {
-            log.error("获取角色列表失败: {}", e.getMessage(), e);
-            throw new RuntimeException("获取角色列表失败: " + e.getMessage());
+            log.error("[getAllCharacters] 获取角色列表失败: error={}", e.getMessage(), e);
+            throw new RuntimeException("获取角色列表失败: " + e.getMessage(), e);
         }
     }
 
     @Override
     public Character getCharacterById(Long id) {
-        log.info("根据ID获取角色详情: {}", id);
+        log.info("[getCharacterById] 根据ID获取角色详情: id={}", id);
         
         if (id == null || id <= 0) {
+            log.warn("[getCharacterById] 角色ID无效: id={}", id);
             throw new IllegalArgumentException("角色ID无效");
         }
         
         try {
             Character character = baseMapper.selectById(id);
             if (character == null) {
+                log.warn("[getCharacterById] 角色不存在: id={}", id);
                 throw new RuntimeException("角色不存在: ID=" + id);
             }
             
-            log.info("成功获取角色: {} ({})", character.getName(), id);
+            log.info("[getCharacterById] 成功获取角色: name={}, id={}", character.getName(), id);
             return character;
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
-            log.error("获取角色详情失败: ID={}, error={}", id, e.getMessage(), e);
-            throw new RuntimeException("获取角色详情失败: " + e.getMessage());
+            log.error("[getCharacterById] 获取角色详情失败: id={}, error={}", id, e.getMessage(), e);
+            throw new RuntimeException("获取角色详情失败: " + e.getMessage(), e);
         }
     }
 

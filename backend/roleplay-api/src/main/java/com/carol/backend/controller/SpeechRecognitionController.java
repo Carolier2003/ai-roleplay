@@ -3,9 +3,11 @@ package com.carol.backend.controller;
 import com.carol.backend.dto.ApiResponse;
 import com.carol.backend.dto.SpeechRecognitionRequest;
 import com.carol.backend.dto.SpeechRecognitionResponse;
-import com.carol.backend.service.AudioFileService;
-import com.carol.backend.service.SpeechRecognitionService;
-import com.carol.backend.service.StreamingSpeechRecognitionService;
+import com.carol.backend.service.IAudioFileService;
+import com.carol.backend.service.ISpeechRecognitionService;
+import com.carol.backend.service.IStreamingSpeechRecognitionService;
+import com.carol.backend.service.IOssService;
+import com.carol.backend.service.ICustomMessageStorageService;
 import com.carol.backend.util.SecurityUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -31,9 +33,11 @@ import java.util.concurrent.CompletableFuture;
 @Validated
 public class SpeechRecognitionController {
     
-    private final SpeechRecognitionService speechRecognitionService;
-    private final StreamingSpeechRecognitionService streamingService;
-    private final AudioFileService audioFileService;
+    private final ISpeechRecognitionService speechRecognitionService;
+    private final IStreamingSpeechRecognitionService streamingService;
+    private final IAudioFileService audioFileService;
+    private final IOssService ossService;
+    private final ICustomMessageStorageService customMessageStorageService;
     
     /**
      * 同步语音识别 - 上传文件进行识别
@@ -44,10 +48,12 @@ public class SpeechRecognitionController {
             @RequestParam(value = "model", required = false, defaultValue = "fun-asr-realtime") String model,
             @RequestParam(value = "format", required = false) String format,
             @RequestParam(value = "sampleRate", required = false, defaultValue = "16000") Integer sampleRate,
-            @RequestParam(value = "semanticPunctuationEnabled", required = false, defaultValue = "false") Boolean semanticPunctuationEnabled,
+            @RequestParam(value = " semanticPunctuationEnabled", required = false, defaultValue = "false") Boolean semanticPunctuationEnabled,
             @RequestParam(value = "punctuationPredictionEnabled", required = false, defaultValue = "true") Boolean punctuationPredictionEnabled,
             @RequestParam(value = "maxSentenceSilence", required = false, defaultValue = "1300") Integer maxSentenceSilence,
-            @RequestParam(value = "languageHints", required = false) String[] languageHints) {
+            @RequestParam(value = "languageHints", required = false) String[] languageHints,
+            @RequestParam(value = "conversationId", required = false) String conversationId,
+            @RequestParam(value = "characterId", required = false) Long characterId) {
         
         try {
             log.info("收到同步语音识别请求，文件: {}, 大小: {} bytes", 
@@ -85,9 +91,57 @@ public class SpeechRecognitionController {
             // 执行识别
             SpeechRecognitionResponse response = speechRecognitionService.recognizeFile(audioFile, request);
             
-            // 在响应中添加保存的文件路径信息（可选）
-            if (savedFilePath != null) {
-                log.info("语音识别完成，文件已保存: {}", savedFilePath);
+            // 上传音频到OSS并保存到Redis会话记忆
+            String ossAudioUrl = null;
+            Integer audioDuration = null;
+            
+            try {
+                // 生成OSS对象键: audio/user/{userId}/{timestamp}.{ext}
+                String userId = userAccount != null ? userAccount : "anonymous";
+                String timestamp = java.time.LocalDateTime.now()
+                    .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS"));
+                String extension = getFormatFromFilename(audioFile.getOriginalFilename());
+                String objectKey = String.format("audio/user/%s/%s.%s", userId, timestamp, extension);
+                
+                // 上传到OSS
+                ossAudioUrl = ossService.uploadFile(audioFile, objectKey);
+                log.info("[recognizeAudio] 用户音频已上传到OSS: ossUrl={}", ossAudioUrl);
+                
+                // 计算音频时长（简化版本：根据文件大小估算，后续可以用音频库精确计算）
+                // 假设16kHz采样率，16bit，单声道：32000 bytes/sec
+                audioDuration = (int) (audioFile.getSize() / 32000);
+                if (audioDuration < 1) audioDuration = 1; // 最小1秒
+                
+                // 设置响应中的音频URL和时长
+                response.setAudioUrl(ossAudioUrl);
+                response.setAudioDuration(audioDuration);
+                
+            } catch (Exception ossError) {
+                log.error("[recognizeAudio] 上传音频到OSS失败，继续返回识别结果: error={}", ossError.getMessage());
+                // OSS上传失败不影响识别结果返回
+            }
+            
+            // 如果有conversationId和characterId，保存用户消息到Redis
+            if (conversationId != null && characterId != null && response.getText() != null) {
+                try {
+                    org.springframework.ai.chat.messages.UserMessage userMessage = 
+                        new org.springframework.ai.chat.messages.UserMessage(response.getText());
+                    
+                    customMessageStorageService.saveMessage(
+                        conversationId, 
+                        userMessage, 
+                        true,  // isUser = true
+                        ossAudioUrl,
+                        audioDuration
+                    );
+                    
+                    log.info("[recognizeAudio] 用户语音消息已保存到Redis: conversationId={}, text={}, audioUrl={}", 
+                            conversationId, response.getText(), ossAudioUrl);
+                } catch (Exception redisError) {
+                    log.error("[recognizeAudio] 保存用户消息到Redis失败: conversationId={}, error={}", 
+                            conversationId, redisError.getMessage());
+                    // Redis保存失败不影响识别结果返回
+                }
             }
             
             return ResponseEntity.ok(ApiResponse.success(response, "语音识别完成"));

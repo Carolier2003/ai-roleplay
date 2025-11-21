@@ -8,13 +8,14 @@ import com.carol.backend.dto.UpdateVoiceDurationRequest;
 import com.carol.backend.entity.Character;
 import com.carol.backend.entity.CharacterKnowledge;
 import com.carol.backend.service.CharacterService;
-import com.carol.backend.service.CharacterKnowledgeRAGService;
-import com.carol.backend.service.PromptTemplateService;
+import com.carol.backend.service.ICharacterKnowledgeRAGService;
+import com.carol.backend.service.IPromptTemplateService;
 import com.carol.backend.service.IConversationHistoryService;
-import com.carol.backend.service.ChatTtsIntegrationService;
-import com.carol.backend.service.TtsSynthesisService;
+import com.carol.backend.service.IChatTtsIntegrationService;
+import com.carol.backend.service.ITtsSynthesisService;
 import com.carol.backend.service.IGuestChatLimitService;
 import com.carol.backend.service.CustomMessageStorageService;
+import com.carol.backend.service.ITtsAudioPersistenceService;
 import com.carol.backend.dto.ChatHistoryResponse;
 import com.carol.backend.dto.ConversationMessageVO;
 import com.carol.backend.util.SecurityUtils;
@@ -61,13 +62,14 @@ public class ChatController {
     private final ChatClient chatClient;
     private final MessageWindowChatMemory messageWindowChatMemory;
     private final CharacterService characterService;
-    private final PromptTemplateService promptTemplateService;
-    private final CharacterKnowledgeRAGService ragService;
+    private final IPromptTemplateService promptTemplateService;
+    private final ICharacterKnowledgeRAGService ragService;
     private final IConversationHistoryService conversationHistoryService;
-    private final ChatTtsIntegrationService chatTtsIntegrationService;
-    private final TtsSynthesisService ttsSynthesisService;
+    private final IChatTtsIntegrationService chatTtsIntegrationService;
+    private final ITtsSynthesisService ttsSynthesisService;
     private final IGuestChatLimitService guestChatLimitService;
     private final CustomMessageStorageService customMessageStorageService;
+    private final ITtsAudioPersistenceService ttsAudioPersistenceService;
 
     private static final int DEFAULT_MAX_MESSAGES = 100;
     
@@ -77,13 +79,14 @@ public class ChatController {
     public ChatController(ChatClient.Builder chatClientBuilder, 
                          MessageWindowChatMemory messageWindowChatMemory,
                          CharacterService characterService,
-                         PromptTemplateService promptTemplateService,
-                         CharacterKnowledgeRAGService ragService,
+                         IPromptTemplateService promptTemplateService,
+                         ICharacterKnowledgeRAGService ragService,
                          IConversationHistoryService conversationHistoryService,
-                         ChatTtsIntegrationService chatTtsIntegrationService,
-                         TtsSynthesisService ttsSynthesisService,
+                         IChatTtsIntegrationService chatTtsIntegrationService,
+                         ITtsSynthesisService ttsSynthesisService,
                          IGuestChatLimitService guestChatLimitService,
-                         CustomMessageStorageService customMessageStorageService) {
+                         CustomMessageStorageService customMessageStorageService,
+                         ITtsAudioPersistenceService ttsAudioPersistenceService) {
 
         this.characterService = characterService;
         this.promptTemplateService = promptTemplateService;
@@ -94,6 +97,7 @@ public class ChatController {
         this.chatTtsIntegrationService = chatTtsIntegrationService;
         this.ttsSynthesisService = ttsSynthesisService;
         this.customMessageStorageService = customMessageStorageService;
+        this.ttsAudioPersistenceService = ttsAudioPersistenceService;
 
         // 初始化ChatClient，配置默认系统提示和顾问
         this.chatClient = chatClientBuilder
@@ -154,7 +158,8 @@ public class ChatController {
                 UserMessage userMessage = new UserMessage(request.getMessage());
                 
                 // 保存用户消息到自定义存储和messageWindowChatMemory
-                customMessageStorageService.saveMessage(conversationId, userMessage, true);
+                // 保存用户消息到自定义存储和messageWindowChatMemory
+                customMessageStorageService.saveMessage(conversationId, userMessage, true, request.getAudioUrl(), request.getVoiceDuration());
                 messageWindowChatMemory.add(conversationId, userMessage);
                 
                 response = chatClient.prompt(new Prompt(List.of(userMessage)))
@@ -439,7 +444,8 @@ public class ChatController {
             Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
 
             // 7. 保存用户消息到自定义存储和messageWindowChatMemory
-            customMessageStorageService.saveMessage(conversationId, userMessage, true);
+            // 7. 保存用户消息到自定义存储和messageWindowChatMemory
+            customMessageStorageService.saveMessage(conversationId, userMessage, true, request.getAudioUrl(), request.getVoiceDuration());
             // 同时保存到messageWindowChatMemory，确保MessageChatMemoryAdvisor能读取到
             messageWindowChatMemory.add(conversationId, userMessage);
 
@@ -526,7 +532,8 @@ public class ChatController {
                 Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
 
                 // 7. 保存用户消息到自定义存储和messageWindowChatMemory
-                customMessageStorageService.saveMessage(conversationId, userMessage, true);
+                // 7. 保存用户消息到自定义存储和messageWindowChatMemory
+                customMessageStorageService.saveMessage(conversationId, userMessage, true, request.getAudioUrl(), request.getVoiceDuration());
                 // 同时保存到messageWindowChatMemory，确保MessageChatMemoryAdvisor能读取到
                 messageWindowChatMemory.add(conversationId, userMessage);
 
@@ -621,23 +628,53 @@ public class ChatController {
                                 log.info("[handleStreamingWithTTS] 保存AI流式回复: conversationId={}, length={}", 
                                         conversationId, fullResponse.length());
                                 
-                                // 如果TTS成功，更新消息的audioUrl和语音时长
+                                // 如果TTS成功，持久化音频到OSS并更新消息
                                 if (ttsResponse != null && ttsResponse.getSuccess()) {
                                     Integer voiceDuration = ttsResponse.getDuration() != null ? 
                                         ttsResponse.getDuration().intValue() : null;
+                                    
+                                    // 持久化TTS音频到OSS（下载临时URL并上传到OSS获取永久URL）
+                                    String permanentAudioUrl = ttsResponse.getAudioUrl();
+                                    try {
+                                        permanentAudioUrl = ttsAudioPersistenceService.persistTtsAudio(
+                                            ttsResponse.getAudioUrl(),
+                                            userId,
+                                            request.getCharacterId()
+                                        );
+                                        log.info("[handleStreamingWithTTS] TTS音频持久化到OSS成功: conversationId={}, ossUrl={}", 
+                                                conversationId, permanentAudioUrl);
+                                    } catch (Exception persistError) {
+                                        log.error("[handleStreamingWithTTS] TTS音频持久化失败，使用临时URL: conversationId={}, error={}", 
+                                                conversationId, persistError.getMessage());
+                                        // 持久化失败时仍然使用临时URL，不影响主流程
+                                    }
+                                    
                                     customMessageStorageService.updateMessageAudioInfo(conversationId, fullResponse, 
-                                        ttsResponse.getAudioUrl(), voiceDuration);
+                                        permanentAudioUrl, voiceDuration);
                                     log.info("[handleStreamingWithTTS] 更新AI回复音频信息: conversationId={}, audioUrl={}, duration={}", 
-                                            conversationId, ttsResponse.getAudioUrl(), voiceDuration);
+                                            conversationId, permanentAudioUrl, voiceDuration);
                                 }
                             }
                             
                             if (ttsResponse != null && ttsResponse.getSuccess()) {
-                                log.info("流式TTS合成成功: conversationId={}, audioUrl={}", 
-                                        conversationId, ttsResponse.getAudioUrl());
+                                // 持久化TTS音频到OSS（下载临时URL并上传到OSS获取永久URL）
+                                String audioUrlToReturn = ttsResponse.getAudioUrl();
+                                try {
+                                    audioUrlToReturn = ttsAudioPersistenceService.persistTtsAudio(
+                                        ttsResponse.getAudioUrl(),
+                                        userId,
+                                        request.getCharacterId()
+                                    );
+                                    log.info("流式TTS合成成功并持久化到OSS: conversationId={}, ossUrl={}", 
+                                            conversationId, audioUrlToReturn);
+                                } catch (Exception persistError) {
+                                    log.error("流式TTS持久化失败，返回临时URL: conversationId={}, error={}", 
+                                            conversationId, persistError.getMessage());
+                                    // 持久化失败时仍然返回临时URL，不影响前端播放
+                                }
                                 
-                                // 返回TTS信息作为SSE事件
-                                return "data:{\"type\":\"tts\",\"audioUrl\":\"" + ttsResponse.getAudioUrl() + 
+                                // 返回TTS信息作为SSE事件（使用OSS永久URL或临时URL）
+                                return "data:{\"type\":\"tts\",\"audioUrl\":\"" + audioUrlToReturn + 
                                        "\",\"voice\":\"" + (ttsResponse.getVoice() != null ? ttsResponse.getVoice() : "") + 
                                        "\",\"duration\":" + (ttsResponse.getDuration() != null ? ttsResponse.getDuration() : 0) + 
                                        ",\"success\":true}\n\n";

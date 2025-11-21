@@ -68,6 +68,16 @@ public class SpeechRecognitionResponse {
     private Double duration;
     
     /**
+     * 音频文件OSS URL（用于保存和回放）
+     */
+    private String audioUrl;
+    
+    /**
+     * 音频时长（整数秒，用于Redis保存）
+     */
+    private Integer audioDuration;
+    
+    /**
      * 处理时间戳
      */
     @Builder.Default

@@ -1,9 +1,9 @@
 package com.carol.backend.controller;
 
 import com.carol.backend.dto.ApiResponse;
-import com.carol.backend.service.SpeechAlertingService;
-import com.carol.backend.service.SpeechMetricsCollector;
-import com.carol.backend.service.SpeechResourceManager;
+import com.carol.backend.service.ISpeechAlertingService;
+import com.carol.backend.service.ISpeechMetricsCollector;
+import com.carol.backend.service.ISpeechResourceManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,19 +23,19 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SpeechMonitoringController {
     
-    private final SpeechMetricsCollector metricsCollector;
-    private final SpeechAlertingService alertingService;
-    private final SpeechResourceManager resourceManager;
+    private final ISpeechMetricsCollector metricsCollector;
+    private final ISpeechAlertingService alertingService;
+    private final ISpeechResourceManager resourceManager;
     
     /**
      * 获取当前性能指标
      */
     @GetMapping("/metrics")
-    public ResponseEntity<ApiResponse<SpeechMetricsCollector.PerformanceSnapshot>> getCurrentMetrics() {
-        log.info("获取当前性能指标");
+    public ResponseEntity<ApiResponse<ISpeechMetricsCollector.PerformanceSnapshot>> getCurrentMetrics() {
+        log.info("[getCurrentMetrics] 获取当前性能指标");
         
         try {
-            SpeechMetricsCollector.PerformanceSnapshot snapshot = metricsCollector.getCurrentMetrics();
+            ISpeechMetricsCollector.PerformanceSnapshot snapshot = metricsCollector.getCurrentMetrics();
             return ResponseEntity.ok(ApiResponse.success(snapshot, "当前性能指标"));
         } catch (Exception e) {
             log.error("获取性能指标失败", e);
@@ -118,12 +118,12 @@ public class SpeechMonitoringController {
      * 获取告警统计
      */
     @GetMapping("/alerts/statistics")
-    public ResponseEntity<ApiResponse<SpeechAlertingService.AlertStatistics>> getAlertStatistics(
+    public ResponseEntity<ApiResponse<ISpeechAlertingService.AlertStatistics>> getAlertStatistics(
             @RequestParam(defaultValue = "24") int hours) {
-        log.info("获取告警统计: hours={}", hours);
+        log.info("[getAlertStatistics] 获取告警统计: hours={}", hours);
         
         try {
-            SpeechAlertingService.AlertStatistics statistics = alertingService.getAlertStatistics(hours);
+            ISpeechAlertingService.AlertStatistics statistics = alertingService.getAlertStatistics(hours);
             return ResponseEntity.ok(ApiResponse.success(statistics, "告警统计"));
         } catch (Exception e) {
             log.error("获取告警统计失败", e);
@@ -140,7 +140,7 @@ public class SpeechMonitoringController {
         log.info("获取系统健康状态");
         
         try {
-            SpeechMetricsCollector.PerformanceSnapshot metrics = metricsCollector.getCurrentMetrics();
+            ISpeechMetricsCollector.PerformanceSnapshot metrics = metricsCollector.getCurrentMetrics();
             var activeAlerts = alertingService.getActiveAlerts();
             
             // 计算健康分数
@@ -182,11 +182,11 @@ public class SpeechMonitoringController {
      * 获取资源使用情况
      */
     @GetMapping("/resources")
-    public ResponseEntity<ApiResponse<SpeechResourceManager.ResourceUsageStats>> getResourceUsage() {
-        log.info("获取资源使用情况");
+    public ResponseEntity<ApiResponse<ISpeechResourceManager.ResourceUsageStats>> getResourceUsage() {
+        log.info("[getResourceUsage] 获取资源使用情况");
         
         try {
-            SpeechResourceManager.ResourceUsageStats stats = resourceManager.getResourceUsageStats();
+            ISpeechResourceManager.ResourceUsageStats stats = resourceManager.getResourceUsageStats();
             return ResponseEntity.ok(ApiResponse.success(stats, "资源使用情况"));
         } catch (Exception e) {
             log.error("获取资源使用情况失败", e);
@@ -232,7 +232,7 @@ public class SpeechMonitoringController {
     /**
      * 计算健康分数 (0-100)
      */
-    private int calculateHealthScore(SpeechMetricsCollector.PerformanceSnapshot metrics, int activeAlertsCount) {
+    private int calculateHealthScore(ISpeechMetricsCollector.PerformanceSnapshot metrics, int activeAlertsCount) {
         int score = 100;
         
         // 根据成功率扣分

@@ -8,7 +8,10 @@ import java.util.List;
 /**
  * 角色服务接口
  * 
- * @author carol
+ * @author jianjl
+ * @version 1.0
+ * @description 角色相关的业务逻辑服务
+ * @date 2025-01-15
  */
 public interface CharacterService extends IService<Character> {
 

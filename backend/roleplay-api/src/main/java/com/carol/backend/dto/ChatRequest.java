@@ -44,4 +44,14 @@ public class ChatRequest {
      */
     private Boolean enableRag = true;
 
+    /**
+     * 音频URL（可选，用于存储用户发送的语音消息）
+     */
+    private String audioUrl;
+
+    /**
+     * 语音时长（秒，可选）
+     */
+    private Integer voiceDuration;
+
 }

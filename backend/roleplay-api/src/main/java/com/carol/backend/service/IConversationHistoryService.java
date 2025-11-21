@@ -8,7 +8,10 @@ import java.util.List;
 /**
  * 聊天历史服务接口
  * 
- * @author carol
+ * @author jianjl
+ * @version 1.0
+ * @description 聊天历史相关的业务逻辑服务
+ * @date 2025-01-15
  */
 public interface IConversationHistoryService {
     

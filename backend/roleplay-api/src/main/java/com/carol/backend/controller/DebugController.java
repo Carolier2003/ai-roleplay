@@ -1,7 +1,7 @@
 package com.carol.backend.controller;
 
 import com.carol.backend.mapper.ConversationMapper;
-import com.carol.backend.service.ConversationSyncService;
+import com.carol.backend.service.IConversationSyncService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,7 +31,7 @@ public class DebugController {
     private final ConversationMapper conversationMapper;
     private final RedisTemplate<String, Object> redisTemplate;
     private final StringRedisTemplate stringRedisTemplate;
-    private final ConversationSyncService syncService;
+    private final IConversationSyncService syncService;
     
     /**
      * 测试数据库连接

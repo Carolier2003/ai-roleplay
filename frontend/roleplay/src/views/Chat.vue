@@ -108,7 +108,7 @@
       </div>
 
       <!-- 消息列表区域 -->
-      <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scroll-smooth" ref="messagesContainer">
+      <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scroll-smooth messages-container" ref="messagesContainer">
         <div v-if="currentMessages.length === 0" class="h-full flex flex-col items-center justify-center text-gray-400 space-y-4">
           <div class="text-6xl opacity-50">💬</div>
           <div class="text-center">

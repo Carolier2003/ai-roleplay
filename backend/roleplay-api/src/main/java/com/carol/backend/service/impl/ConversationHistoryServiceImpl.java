@@ -2,6 +2,8 @@ package com.carol.backend.service.impl;
 
 import com.carol.backend.dto.ConversationMessageVO;
 import com.carol.backend.dto.ChatHistoryResponse;
+import com.carol.backend.enums.ErrorCode;
+import com.carol.backend.exception.BusinessException;
 import com.carol.backend.service.IConversationHistoryService;
 import com.carol.backend.service.CustomMessageStorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +11,7 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,19 +20,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * 聊天历史服务实现 - 适配Spring AI Redis存储
+ * 聊天历史服务实现类
  * 
- * @author carol
+ * @author jianjl
+ * @version 1.0
+ * @description 适配Spring AI Redis存储的聊天历史服务实现
+ * @date 2025-01-15
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ConversationHistoryServiceImpl implements IConversationHistoryService {
     
-    @Autowired
-    private MessageWindowChatMemory messageWindowChatMemory;
-    
-    @Autowired
-    private CustomMessageStorageService customMessageStorageService;
+    private final MessageWindowChatMemory messageWindowChatMemory;
+    private final CustomMessageStorageService customMessageStorageService;
     
     // Redis中保留的最大消息数量（Spring AI MessageWindowChatMemory的限制）
     private static final int MAX_REDIS_MESSAGES = 100;
@@ -87,8 +90,8 @@ public class ConversationHistoryServiceImpl implements IConversationHistoryServi
                 .setQueryDays(7);
             
         } catch (Exception e) {
-            log.error("[getChatHistory] 查询聊天历史失败: {}", e.getMessage(), e);
-            throw new RuntimeException("查询聊天历史失败: " + e.getMessage());
+            log.error("[getChatHistory] 查询聊天历史失败: error={}", e.getMessage(), e);
+            throw BusinessException.of(ErrorCode.SYSTEM_ERROR, "查询聊天历史失败", e);
         }
     }
     
@@ -136,8 +139,8 @@ public class ConversationHistoryServiceImpl implements IConversationHistoryServi
                 .setQueryDays(7);
             
         } catch (Exception e) {
-            log.error("[getAllChatHistory] 查询所有聊天历史失败: {}", e.getMessage(), e);
-            throw new RuntimeException("查询所有聊天历史失败: " + e.getMessage());
+            log.error("[getAllChatHistory] 查询所有聊天历史失败: error={}", e.getMessage(), e);
+            throw BusinessException.of(ErrorCode.SYSTEM_ERROR, "查询所有聊天历史失败", e);
         }
     }
     
@@ -175,7 +178,7 @@ public class ConversationHistoryServiceImpl implements IConversationHistoryServi
             
         } catch (Exception e) {
             log.error("[clearConversation] 清空对话失败: conversationId={}, error={}", conversationId, e.getMessage(), e);
-            throw new RuntimeException("清空对话失败: " + e.getMessage());
+            throw BusinessException.of(ErrorCode.SYSTEM_ERROR, "清空对话失败", e);
         }
     }
     
@@ -242,7 +245,7 @@ public class ConversationHistoryServiceImpl implements IConversationHistoryServi
             
         } catch (Exception e) {
             log.error("[clearAllConversations] 清空所有对话失败: userId={}, error={}", userId, e.getMessage(), e);
-            throw new RuntimeException("清空所有对话失败: " + e.getMessage());
+            throw BusinessException.of(ErrorCode.SYSTEM_ERROR, "清空所有对话失败", e);
         }
     }
     
