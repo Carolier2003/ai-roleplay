@@ -71,9 +71,11 @@ import { ref, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import type { LoginRequest, RegisterRequest } from '@/api/auth'
+import { useToast } from '@/composables/useToast'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const toast = useToast()
 
 // 状态
 const isLogin = ref(true)
@@ -179,7 +181,7 @@ const handleSubmit = async () => {
       }
       
       await authStore.register(registerData)
-      alert('注册成功，请登录')
+      toast.success('注册成功，请登录')
       
       // 切换到登录模式
       isLogin.value = true
@@ -187,7 +189,7 @@ const handleSubmit = async () => {
       form.value.confirmPassword = ''
     }
   } catch (error: any) {
-    alert(error.message || (isLogin.value ? '登录失败' : '注册失败'))
+    toast.error(error.message || (isLogin.value ? '登录失败' : '注册失败'))
   }
 }
 </script>

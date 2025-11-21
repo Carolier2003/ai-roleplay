@@ -122,6 +122,7 @@ import { speechConfig, getRecommendedRecordingConfig, isSpeechRecordingSupported
 import type { SendMessageRequest, StreamResponse, UpdateVoiceDurationRequest } from '@/api/chat'
 import { useTTSPlayer } from '@/composables/useTTSPlayer'
 import { ttsState } from '@/services/ttsService'
+import { useToast } from '@/composables/useToast'
 
 interface Props {
   currentCharacterId?: number
@@ -138,19 +139,20 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 const chatStore = useChatStore()
 const authStore = useAuthStore()
+const toast = useToast()
 
 // Simple replacement for useMessage
 const message = {
-  success: (msg: string) => console.log('Success:', msg),
+  success: (msg: string) => toast.success(msg),
   error: (msg: string) => {
     console.error('Error:', msg)
-    alert(msg)
+    toast.error(msg)
   },
   warning: (msg: string) => {
     console.warn('Warning:', msg)
-    alert(msg)
+    toast.warning(msg)
   },
-  info: (msg: string) => console.log('Info:', msg)
+  info: (msg: string) => toast.info(msg)
 }
 
 // TTS播放器

@@ -6,29 +6,8 @@
 import { ref } from 'vue'
 import { ErrorHandler, type FrontendError } from '@/utils/errorHandler'
 import { useAuthStore } from '@/stores/auth'
-
-// Simple replacement for Naive UI message/dialog
-const message = {
-  error: (msg: string) => {
-    console.error('Error:', msg)
-    alert(msg)
-  },
-  warning: (msg: string) => {
-    console.warn('Warning:', msg)
-    alert(msg)
-  }
-}
-
-const dialog = {
-  warning: (options: any) => {
-    if (confirm(options.content)) {
-      options.onPositiveClick?.()
-    }
-  },
-  error: (options: any) => {
-    alert(options.content)
-  }
-}
+import { useToast } from '@/composables/useToast'
+import { useConfirm } from '@/composables/useConfirm'
 
 /**
  * 错误处理组合式函数
@@ -36,6 +15,8 @@ const dialog = {
 export function useErrorHandler() {
   const loading = ref(false)
   const error = ref<FrontendError | null>(null)
+  const toast = useToast()
+  const confirm = useConfirm()
 
   // 安全地初始化服务
   let authStore: any = null
@@ -97,7 +78,7 @@ export function useErrorHandler() {
     }
 
     // 其他认证错误显示消息
-    message.error(error.userMessage)
+    toast.error(error.userMessage)
   }
 
   /**
@@ -113,20 +94,22 @@ export function useErrorHandler() {
 
     // 特殊处理某些业务错误
     if (error.code === 2000) { // 用户不存在
-      dialog.warning({
+      confirm.show({
         title: '用户不存在',
-        content: error.userMessage,
-        positiveText: '确定'
+        message: error.userMessage,
+        confirmText: '确定',
+        showCancel: false
       })
       return
     }
 
     if (error.code === 5000) { // 角色不存在
-      dialog.warning({
+      confirm.show({
         title: '角色不存在',
-        content: error.userMessage + '，页面将自动刷新',
-        positiveText: '确定',
-        onPositiveClick: () => {
+        message: error.userMessage + '，页面将自动刷新',
+        confirmText: '确定',
+        showCancel: false,
+        onConfirm: () => {
           window.location.reload()
         }
       })
@@ -134,7 +117,7 @@ export function useErrorHandler() {
     }
 
     // 默认显示错误消息
-    message.error(error.userMessage)
+    toast.error(error.userMessage)
   }
 
   /**
@@ -148,10 +131,11 @@ export function useErrorHandler() {
       return
     }
 
-    dialog.error({
+    confirm.show({
       title: '网络连接失败',
-      content: error.userMessage + '，请检查网络连接后重试',
-      positiveText: '确定'
+      message: error.userMessage + '，请检查网络连接后重试',
+      confirmText: '确定',
+      showCancel: false
     })
   }
 
@@ -166,10 +150,11 @@ export function useErrorHandler() {
       return
     }
 
-    dialog.error({
+    confirm.show({
       title: '系统错误',
-      content: error.userMessage,
-      positiveText: '确定'
+      message: error.userMessage,
+      confirmText: '确定',
+      showCancel: false
     })
   }
 

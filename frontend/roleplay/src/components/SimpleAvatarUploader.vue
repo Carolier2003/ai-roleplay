@@ -74,14 +74,20 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
+import { useToast } from '@/composables/useToast'
+
 const authStore = useAuthStore()
+const toast = useToast()
 
 // Simple replacement for useMessage
 const message = {
-  success: (msg: string) => console.log('Success:', msg),
+  success: (msg: string) => {
+    console.log('Success:', msg)
+    toast.success(msg)
+  },
   error: (msg: string) => {
     console.error('Error:', msg)
-    alert(msg)
+    toast.error(msg)
   }
 }
 

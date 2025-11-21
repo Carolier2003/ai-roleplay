@@ -1,135 +1,131 @@
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 backdrop-blur-sm p-4 sm:p-0" @click.self="$emit('update:visible', false)">
-      <div class="relative w-full max-w-lg transform rounded-2xl bg-white p-6 text-left shadow-xl transition-all sm:my-8">
-        <!-- Close button -->
-        <button @click="$emit('update:visible', false)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        <div class="text-center mb-6">
-          <h3 class="text-xl font-bold leading-6 text-gray-900">语音通话</h3>
-        </div>
-
-        <div class="flex flex-col items-center p-4">
-          <!-- 通话状态显示 -->
-          <div class="flex flex-col items-center mb-8">
-            <div class="relative flex items-center justify-center w-20 h-20 rounded-full bg-white/10 mb-4">
-              <div v-if="isConnected" class="absolute w-full h-full border-2 border-green-500 rounded-full animate-ping opacity-75"></div>
-              <!-- 状态图标 -->
-              <svg v-if="callStatus === 'idle'" viewBox="0 0 24 24" width="40" height="40" :fill="statusColor">
-                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-              </svg>
-              <svg v-else-if="callStatus === 'connecting'" viewBox="0 0 24 24" width="40" height="40" :fill="statusColor">
-                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-              </svg>
-              <svg v-else-if="callStatus === 'connected'" viewBox="0 0 24 24" width="40" height="40" :fill="statusColor">
-                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-              </svg>
-              <svg v-else-if="callStatus === 'disconnected'" viewBox="0 0 24 24" width="40" height="40" :fill="statusColor">
-                <path d="M17.73 14.27L19.07 12.93C19.32 12.68 19.32 12.25 19.07 12L17.73 10.66C17.48 10.41 17.05 10.41 16.8 10.66L15.46 12C14.5 11.5 13.5 11.2 12.5 11.05V9C12.5 8.72 12.28 8.5 12 8.5S11.5 8.72 11.5 9V11.05C10.5 11.2 9.5 11.5 8.54 12L7.2 10.66C6.95 10.41 6.52 10.41 6.27 10.66L4.93 12C4.68 12.25 4.68 12.68 4.93 12.93L6.27 14.27C5.77 15.23 5.47 16.23 5.32 17.23H3.27C2.99 17.23 2.77 17.45 2.77 17.73S2.99 18.23 3.27 18.23H5.32C5.47 19.23 5.77 20.23 6.27 21.19L4.93 22.53C4.68 22.78 4.68 23.21 4.93 23.46L6.27 24.8C6.52 25.05 6.95 25.05 7.2 24.8L8.54 23.46C9.5 23.96 10.5 24.26 11.5 24.41V26.46C11.5 26.74 11.72 26.96 12 26.96S12.5 26.74 12.5 26.46V24.41C13.5 24.26 14.5 23.96 15.46 23.46L16.8 24.8C17.05 25.05 17.48 25.05 17.73 24.8L19.07 23.46C19.32 23.21 19.32 22.78 19.07 22.53L17.73 21.19C18.23 20.23 18.53 19.23 18.68 18.23H20.73C21.01 18.23 21.23 18.01 21.23 17.73S21.01 17.23 20.73 17.23H18.68C18.53 16.23 18.23 15.23 17.73 14.27Z"/>
-              </svg>
-            </div>
-            <div class="text-lg font-medium text-gray-600">
-              {{ statusText }}
-            </div>
+    <Transition name="fade">
+      <div v-if="visible" class="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/60 backdrop-blur-sm" @click.self="$emit('update:visible', false)">
+        <div class="relative w-full max-w-md transform overflow-hidden rounded-3xl bg-white/10 p-6 text-left shadow-2xl backdrop-blur-xl border border-white/20 transition-all sm:my-8 m-4">
+          
+          <!-- Background Glow Effects -->
+          <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+            <div class="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-gradient-to-br from-purple-500/20 via-transparent to-blue-500/20 blur-3xl opacity-50 animate-pulse-slow"></div>
           </div>
 
-          <!-- 音频波形图 -->
-          <div class="relative w-full mb-8 border border-gray-200 rounded-lg overflow-hidden bg-[#1a1a1a]">
-            <canvas 
-              ref="waveformCanvas" 
-              class="block w-full"
-              :width="canvasWidth"
-              :height="canvasHeight"
-            ></canvas>
-            <div class="absolute top-2 right-2 text-green-500 text-xs font-medium">
-              <div v-if="isRecording">
-                音量: {{ Math.round(currentVolume * 100) }}%
+          <!-- Content Container -->
+          <div class="relative z-10 flex flex-col items-center">
+            
+            <!-- Header -->
+            <div class="w-full flex justify-between items-center mb-8">
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full" :class="isConnected ? 'bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]' : 'bg-gray-400'"></div>
+                <span class="text-white/80 text-sm font-medium tracking-wide">{{ statusText }}</span>
+              </div>
+              <button @click="$emit('update:visible', false)" class="text-white/50 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Avatar / Visualizer -->
+            <div class="relative mb-8 group">
+              <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
+              <div class="relative w-24 h-24 rounded-full bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center shadow-inner overflow-hidden">
+                <img v-if="currentCharacter?.avatarUrl" :src="currentCharacter.avatarUrl" class="w-full h-full object-cover opacity-80" alt="Character Avatar" />
+                <div v-else class="text-4xl">🎙️</div>
+                
+                <!-- Ripple Effect when talking -->
+                <div v-if="isRecording && currentVolume > 0.01" class="absolute inset-0 rounded-full border-2 border-white/30 animate-ping opacity-50"></div>
               </div>
             </div>
-          </div>
 
-          <!-- 通话控制按钮 -->
-          <div class="flex gap-6 mb-6">
-            <button 
-              v-if="callStatus === 'idle'"
-              @click="startCall"
-              :disabled="isConnecting"
-              class="w-16 h-16 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg v-if="isConnecting" class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <svg v-else viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
-                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-              </svg>
-            </button>
+            <!-- Character Name -->
+            <h3 class="text-xl font-bold text-white mb-1 tracking-wide">{{ currentCharacter?.name || 'AI Assistant' }}</h3>
+            <p class="text-white/40 text-xs mb-8 font-mono">{{ formatDuration(callDuration) }}</p>
 
-            <template v-else-if="callStatus === 'connected'">
+            <!-- Waveform & Text Area -->
+            <div class="w-full mb-8 min-h-[120px] flex flex-col justify-end">
+              <!-- Recognized Text -->
+              <div v-if="recognizedText" class="mb-4 text-center">
+                <p class="text-white/90 text-lg font-medium leading-relaxed animate-fade-in-up">
+                  "{{ recognizedText }}"
+                </p>
+              </div>
+              
+              <!-- Waveform Canvas -->
+              <div class="relative w-full h-16 rounded-xl overflow-hidden bg-black/20 border border-white/5 backdrop-blur-sm">
+                <canvas 
+                  ref="waveformCanvas" 
+                  class="block w-full h-full opacity-80"
+                  :width="canvasWidth"
+                  :height="canvasHeight"
+                ></canvas>
+              </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center gap-6">
+              <!-- Start Call -->
               <button 
-                @click="toggleMute"
-                class="w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg"
-                :class="isMuted ? 'bg-yellow-500 text-white hover:bg-yellow-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
+                v-if="callStatus === 'idle'"
+                @click="startCall"
+                :disabled="isConnecting"
+                class="w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg shadow-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed group"
               >
-                <svg v-if="isMuted" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                  <path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z"/>
+                <svg v-if="isConnecting" class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <svg v-else viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                  <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+                <svg v-else viewBox="0 0 24 24" width="28" height="28" fill="currentColor" class="group-hover:drop-shadow-md">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
                 </svg>
               </button>
 
+              <template v-else-if="callStatus === 'connected'">
+                <!-- Mute Button -->
+                <button 
+                  @click="toggleMute"
+                  class="w-12 h-12 rounded-full flex items-center justify-center transition-all border border-white/10 hover:bg-white/10"
+                  :class="isMuted ? 'bg-white/20 text-white' : 'bg-transparent text-white/70'"
+                >
+                  <svg v-if="isMuted" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z"/>
+                  </svg>
+                  <svg v-else viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+                  </svg>
+                </button>
+
+                <!-- End Call -->
+                <button 
+                  @click="endCall"
+                  class="w-16 h-16 rounded-full bg-gradient-to-r from-red-500 to-rose-600 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg shadow-red-500/30"
+                >
+                  <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                    <path d="M17.73 14.27L19.07 12.93C19.32 12.68 19.32 12.25 19.07 12L17.73 10.66C17.48 10.41 17.05 10.41 16.8 10.66L15.46 12C14.5 11.5 13.5 11.2 12.5 11.05V9C12.5 8.72 12.28 8.5 12 8.5S11.5 8.72 11.5 9V11.05C10.5 11.2 9.5 11.5 8.54 12L7.2 10.66C6.95 10.41 6.52 10.41 6.27 10.66L4.93 12C4.68 12.25 4.68 12.68 4.93 12.93L6.27 14.27C5.77 15.23 5.47 16.23 5.32 17.23H3.27C2.99 17.23 2.77 17.45 2.77 17.73S2.99 18.23 3.27 18.23H5.32C5.47 19.23 5.77 20.23 6.27 21.19L4.93 22.53C4.68 22.78 4.68 23.21 4.93 23.46L6.27 24.8C6.52 25.05 6.95 25.05 7.2 24.8L8.54 23.46C9.5 23.96 10.5 24.26 11.5 24.41V26.46C11.5 26.74 11.72 26.96 12 26.96S12.5 26.74 12.5 26.46V24.41C13.5 24.26 14.5 23.96 15.46 23.46L16.8 24.8C17.05 25.05 17.48 25.05 17.73 24.8L19.07 23.46C19.32 23.21 19.32 22.78 19.07 22.53L17.73 21.19C18.23 20.23 18.53 19.23 18.68 18.23H20.73C21.01 18.23 21.23 18.01 21.23 17.73S21.01 17.23 20.73 17.23H18.68C18.53 16.23 18.23 15.23 17.73 14.27Z"/>
+                  </svg>
+                </button>
+              </template>
+
               <button 
+                v-else-if="callStatus === 'connecting'"
                 @click="endCall"
-                class="w-16 h-16 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-all shadow-lg hover:shadow-xl animate-pulse-red"
+                class="w-16 h-16 rounded-full bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600 transition-all shadow-lg"
               >
-                <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
                   <path d="M17.73 14.27L19.07 12.93C19.32 12.68 19.32 12.25 19.07 12L17.73 10.66C17.48 10.41 17.05 10.41 16.8 10.66L15.46 12C14.5 11.5 13.5 11.2 12.5 11.05V9C12.5 8.72 12.28 8.5 12 8.5S11.5 8.72 11.5 9V11.05C10.5 11.2 9.5 11.5 8.54 12L7.2 10.66C6.95 10.41 6.52 10.41 6.27 10.66L4.93 12C4.68 12.25 4.68 12.68 4.93 12.93L6.27 14.27C5.77 15.23 5.47 16.23 5.32 17.23H3.27C2.99 17.23 2.77 17.45 2.77 17.73S2.99 18.23 3.27 18.23H5.32C5.47 19.23 5.77 20.23 6.27 21.19L4.93 22.53C4.68 22.78 4.68 23.21 4.93 23.46L6.27 24.8C6.52 25.05 6.95 25.05 7.2 24.8L8.54 23.46C9.5 23.96 10.5 24.26 11.5 24.41V26.46C11.5 26.74 11.72 26.96 12 26.96S12.5 26.74 12.5 26.46V24.41C13.5 24.26 14.5 23.96 15.46 23.46L16.8 24.8C17.05 25.05 17.48 25.05 17.73 24.8L19.07 23.46C19.32 23.21 19.32 22.78 19.07 22.53L17.73 21.19C18.23 20.23 18.53 19.23 18.68 18.23H20.73C21.01 18.23 21.23 18.01 21.23 17.73S21.01 17.23 20.73 17.23H18.68C18.53 16.23 18.23 15.23 17.73 14.27Z"/>
                 </svg>
               </button>
-            </template>
-
-            <button 
-              v-else-if="callStatus === 'connecting'"
-              @click="endCall"
-              class="w-16 h-16 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-all shadow-lg hover:shadow-xl"
-            >
-              <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
-                <path d="M17.73 14.27L19.07 12.93C19.32 12.68 19.32 12.25 19.07 12L17.73 10.66C17.48 10.41 17.05 10.41 16.8 10.66L15.46 12C14.5 11.5 13.5 11.2 12.5 11.05V9C12.5 8.72 12.28 8.5 12 8.5S11.5 8.72 11.5 9V11.05C10.5 11.2 9.5 11.5 8.54 12L7.2 10.66C6.95 10.41 6.52 10.41 6.27 10.66L4.93 12C4.68 12.25 4.68 12.68 4.93 12.93L6.27 14.27C5.77 15.23 5.47 16.23 5.32 17.23H3.27C2.99 17.23 2.77 17.45 2.77 17.73S2.99 18.23 3.27 18.23H5.32C5.47 19.23 5.77 20.23 6.27 21.19L4.93 22.53C4.68 22.78 4.68 23.21 4.93 23.46L6.27 24.8C6.52 25.05 6.95 25.05 7.2 24.8L8.54 23.46C9.5 23.96 10.5 24.26 11.5 24.41V26.46C11.5 26.74 11.72 26.96 12 26.96S12.5 26.74 12.5 26.46V24.41C13.5 24.26 14.5 23.96 15.46 23.46L16.8 24.8C17.05 25.05 17.48 25.05 17.73 24.8L19.07 23.46C19.32 23.21 19.32 22.78 19.07 22.53L17.73 21.19C18.23 20.23 18.53 19.23 18.68 18.23H20.73C21.01 18.23 21.23 18.01 21.23 17.73S21.01 17.23 20.73 17.23H18.68C18.53 16.23 18.23 15.23 17.73 14.27Z"/>
-              </svg>
-            </button>
-          </div>
-
-          <!-- 通话信息 -->
-          <div class="w-full bg-gray-50 rounded-lg p-4 mb-4" v-if="callStatus !== 'idle'">
-            <div class="flex justify-between mb-2">
-              <span class="text-gray-500 text-sm">通话时长:</span>
-              <span class="text-gray-800 text-sm font-medium">{{ formatDuration(callDuration) }}</span>
             </div>
-            <div class="flex justify-between" v-if="currentCharacter">
-              <span class="text-gray-500 text-sm">对话角色:</span>
-              <span class="text-gray-800 text-sm font-medium">{{ currentCharacter.name }}</span>
-            </div>
-          </div>
 
-          <!-- 错误提示 -->
-          <div 
-            v-if="errorMessage" 
-            class="w-full bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4"
-            role="alert"
-          >
-            <span class="block sm:inline">{{ errorMessage }}</span>
-            <span class="absolute top-0 bottom-0 right-0 px-4 py-3" @click="clearError">
-              <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-            </span>
+            <!-- Error Toast (Inline) -->
+            <Transition name="fade">
+              <div v-if="errorMessage" class="absolute bottom-4 left-4 right-4 bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm text-center backdrop-blur-md shadow-lg">
+                {{ errorMessage }}
+              </div>
+            </Transition>
           </div>
         </div>
       </div>
-    </div>
+    </Transition>
   </Teleport>
 </template>
 
@@ -154,19 +150,31 @@ const emit = defineEmits<{
 }>()
 
 // Stores & Composables
+import { useToast } from '@/composables/useToast'
+
 const chatStore = useChatStore()
 const authStore = useAuthStore()
 const errorHandler = useErrorHandler()
+const toast = useToast()
 
 // Simple replacement for useMessage
 const message = {
-  success: (msg: string) => console.log('Success:', msg),
-  info: (msg: string) => console.log('Info:', msg),
+  success: (msg: string) => {
+    console.log('Success:', msg)
+    toast.success(msg)
+  },
+  info: (msg: string) => {
+    console.log('Info:', msg)
+    toast.info(msg)
+  },
   error: (msg: string) => {
     console.error('Error:', msg)
-    alert(msg)
+    toast.error(msg)
   },
-  warning: (msg: string) => console.warn('Warning:', msg)
+  warning: (msg: string) => {
+    console.warn('Warning:', msg)
+    toast.warning(msg)
+  }
 }
 
 // 响应式数据
@@ -565,14 +573,32 @@ const startWaveformAnimation = () => {
   draw()
 }
 
-const handleSpeechRecognitionResult = (data: string) => {
+const recognizedText = ref('')
+
+// ... (existing code)
+
+const handleSpeechRecognitionResult = (result: any) => {
   try {
-    const result = JSON.parse(data)
     console.log('[VoiceCall] 语音识别结果:', result)
     
     if (result.text && result.text.trim()) {
-      // 发送识别到的文本到聊天
-      chatStore.sendMessage(result.text.trim())
+      recognizedText.value = result.text.trim()
+      
+      if (result.isFinal) {
+        // 发送识别到的文本到聊天
+        if (chatStore.currentCharacterId) {
+          chatStore.addMessage({
+            characterId: chatStore.currentCharacterId,
+            content: result.text.trim(),
+            isUser: true
+          })
+        }
+        
+        // 延迟清除显示的文本
+        setTimeout(() => {
+          recognizedText.value = ''
+        }, 3000)
+      }
     }
     
   } catch (error) {
@@ -628,7 +654,37 @@ onUnmounted(() => {
   }
 }
 
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .animate-pulse-red {
   animation: pulse-red 1.5s infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
 }
 </style>

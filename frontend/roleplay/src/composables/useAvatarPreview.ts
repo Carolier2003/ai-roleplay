@@ -4,12 +4,20 @@ import { ref, onUnmounted } from 'vue'
  * 头像预览钩子
  * 支持文件选择和URL输入的实时预览功能
  */
+import { useToast } from '@/composables/useToast'
+
+/**
+ * 头像预览钩子
+ * 支持文件选择和URL输入的实时预览功能
+ */
 export function useAvatarPreview() {
+  const toast = useToast()
+
   // Simple replacement for useMessage
   const message = {
     error: (msg: string) => {
       console.error('Error:', msg)
-      alert(msg)
+      toast.error(msg)
     }
   }
 

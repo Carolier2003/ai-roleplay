@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ToastContainer from '@/components/ui/ToastContainer.vue'
+import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import { useTheme } from '@/composables/useTheme'
@@ -23,7 +25,11 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen bg-gray-50 font-sans text-gray-900 relative overflow-hidden">
-    <!-- Global Animated Background -->
+    <!-- Global UI Components -->
+    <ToastContainer />
+    <ConfirmModal />
+
+    <!-- Animated Background -->
     <div class="fixed inset-0 z-0 pointer-events-none">
       <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-400/30 blur-[100px] animate-blob"></div>
       <div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-400/30 blur-[100px] animate-blob animation-delay-2000"></div>

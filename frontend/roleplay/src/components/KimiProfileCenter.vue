@@ -141,29 +141,29 @@ interface Emits {
   (e: 'success'): void
 }
 
+import { useToast } from '@/composables/useToast'
+import { useConfirm } from '@/composables/useConfirm'
+
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const authStore = useAuthStore()
+const toast = useToast()
+const confirm = useConfirm()
 
 // Simple replacement for useMessage and useDialog
 const message = {
   warning: (msg: string) => {
     console.warn('Warning:', msg)
-    alert(msg)
+    toast.warning(msg)
   },
   error: (msg: string) => {
     console.error('Error:', msg)
-    alert(msg)
+    toast.error(msg)
   },
-  success: (msg: string) => console.log('Success:', msg)
-}
-
-const dialog = {
-  warning: (options: any) => {
-    if (confirm(options.content)) {
-      options.onPositiveClick?.()
-    }
+  success: (msg: string) => {
+    console.log('Success:', msg)
+    toast.success(msg)
   }
 }
 
@@ -487,22 +487,17 @@ const handleSaveAll = async () => {
 }
 
 // 退出登录
-const handleLogout = () => {
-  dialog.warning({
-    title: '确认退出',
-    content: '确定要退出登录吗？',
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: async () => {
-      try {
-        await authStore.logout()
-        emit('update:visible', false)
-        message.success('已退出登录')
-      } catch (error) {
-        console.error('[KimiProfileCenter] 退出登录失败:', error)
-        message.error('退出登录失败')
-      }
+const handleLogout = async () => {
+  const confirmed = await confirm.warning('确定要退出登录吗？', '确认退出')
+  if (confirmed) {
+    try {
+      await authStore.logout()
+      emit('update:visible', false)
+      message.success('已退出登录')
+    } catch (error) {
+      console.error('[KimiProfileCenter] 退出登录失败:', error)
+      message.error('退出登录失败')
     }
-  })
+  }
 }
 </script>

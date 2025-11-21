@@ -228,16 +228,24 @@ const props = withDefaults(defineProps<Props>(), {
   activeConversationId: ''
 })
 
+import { useToast } from '@/composables/useToast'
+import { useConfirm } from '@/composables/useConfirm'
+
 const emit = defineEmits<Emits>()
 const authStore = useAuthStore()
 const router = useRouter()
+const toast = useToast()
+const confirm = useConfirm()
 
 // Simple replacement for useMessage
 const message = {
-  success: (msg: string) => console.log('Success:', msg),
+  success: (msg: string) => {
+    console.log('Success:', msg)
+    toast.success(msg)
+  },
   error: (msg: string) => {
     console.error('Error:', msg)
-    alert(msg)
+    toast.error(msg)
   }
 }
 
@@ -312,8 +320,9 @@ const handleConversationAction = (action: string, conversation: Conversation) =>
   }
 }
 
-const handleDeleteConversation = (conversationId: string) => {
-  if (confirm('确定要删除这个会话吗？')) {
+const handleDeleteConversation = async (conversationId: string) => {
+  const confirmed = await confirm.warning('确定要删除这个会话吗？')
+  if (confirmed) {
     conversations.value = conversations.value.filter(c => c.id !== conversationId)
     saveData()
     message.success('会话已删除')

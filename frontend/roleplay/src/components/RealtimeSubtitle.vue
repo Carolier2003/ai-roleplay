@@ -97,17 +97,20 @@ const emit = defineEmits<{
 }>()
 
 // 状态管理
+import { useToast } from '@/composables/useToast'
+
 const authStore = useAuthStore()
+const toast = useToast()
 
 // Simple replacement for useMessage
 const message = {
   warning: (msg: string) => {
     console.warn('Warning:', msg)
-    alert(msg)
+    toast.warning(msg)
   },
   error: (msg: string) => {
     console.error('Error:', msg)
-    alert(msg)
+    toast.error(msg)
   }
 }
 

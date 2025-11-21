@@ -93,14 +93,16 @@
             </svg>
             清空记录
           </button>
-          <!-- 下拉菜单 -->
-          <div class="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 hidden group-hover:block z-10">
-            <button @click="handleClearCurrentCharacter" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 flex items-center gap-2 transition-colors">
-              <span>🗑️</span> 清空当前角色记录
-            </button>
-            <button @click="handleClearAllChats" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 flex items-center gap-2 transition-colors">
-              <span>🚮</span> 清空所有记录
-            </button>
+          <!-- 下拉菜单 - 使用 padding 桥接间隙，防止鼠标移动时菜单消失 -->
+          <div class="absolute right-0 top-full pt-2 w-48 hidden group-hover:block z-10">
+            <div class="bg-white rounded-lg shadow-xl border border-gray-100 py-1">
+              <button @click="handleClearCurrentCharacter" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 flex items-center gap-2 transition-colors">
+                <span>🗑️</span> 清空当前角色记录
+              </button>
+              <button @click="handleClearAllChats" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 flex items-center gap-2 transition-colors">
+                <span>🚮</span> 清空所有记录
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -145,10 +147,14 @@ import ChatSidebar from '@/components/ChatSidebar.vue'
 import ChatMessage from '@/components/ChatMessage.vue'
 import ChatInputBar from '@/components/ChatInputBar.vue'
 import LoginModal from '@/components/LoginModal.vue'
+import { useToast } from '@/composables/useToast'
+import { useConfirm } from '@/composables/useConfirm'
 
 const route = useRoute()
 const chatStore = useChatStore()
 const authStore = useAuthStore()
+const toast = useToast()
+const confirm = useConfirm()
 
 // 接收路由参数
 const props = defineProps<{
@@ -224,33 +230,45 @@ watch(() => authStore.loginModalVisible, (visible) => {
 // 清空操作
 const handleClearCurrentCharacter = async () => {
   if (!authStore.isLoggedIn) {
-    alert('请先登录后再进行清空操作')
+    toast.warning('请先登录后再进行清空操作')
     return
   }
   if (!currentCharacter.value) return
 
-  if (confirm(`确定要清空与 ${currentCharacter.value.name} 的所有聊天记录吗？此操作不可撤销。`)) {
+  const confirmed = await confirm.danger(
+    `确定要清空与 ${currentCharacter.value.name} 的所有聊天记录吗？此操作不可撤销。`,
+    '清空当前角色记录'
+  )
+
+  if (confirmed) {
     try {
       await chatStore.clearCurrentCharacterMessages(currentCharacter.value.id)
+      toast.success('记录已清空')
     } catch (error) {
       console.error('[Chat] 清空当前角色记录失败:', error)
-      alert('清空失败，请重试')
+      toast.error('清空失败，请重试')
     }
   }
 }
 
 const handleClearAllChats = async () => {
   if (!authStore.isLoggedIn) {
-    alert('请先登录后再进行清空操作')
+    toast.warning('请先登录后再进行清空操作')
     return
   }
 
-  if (confirm('确定要清空所有角色的聊天记录吗？此操作不可撤销。')) {
+  const confirmed = await confirm.danger(
+    '确定要清空所有角色的聊天记录吗？此操作不可撤销。',
+    '清空所有记录'
+  )
+
+  if (confirmed) {
     try {
       await chatStore.clearAllMessages()
+      toast.success('所有记录已清空')
     } catch (error) {
       console.error('[Chat] 清空所有记录失败:', error)
-      alert('清空失败，请重试')
+      toast.error('清空失败，请重试')
     }
   }
 }

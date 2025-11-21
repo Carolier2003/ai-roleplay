@@ -26,7 +26,7 @@
             :class="[
               message.isUser 
                 ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-transparent rounded-br-none shadow-md shadow-indigo-500/20' 
-                : 'bg-white/80 backdrop-blur-sm text-gray-800 border-white/50 rounded-bl-none shadow-sm hover:bg-white/90 hover:shadow-md',
+                : `backdrop-blur-sm text-gray-800 border-white/50 rounded-bl-none shadow-sm hover:shadow-md ${themeClasses}`,
               message.streaming ? 'border-indigo-300 ring-2 ring-indigo-100' : ''
             ]"
           >
@@ -95,6 +95,27 @@ const characterName = computed(() => {
 const characterAvatar = computed(() => {
   const character = charactersMap.value.get(props.message.characterId)
   return character?.avatar || '/src/assets/characters/default.webp'
+})
+
+const characterTheme = computed(() => {
+  const character = charactersMap.value.get(props.message.characterId)
+  return character?.theme || 'gray'
+})
+
+const themeClasses = computed(() => {
+  if (props.message.isUser) return ''
+  
+  const theme = characterTheme.value
+  const classes: Record<string, string> = {
+    blue: 'bg-blue-50/80 hover:bg-blue-50 border-blue-100',
+    green: 'bg-green-50/80 hover:bg-green-50 border-green-100',
+    amber: 'bg-amber-50/80 hover:bg-amber-50 border-amber-100',
+    emerald: 'bg-emerald-50/80 hover:bg-emerald-50 border-emerald-100',
+    indigo: 'bg-indigo-50/80 hover:bg-indigo-50 border-indigo-100',
+    gray: 'bg-white/80 hover:bg-white/90 border-white/50'
+  }
+  
+  return classes[theme] || classes['gray']
 })
 
 // 配置 marked

@@ -17,6 +17,7 @@ export interface Character {
   status?: number
   displayName?: string
   complete?: boolean
+  theme?: string // 角色主题色
 }
 
 export interface ChatMessage {
@@ -258,6 +259,18 @@ export const useChatStore = defineStore('chat', () => {
     return avatarMap[character.name] || '/src/assets/characters/default.svg'
   }
 
+  // 角色主题色映射
+  const getCharacterTheme = (name: string): string => {
+    const themeMap: Record<string, string> = {
+      '江户川柯南': 'blue',
+      '泰拉瑞亚向导': 'green',
+      '哈利·波特': 'amber',
+      '苏格拉底': 'emerald',
+      '爱因斯坦': 'indigo'
+    }
+    return themeMap[name] || 'gray'
+  }
+
   // 加载角色列表
   const loadCharacters = async () => {
     try {
@@ -279,7 +292,8 @@ export const useChatStore = defineStore('chat', () => {
         voiceStyle: char.voiceStyle,
         status: char.status,
         displayName: char.displayName,
-        complete: char.complete
+        complete: char.complete,
+        theme: getCharacterTheme(char.name) // 分配主题色
       }))
 
       console.log('[ChatStore] 角色列表加载成功:', characterList.length, '个角色')

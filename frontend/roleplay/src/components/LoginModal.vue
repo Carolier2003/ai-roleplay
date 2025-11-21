@@ -94,20 +94,26 @@ import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
 import type { RegisterRequest, LoginRequest } from '@/api/auth'
 
+import { useToast } from '@/composables/useToast'
+
 const authStore = useAuthStore()
 const chatStore = useChatStore()
+const toast = useToast()
 
 // Simple replacement for useMessage
 const message = {
   success: (msg: string) => {
     console.log('Success:', msg)
-    alert(msg)
+    toast.success(msg)
   },
   error: (msg: string) => {
     console.error('Error:', msg)
-    alert(msg)
+    toast.error(msg)
   },
-  info: (msg: string) => console.log('Info:', msg)
+  info: (msg: string) => {
+    console.log('Info:', msg)
+    toast.info(msg)
+  }
 }
 
 // 状态
@@ -277,7 +283,7 @@ const startCooldownTimer = () => {
     clearInterval(cooldownTimer)
   }
   
-  cooldownTimer = setInterval(() => {
+  cooldownTimer = window.setInterval(() => {
     if (cooldown.value > 0) {
       cooldown.value--
     } else {

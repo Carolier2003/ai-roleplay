@@ -107,22 +107,22 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
+import { useToast } from '@/composables/useToast'
+import { useConfirm } from '@/composables/useConfirm'
+
 const authStore = useAuthStore()
+const toast = useToast()
+const confirm = useConfirm()
 
 // Simple replacement for useMessage and useDialog
 const message = {
-  success: (msg: string) => console.log('Success:', msg),
+  success: (msg: string) => {
+    console.log('Success:', msg)
+    toast.success(msg)
+  },
   error: (msg: string) => {
     console.error('Error:', msg)
-    alert(msg)
-  }
-}
-
-const dialog = {
-  warning: (options: any) => {
-    if (confirm(options.content)) {
-      options.onPositiveClick?.()
-    }
+    toast.error(msg)
   }
 }
 
@@ -195,46 +195,45 @@ const handleFileSelect = async (event: Event) => {
 }
 
 // 删除头像
-const handleDeleteAvatar = () => {
-  dialog.warning({
-    title: '确认删除',
-    content: '确定要删除当前头像吗？删除后将显示默认头像。',
-    positiveText: '确定删除',
-    negativeText: '取消',
-    onPositiveClick: async () => {
-      try {
-        deleting.value = true
-        
-        const success = await AvatarAPI.deleteAvatar()
-        
-        if (success) {
-          // 更新用户头像信息
-          if (authStore.userInfo) {
-            authStore.userInfo.avatarUrl = undefined
-            localStorage.setItem('USER_INFO', JSON.stringify(authStore.userInfo))
-          }
-          
-          message.success('头像删除成功！')
-          emit('delete-success')
-          
-          console.log('[AvatarUploader] 头像删除成功')
-        } else {
-          message.error('头像删除失败，请稍后重试')
+const handleDeleteAvatar = async () => {
+  const confirmed = await confirm.warning(
+    '确定要删除当前头像吗？删除后将显示默认头像。',
+    '确认删除'
+  )
+
+  if (confirmed) {
+    try {
+      deleting.value = true
+      
+      const success = await AvatarAPI.deleteAvatar()
+      
+      if (success) {
+        // 更新用户头像信息
+        if (authStore.userInfo) {
+          authStore.userInfo.avatarUrl = undefined
+          localStorage.setItem('USER_INFO', JSON.stringify(authStore.userInfo))
         }
         
-      } catch (error: any) {
-        console.error('[AvatarUploader] 头像删除失败:', error)
+        message.success('头像删除成功！')
+        emit('delete-success')
         
-        // 使用错误处理器获取用户友好的错误消息
-        const { ErrorHandler } = await import('@/utils/errorHandler')
-        const userMessage = ErrorHandler.getUserMessage(error)
-        
-        message.error(userMessage || '头像删除失败，请稍后重试')
-        emit('delete-error', error)
-      } finally {
-        deleting.value = false
+        console.log('[AvatarUploader] 头像删除成功')
+      } else {
+        message.error('头像删除失败，请稍后重试')
       }
+      
+    } catch (error: any) {
+      console.error('[AvatarUploader] 头像删除失败:', error)
+      
+      // 使用错误处理器获取用户友好的错误消息
+      const { ErrorHandler } = await import('@/utils/errorHandler')
+      const userMessage = ErrorHandler.getUserMessage(error)
+      
+      message.error(userMessage || '头像删除失败，请稍后重试')
+      emit('delete-error', error)
+    } finally {
+      deleting.value = false
     }
-  })
+  }
 }
 </script>

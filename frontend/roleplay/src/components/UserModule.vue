@@ -107,21 +107,28 @@
 import { ref, computed, nextTick } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
+import { useToast } from '@/composables/useToast'
+import { useConfirm } from '@/composables/useConfirm'
 import KimiProfileCenter from './KimiProfileCenter.vue'
 
 const authStore = useAuthStore()
 const chatStore = useChatStore()
+const toast = useToast()
+const confirm = useConfirm()
 
 // Simple replacement for useMessage/useDialog
 const message = {
-  success: (msg: string) => console.log('Success:', msg),
+  success: (msg: string) => {
+    console.log('Success:', msg)
+    toast.success(msg)
+  },
   error: (msg: string) => {
     console.error('Error:', msg)
-    alert(msg)
+    toast.error(msg)
   },
   warning: (msg: string) => {
     console.warn('Warning:', msg)
-    alert(msg)
+    toast.warning(msg)
   }
 }
 
@@ -162,7 +169,8 @@ const editProfile = () => {
 }
 
 const logout = async () => {
-  if (!confirm('确定要退出登录吗？')) return
+  const confirmed = await confirm.warning('确定要退出登录吗？')
+  if (!confirmed) return
 
   try {
     await authStore.logout()
