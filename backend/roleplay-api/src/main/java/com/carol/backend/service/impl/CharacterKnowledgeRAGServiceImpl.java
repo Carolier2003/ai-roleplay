@@ -374,6 +374,58 @@ public class CharacterKnowledgeRAGServiceImpl implements ICharacterKnowledgeRAGS
         }
     }
 
+    @Override
+    public void updateKnowledge(CharacterKnowledge knowledge) {
+        log.info("[updateKnowledge] 更新知识: knowledgeId={}", knowledge.getId());
+        
+        CharacterKnowledge oldKnowledge = knowledgeMapper.selectById(knowledge.getId());
+        if (oldKnowledge == null) {
+            throw BusinessException.of(ErrorCode.PARAM_ERROR, "知识不存在");
+        }
+        
+        // 更新数据库
+        knowledgeMapper.updateById(knowledge);
+        
+        // 更新向量数据库
+        // 先删除旧的向量数据
+        if (oldKnowledge.getVectorId() != null) {
+            try {
+                vectorStore.delete(List.of(oldKnowledge.getVectorId()));
+            } catch (Exception e) {
+                log.warn("[updateKnowledge] 删除旧向量数据失败: vectorId={}", oldKnowledge.getVectorId());
+            }
+        }
+        
+        // 重新向量化
+        vectorizeKnowledge(List.of(knowledge));
+        
+        log.info("[updateKnowledge] 更新知识完成: knowledgeId={}", knowledge.getId());
+    }
+
+    @Override
+    public com.baomidou.mybatisplus.core.metadata.IPage<CharacterKnowledge> getKnowledgeList(Long characterId, int page, int size, String keyword) {
+        log.info("[getKnowledgeList] 获取知识列表: characterId={}, page={}, size={}, keyword={}", 
+                characterId, page, size, keyword);
+        
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<CharacterKnowledge> pageParam = 
+                new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page, size);
+        
+        QueryWrapper<CharacterKnowledge> wrapper = new QueryWrapper<>();
+        if (characterId != null) {
+            wrapper.eq("character_id", characterId);
+        }
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            wrapper.and(w -> w.like("title", keyword)
+                    .or().like("content", keyword)
+                    .or().like("knowledge_type", keyword));
+        }
+        
+        wrapper.orderByDesc("created_at");
+        
+        return knowledgeMapper.selectPage(pageParam, wrapper);
+    }
+
     // ==================== 性能优化方法 ====================
     
     /**

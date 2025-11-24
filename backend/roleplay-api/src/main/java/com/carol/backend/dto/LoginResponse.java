@@ -44,5 +44,10 @@ public class LoginResponse {
          * 头像URL
          */
         private String avatarUrl;
+        
+        /**
+         * 用户角色
+         */
+        private String role;
     }
 }

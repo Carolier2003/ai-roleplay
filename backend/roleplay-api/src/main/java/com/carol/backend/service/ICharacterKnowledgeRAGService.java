@@ -78,4 +78,22 @@ public interface ICharacterKnowledgeRAGService {
      * @param knowledgeId 知识ID
      */
     void deleteKnowledge(Long knowledgeId);
+
+    /**
+     * 更新知识（同步更新向量数据）
+     * 
+     * @param knowledge 知识实体
+     */
+    void updateKnowledge(CharacterKnowledge knowledge);
+
+    /**
+     * 获取知识列表（分页）
+     * 
+     * @param characterId 角色ID
+     * @param page 页码
+     * @param size 每页数量
+     * @param keyword 关键词
+     * @return 知识分页列表
+     */
+    com.baomidou.mybatisplus.core.metadata.IPage<CharacterKnowledge> getKnowledgeList(Long characterId, int page, int size, String keyword);
 }

@@ -38,4 +38,10 @@ public interface IAuthService {
      * @return 登录响应
      */
     LoginResponse refreshToken(String refreshToken);
+    
+    /**
+     * 获取当前用户信息
+     * @return 用户响应
+     */
+    UserResponse getCurrentUser();
 }

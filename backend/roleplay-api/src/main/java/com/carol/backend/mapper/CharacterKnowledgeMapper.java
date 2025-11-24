@@ -78,6 +78,19 @@ public interface CharacterKnowledgeMapper extends BaseMapper<CharacterKnowledge>
     /**
      * 根据向量ID查询知识
      */
+    /**
+     * 根据向量ID查询知识
+     */
     @Select("SELECT * FROM character_knowledge WHERE vector_id = #{vectorId} AND deleted = 0")
     CharacterKnowledge selectByVectorId(@Param("vectorId") String vectorId);
+
+    /**
+     * 统计每个角色的知识库数量
+     */
+    @Select("SELECT c.name as characterName, COUNT(ck.id) as count " +
+            "FROM character_knowledge ck " +
+            "LEFT JOIN characters c ON ck.character_id = c.id " +
+            "WHERE ck.status = 1 AND ck.deleted = 0 " +
+            "GROUP BY ck.character_id, c.name")
+    List<com.carol.backend.dto.AdminStatsResponse.CharacterKnowledgeStat> selectKnowledgeDistribution();
 }

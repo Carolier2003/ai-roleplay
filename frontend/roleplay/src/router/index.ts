@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Chat from '../views/Chat.vue'
 import Login from '../views/Login.vue'
+import KnowledgeManagement from '../views/KnowledgeManagement.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +25,39 @@ const router = createRouter({
       component: Chat,
       props: route => ({ characterId: Number(route.params.characterId) }),  // ✅ 转换为数字
       meta: { requiresAuth: false } // ✅ 允许游客访问聊天页面
+    },
+    {
+      path: '/knowledge',
+      name: 'knowledge-management',
+      component: KnowledgeManagement,
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/admin',
+      component: () => import('../layouts/AdminLayout.vue'),
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: '',
+          name: 'admin-dashboard',
+          component: () => import('../views/admin/Dashboard.vue')
+        },
+        {
+          path: 'users',
+          name: 'admin-users',
+          component: () => import('../views/admin/UserManagement.vue')
+        },
+        {
+          path: 'characters',
+          name: 'admin-characters',
+          component: () => import('../views/admin/CharacterManagement.vue')
+        },
+        {
+          path: 'knowledge',
+          name: 'admin-knowledge',
+          component: () => import('../views/admin/KnowledgeManagement.vue')
+        }
+      ]
     },
     {
       path: '/:pathMatch(.*)*',
@@ -51,13 +85,13 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('ACCESS_TOKEN')
   const userInfo = localStorage.getItem('USER_INFO')
   const isAuthenticated = !!(token && userInfo)
-  
+
   console.log('[router] 路由守卫检查:', {
     to: to.path,
     from: from.path,
     isAuthenticated
   })
-  
+
   // 如果用户已登录但访问登录页面，重定向到最后访问的聊天页面
   if (to.path === '/login' && isAuthenticated) {
     const lastCharacterId = getLastCharacterId()
@@ -65,7 +99,7 @@ router.beforeEach((to, from, next) => {
     next(`/chat/${lastCharacterId}`)
     return
   }
-  
+
   // 保存当前访问的角色ID
   if (to.name === 'chat' && to.params.characterId) {
     const characterId = Number(to.params.characterId)
@@ -74,7 +108,7 @@ router.beforeEach((to, from, next) => {
       console.log('[router] 保存最后访问的角色ID:', characterId)
     }
   }
-  
+
   next()
 })
 

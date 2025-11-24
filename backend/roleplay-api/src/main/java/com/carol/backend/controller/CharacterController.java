@@ -222,6 +222,29 @@ public class CharacterController {
     }
 
     /**
+     * 删除角色（管理功能）
+     * DELETE /api/characters/{id}
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCharacter(@PathVariable Long id) {
+        log.info("删除角色: ID={}", id);
+        
+        try {
+            boolean removed = characterService.removeById(id);
+            if (removed) {
+                log.info("成功删除角色: ID={}", id);
+                return ResponseEntity.ok().build();
+            } else {
+                log.warn("删除角色失败，角色不存在: ID={}", id);
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            log.error("删除角色失败: ID={}, error={}", id, e.getMessage(), e);
+            throw new RuntimeException("删除角色失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 验证模板系统
      * GET /api/characters/template/validate
      */

@@ -111,8 +111,18 @@ public class AuthController {
      * 获取当前用户信息（需要认证）
      */
     @GetMapping("/me")
-    public ResponseEntity<String> getCurrentUser() {
-        // TODO: 实现获取当前用户信息的逻辑
-        return ResponseEntity.ok("Current user info");
+    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
+        log.info("[getCurrentUser] 获取当前用户信息请求");
+        
+        try {
+            UserResponse response = authService.getCurrentUser();
+            return ResponseEntity.ok(ApiResponse.success(response));
+        } catch (IllegalArgumentException e) {
+            log.warn("[getCurrentUser] 获取用户信息失败: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(ApiResponse.error(400, e.getMessage()));
+        } catch (Exception e) {
+            log.error("[getCurrentUser] 获取用户信息异常: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().body(ApiResponse.error("获取用户信息失败"));
+        }
     }
 }

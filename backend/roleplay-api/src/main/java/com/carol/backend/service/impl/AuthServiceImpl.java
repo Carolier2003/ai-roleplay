@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import com.carol.backend.mapper.UserMapper;
+import com.carol.backend.util.UserContext;
+
 import java.util.UUID;
 
 /**
@@ -33,6 +36,7 @@ public class AuthServiceImpl implements IAuthService {
     private final IUserService userService;
     private final IJwtService jwtService;
     private final PasswordEncoderUtil passwordEncoderUtil;
+    private final UserMapper userMapper;
     
     @Override
     public UserResponse register(RegisterRequest request) {
@@ -69,6 +73,7 @@ public class AuthServiceImpl implements IAuthService {
             response.setUserAccount(savedUser.getUserAccount());
             response.setDisplayName(savedUser.getDisplayName());
             response.setAvatarUrl(savedUser.getAvatarUrl());
+            response.setRole(savedUser.getRole());
             
             return response;
             
@@ -117,6 +122,7 @@ public class AuthServiceImpl implements IAuthService {
             userInfo.setUserAccount(user.getUserAccount());
             userInfo.setDisplayName(user.getDisplayName());
             userInfo.setAvatarUrl(user.getAvatarUrl());
+            userInfo.setRole(user.getRole());
             response.setUser(userInfo);
             
             log.info("[login] 用户登录成功: userId={}, userAccount={}", user.getUserId(), user.getUserAccount());
@@ -170,6 +176,7 @@ public class AuthServiceImpl implements IAuthService {
             userInfo.setUserAccount(user.getUserAccount());
             userInfo.setDisplayName(user.getDisplayName());
             userInfo.setAvatarUrl(user.getAvatarUrl());
+            userInfo.setRole(user.getRole());
             response.setUser(userInfo);
             
             log.info("[refreshToken] 令牌刷新成功: userId={}, userAccount={}", user.getUserId(), userAccount);
@@ -183,6 +190,28 @@ public class AuthServiceImpl implements IAuthService {
         }
     }
     
+    @Override
+    public UserResponse getCurrentUser() {
+        Long userId = UserContext.getCurrentUserId();
+        if (userId == null) {
+            throw BusinessException.of(ErrorCode.LOGIN_REQUIRED);
+        }
+        
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw BusinessException.of(ErrorCode.USER_NOT_FOUND);
+        }
+        
+        UserResponse response = new UserResponse();
+        response.setUserId(user.getUserId());
+        response.setUserAccount(user.getUserAccount());
+        response.setDisplayName(user.getDisplayName());
+        response.setAvatarUrl(user.getAvatarUrl());
+        response.setRole(user.getRole());
+        
+        return response;
+    }
+
     /**
      * 生成用户名
      * 如果用户没有提供用户名，则自动生成 "聊聊+UUID前4位"

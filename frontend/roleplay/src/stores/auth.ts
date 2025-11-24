@@ -11,11 +11,7 @@ export interface UserInfo {
   displayName: string
   avatarUrl?: string
   email?: string
-  // 暂时注释掉数据库中不存在的字段
-  // bio?: string
-  // gender?: 'M' | 'F' | 'U'
-  // birthday?: string
-  // phoneNumber?: string
+  role?: string // Added role field
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -39,7 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = savedToken
       console.log('[auth] 从localStorage恢复token:', savedToken.substring(0, 20) + '...')
     }
-    
+
     if (savedRefreshToken) {
       refreshTokenValue.value = savedRefreshToken
       console.log('[auth] 从localStorage恢复refreshToken')
@@ -61,11 +57,11 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = ''
     refreshTokenValue.value = ''
     userInfo.value = null
-    
+
     localStorage.removeItem('ACCESS_TOKEN')
     localStorage.removeItem('REFRESH_TOKEN')
     localStorage.removeItem('USER_INFO')
-    
+
     console.log('[auth] 已清除所有认证数据')
   }
 
@@ -78,7 +74,7 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('ACCESS_TOKEN', accessToken)
     localStorage.setItem('REFRESH_TOKEN', refreshToken)
     localStorage.setItem('USER_INFO', JSON.stringify(user))
-    
+
     console.log('[auth] 已保存认证数据:', {
       user: user.userAccount,
       tokenLength: accessToken.length,
@@ -89,34 +85,35 @@ export const useAuthStore = defineStore('auth', () => {
   // 用户登录
   const login = async (loginData: LoginRequest): Promise<void> => {
     loading.value = true
-    
+
     try {
       const response = await authApi.login(loginData)
-      
+
       const user: UserInfo = {
         userId: response.user.userId,
         userAccount: response.user.userAccount,
         displayName: response.user.displayName,
-        avatarUrl: response.user.avatarUrl || undefined // 如果没有头像，使用null让组件显示默认头像
+        avatarUrl: response.user.avatarUrl || undefined,
+        role: response.user.role // Map role from response
       }
-      
+
       saveAuthData(response.accessToken, response.refreshToken, user)
       loginModalVisible.value = false
-      
+
       console.log('[auth] 登录成功:', user.userAccount)
-      
-      // ✅ 登录成功后加载角色列表并选择第一个角色
+
+      // 登录成功后加载角色列表并选择第一个角色
       try {
         const { useChatStore } = await import('@/stores/chat')
         const chatStore = useChatStore()
         await chatStore.loadCharacters()
-        
+
         // 自动选择第一个角色（柯南）
         if (chatStore.characters.length > 0) {
           const firstCharacter = chatStore.characters[0]
           chatStore.setCurrentCharacter(firstCharacter.id)
           console.log('[auth] 自动选择第一个角色:', firstCharacter.name)
-          
+
           // 加载该角色的历史记录
           try {
             await chatStore.loadMessages(firstCharacter.id)
@@ -125,7 +122,7 @@ export const useAuthStore = defineStore('auth', () => {
             console.warn('[auth] 加载角色历史记录失败:', error)
           }
         }
-        
+
         console.log('[auth] 登录后加载角色列表成功')
       } catch (error) {
         console.warn('[auth] 登录后加载角色列表失败:', error)
@@ -142,11 +139,11 @@ export const useAuthStore = defineStore('auth', () => {
   // 用户注册
   const register = async (registerData: RegisterRequest): Promise<UserResponse> => {
     loading.value = true
-    
+
     try {
       const user = await authApi.register(registerData)
       console.log('[auth] 注册成功:', user.userAccount)
-      
+
       // 注册成功后不自动登录，返回用户信息供后续使用
       return user
     } catch (error: any) {
@@ -166,16 +163,17 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const response = await authApi.refreshToken(refreshTokenValue.value)
-      
+
       const user: UserInfo = {
         userId: response.user.userId,
         userAccount: response.user.userAccount,
         displayName: response.user.displayName,
-        avatarUrl: response.user.avatarUrl || undefined // 如果没有头像，使用null让组件显示默认头像
+        avatarUrl: response.user.avatarUrl || undefined,
+        role: response.user.role // Map role from response
       }
-      
+
       saveAuthData(response.accessToken, response.refreshToken, user)
-      
+
       console.log('[auth] Token刷新成功')
       return true
     } catch (error) {
@@ -194,7 +192,7 @@ export const useAuthStore = defineStore('auth', () => {
     } finally {
       clearAuthData()
       console.log('[auth] 已退出登录')
-      
+
       // 不再强制跳转到登录页面，保持在当前聊天页面
       console.log('[auth] 退出登录，保持在当前页面')
     }
@@ -204,7 +202,7 @@ export const useAuthStore = defineStore('auth', () => {
   const handleAuthError = () => {
     console.log('[auth] 处理认证错误，清除数据')
     clearAuthData()
-    
+
     // 不再强制跳转，而是弹出登录弹窗
     console.log('[auth] 认证错误，弹出登录弹窗')
     showLoginModal()
@@ -230,9 +228,10 @@ export const useAuthStore = defineStore('auth', () => {
         userId: user.userId,
         userAccount: user.userAccount,
         displayName: user.displayName,
-        avatarUrl: user.avatarUrl || undefined // 如果没有头像，使用undefined让组件显示默认头像
+        avatarUrl: user.avatarUrl || undefined,
+        role: user.role // Map role from response
       }
-      
+
       localStorage.setItem('USER_INFO', JSON.stringify(userInfo.value))
     } catch (error) {
       console.error('[auth] 获取用户信息失败:', error)
@@ -248,24 +247,20 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       console.log('[auth] 获取完整用户个人资料')
       const profile = await ProfileAPI.getCurrentUserProfile()
-      
+
       // 更新本地用户信息
       userInfo.value = {
         userId: profile.userId,
         userAccount: profile.userAccount,
         displayName: profile.displayName,
         avatarUrl: profile.avatarUrl || undefined,
-        email: profile.email
-        // 暂时注释掉数据库中不存在的字段
-        // bio: profile.bio,
-        // gender: profile.gender,
-        // birthday: profile.birthday,
-        // phoneNumber: profile.phoneNumber
+        email: profile.email,
+        role: userInfo.value.role // Preserve role as profile API might not return it
       }
-      
+
       localStorage.setItem('USER_INFO', JSON.stringify(userInfo.value))
       console.log('[auth] 获取完整用户个人资料成功:', profile.displayName)
-      
+
       return profile
     } catch (error) {
       console.error('[auth] 获取用户个人资料失败:', error)
@@ -282,24 +277,20 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       console.log('[auth] 更新用户个人资料:', request)
       const updatedProfile = await ProfileAPI.updateCurrentUserProfile(request)
-      
+
       // 更新本地用户信息
       userInfo.value = {
         userId: updatedProfile.userId,
         userAccount: updatedProfile.userAccount,
         displayName: updatedProfile.displayName,
         avatarUrl: updatedProfile.avatarUrl || undefined,
-        email: updatedProfile.email
-        // 暂时注释掉数据库中不存在的字段
-        // bio: updatedProfile.bio,
-        // gender: updatedProfile.gender,
-        // birthday: updatedProfile.birthday,
-        // phoneNumber: updatedProfile.phoneNumber
+        email: updatedProfile.email,
+        role: userInfo.value.role // Preserve role
       }
-      
+
       localStorage.setItem('USER_INFO', JSON.stringify(userInfo.value))
       console.log('[auth] 更新用户个人资料成功:', updatedProfile.displayName)
-      
+
       return updatedProfile
     } catch (error: any) {
       console.error('[auth] 更新用户个人资料失败:', error)
@@ -324,10 +315,10 @@ export const useAuthStore = defineStore('auth', () => {
     userInfo,
     loginModalVisible,
     loading,
-    
+
     // 计算属性
     isLoggedIn,
-    
+
     // 方法
     initAuth,
     login,
@@ -340,7 +331,7 @@ export const useAuthStore = defineStore('auth', () => {
     fetchCurrentUser,
     clearAuthData,
     saveAuthData,
-    
+
     // 个人资料方法
     fetchUserProfile,
     updateUserProfile,

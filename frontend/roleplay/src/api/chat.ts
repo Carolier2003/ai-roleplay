@@ -4,7 +4,7 @@ import axios from './axios'
 export interface Character {
   id: number  // ✅ 使用 number 类型
   name: string
-  avatar: string
+  avatarUrl: string
   unread?: number  // 前端使用的未读消息数
   description?: string
 }

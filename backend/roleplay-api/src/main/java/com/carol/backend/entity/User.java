@@ -80,6 +80,12 @@ public class User {
      */
     @TableField("updated_at")
     private LocalDateTime updatedAt;
+
+    /**
+     * 用户角色 (USER, ADMIN)
+     */
+    @TableField("role")
+    private String role;
     
     // 注释掉数据库中不存在的字段，避免查询错误
     // 如果需要这些字段，请先在数据库中添加对应的列

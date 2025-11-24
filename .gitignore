@@ -50,7 +50,6 @@ tests/**/__pycache__/
 # 临时文件
 *.tmp
 *.temp
-*.md
 
 # 前端编译产物
 src/main/resources/static/dist/

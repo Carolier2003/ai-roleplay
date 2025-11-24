@@ -231,6 +231,78 @@ public class KnowledgeController {
         }
     }
 
+    /**
+     * 获取知识列表（分页）
+     */
+    @GetMapping("/list")
+    public ResponseEntity<?> getKnowledgeList(
+            @RequestParam(required = false) Long characterId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword) {
+        try {
+            com.baomidou.mybatisplus.core.metadata.IPage<CharacterKnowledge> result = 
+                    ragService.getKnowledgeList(characterId, page, size, keyword);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", result);
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("获取知识列表失败", e);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "获取列表失败: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    /**
+     * 更新知识
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateKnowledge(@PathVariable Long id, @RequestBody CharacterKnowledge knowledge) {
+        try {
+            knowledge.setId(id);
+            ragService.updateKnowledge(knowledge);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "更新成功");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("更新知识失败", e);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "更新失败: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    /**
+     * 删除知识
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteKnowledge(@PathVariable Long id) {
+        try {
+            ragService.deleteKnowledge(id);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "删除成功");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("删除知识失败", e);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "删除失败: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     // ==================== 私有方法 ====================
 
     private CharacterKnowledge convertToEntity(KnowledgeItem item, Long characterId) {

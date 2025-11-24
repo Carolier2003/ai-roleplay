@@ -86,22 +86,35 @@
           </div>
         </div>
 
-        <div class="relative group">
-          <button class="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
+        <div class="flex items-center gap-2">
+          <router-link 
+            v-if="authStore.userInfo?.role === 'ADMIN'"
+            to="/admin/users"
+            class="flex items-center gap-1 px-3 py-1.5 text-sm text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-md transition-colors font-medium"
+          >
             <svg viewBox="0 0 24 24" width="16" height="16">
-              <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" fill="currentColor"/>
+              <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,11.99H7V10.5H12V11.99M17,11.99H13V10.5H17V11.99M12,15.29C9.3,15.29 7.11,13.1 7.11,10.4C7.11,7.7 9.3,5.51 12,5.51C14.7,5.51 16.89,7.7 16.89,10.4C16.89,13.1 14.7,15.29 12,15.29M12,7.01C10.13,7.01 8.61,8.53 8.61,10.4C8.61,12.27 10.13,13.79 12,13.79C13.87,13.79 15.39,12.27 15.39,10.4C15.39,8.53 13.87,7.01 12,7.01Z" fill="currentColor"/>
             </svg>
-            清空记录
-          </button>
-          <!-- 下拉菜单 - 使用 padding 桥接间隙，防止鼠标移动时菜单消失 -->
-          <div class="absolute right-0 top-full pt-2 w-48 hidden group-hover:block z-10">
-            <div class="bg-white rounded-lg shadow-xl border border-gray-100 py-1">
-              <button @click="handleClearCurrentCharacter" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 flex items-center gap-2 transition-colors">
-                <span>🗑️</span> 清空当前角色记录
-              </button>
-              <button @click="handleClearAllChats" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 flex items-center gap-2 transition-colors">
-                <span>🚮</span> 清空所有记录
-              </button>
+            管理后台
+          </router-link>
+
+          <div class="relative group">
+            <button class="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" fill="currentColor"/>
+              </svg>
+              清空记录
+            </button>
+            <!-- 下拉菜单 - 使用 padding 桥接间隙，防止鼠标移动时菜单消失 -->
+            <div class="absolute right-0 top-full pt-2 w-48 hidden group-hover:block z-10">
+              <div class="bg-white rounded-lg shadow-xl border border-gray-100 py-1">
+                <button @click="handleClearCurrentCharacter" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 flex items-center gap-2 transition-colors">
+                  <span>🗑️</span> 清空当前角色记录
+                </button>
+                <button @click="handleClearAllChats" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 flex items-center gap-2 transition-colors">
+                  <span>🚮</span> 清空所有记录
+                </button>
+              </div>
             </div>
           </div>
         </div>
