@@ -4,6 +4,7 @@ import com.alibaba.cloud.ai.memory.redis.RedissonRedisChatMemoryRepository;
 import com.carol.backend.dto.ChatRequest;
 import com.carol.backend.dto.ChatResponse;
 import com.carol.backend.dto.TtsSynthesisResponse;
+import com.carol.backend.dto.TtsPersistenceResult;
 import com.carol.backend.dto.UpdateVoiceDurationRequest;
 import com.carol.backend.entity.Character;
 import com.carol.backend.entity.CharacterKnowledge;
@@ -636,13 +637,20 @@ public class ChatController {
                                     // 持久化TTS音频到OSS（下载临时URL并上传到OSS获取永久URL）
                                     String permanentAudioUrl = ttsResponse.getAudioUrl();
                                     try {
-                                        permanentAudioUrl = ttsAudioPersistenceService.persistTtsAudio(
+                                        TtsPersistenceResult persistenceResult = ttsAudioPersistenceService.persistTtsAudio(
                                             ttsResponse.getAudioUrl(),
                                             userId,
                                             request.getCharacterId()
                                         );
-                                        log.info("[handleStreamingWithTTS] TTS音频持久化到OSS成功: conversationId={}, ossUrl={}", 
-                                                conversationId, permanentAudioUrl);
+                                        permanentAudioUrl = persistenceResult.getAudioUrl();
+                                        
+                                        // 如果TTS响应中没有时长，使用持久化计算的时长
+                                        if (voiceDuration == null || voiceDuration == 0) {
+                                            voiceDuration = persistenceResult.getDuration();
+                                        }
+                                        
+                                        log.info("[handleStreamingWithTTS] TTS音频持久化到OSS成功: conversationId={}, ossUrl={}, duration={}", 
+                                                conversationId, permanentAudioUrl, voiceDuration);
                                     } catch (Exception persistError) {
                                         log.error("[handleStreamingWithTTS] TTS音频持久化失败，使用临时URL: conversationId={}, error={}", 
                                                 conversationId, persistError.getMessage());
@@ -659,14 +667,21 @@ public class ChatController {
                             if (ttsResponse != null && ttsResponse.getSuccess()) {
                                 // 持久化TTS音频到OSS（下载临时URL并上传到OSS获取永久URL）
                                 String audioUrlToReturn = ttsResponse.getAudioUrl();
+                                Integer durationToReturn = ttsResponse.getDuration() != null ? ttsResponse.getDuration().intValue() : 0;
+                                
                                 try {
-                                    audioUrlToReturn = ttsAudioPersistenceService.persistTtsAudio(
+                                    TtsPersistenceResult persistenceResult = ttsAudioPersistenceService.persistTtsAudio(
                                         ttsResponse.getAudioUrl(),
                                         userId,
                                         request.getCharacterId()
                                     );
-                                    log.info("流式TTS合成成功并持久化到OSS: conversationId={}, ossUrl={}", 
-                                            conversationId, audioUrlToReturn);
+                                    audioUrlToReturn = persistenceResult.getAudioUrl();
+                                    if (durationToReturn == 0 && persistenceResult.getDuration() != null) {
+                                        durationToReturn = persistenceResult.getDuration();
+                                    }
+                                    
+                                    log.info("流式TTS合成成功并持久化到OSS: conversationId={}, ossUrl={}, duration={}", 
+                                            conversationId, audioUrlToReturn, durationToReturn);
                                 } catch (Exception persistError) {
                                     log.error("流式TTS持久化失败，返回临时URL: conversationId={}, error={}", 
                                             conversationId, persistError.getMessage());
@@ -676,7 +691,7 @@ public class ChatController {
                                 // 返回TTS信息作为SSE事件（使用OSS永久URL或临时URL）
                                 return "data:{\"type\":\"tts\",\"audioUrl\":\"" + audioUrlToReturn + 
                                        "\",\"voice\":\"" + (ttsResponse.getVoice() != null ? ttsResponse.getVoice() : "") + 
-                                       "\",\"duration\":" + (ttsResponse.getDuration() != null ? ttsResponse.getDuration() : 0) + 
+                                       "\",\"duration\":" + durationToReturn + 
                                        ",\"success\":true}\n\n";
                             } else if (ttsResponse == null) {
                                 log.warn("流式TTS合成跳过: conversationId={}, 文本不适合语音合成", conversationId);

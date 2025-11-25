@@ -20,6 +20,10 @@ console.log('[main.ts] Pinia已安装')
 app.use(router)
 console.log('[main.ts] Router已安装')
 
+import { vTooltip } from './directives/vTooltip'
+app.directive('tooltip', vTooltip)
+console.log('[main.ts] v-tooltip指令已注册')
+
 // 初始化 stores
 import { useChatStore } from '@/stores/chat'
 import { useAuthStore } from '@/stores/auth'

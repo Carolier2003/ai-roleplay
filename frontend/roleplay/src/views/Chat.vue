@@ -153,7 +153,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useChatStore } from '@/stores/chat'
 import { useAuthStore } from '@/stores/auth'
 import ChatSidebar from '@/components/ChatSidebar.vue'
@@ -164,6 +164,7 @@ import { useToast } from '@/composables/useToast'
 import { useConfirm } from '@/composables/useConfirm'
 
 const route = useRoute()
+const router = useRouter()
 const chatStore = useChatStore()
 const authStore = useAuthStore()
 const toast = useToast()
@@ -307,6 +308,29 @@ onMounted(async () => {
   }
   
   window.addEventListener('resize', handleResize)
+  
+  // 如果当前没有选中角色，或者选中的角色不存在，则默认选中第一个
+  if (chatStore.characters.length > 0) {
+    const currentId = props.characterId || Number(route.params.characterId)
+    const exists = chatStore.characters.find(c => c.id === currentId)
+    
+    if (!exists) {
+      const firstId = chatStore.characters[0].id
+      console.log('[Chat] 当前角色不存在，重定向到第一个角色:', firstId)
+      chatStore.setCurrentCharacter(firstId)
+      // 更新路由，但不刷新页面
+      router.replace({ name: 'chat', params: { characterId: firstId } })
+    }
+  } else {
+    // 如果列表为空，尝试加载
+    await chatStore.loadCharacters()
+    if (chatStore.characters.length > 0) {
+      const firstId = chatStore.characters[0].id
+      chatStore.setCurrentCharacter(firstId)
+      router.replace({ name: 'chat', params: { characterId: firstId } })
+    }
+  }
+
   scrollToBottom()
 })
 </script>

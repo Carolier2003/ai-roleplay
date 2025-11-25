@@ -10,7 +10,11 @@ const router = createRouter({
       path: '/',
       redirect: () => {
         const lastCharacterId = localStorage.getItem('LAST_CHARACTER_ID')
-        return `/chat/${lastCharacterId || '1'}`
+        const id = Number(lastCharacterId)
+        if (id && !isNaN(id)) {
+          return `/chat/${id}`
+        }
+        return '/chat/1'
       }
     },
     {
@@ -63,7 +67,11 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       redirect: () => {
         const lastCharacterId = localStorage.getItem('LAST_CHARACTER_ID')
-        return `/chat/${lastCharacterId || '1'}`
+        const id = Number(lastCharacterId)
+        if (id && !isNaN(id)) {
+          return `/chat/${id}`
+        }
+        return '/chat/1'
       }
     }
   ],

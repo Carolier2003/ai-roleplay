@@ -41,7 +41,7 @@ public class TtsAudioPersistenceServiceImpl implements ITtsAudioPersistenceServi
     private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS");
     
     @Override
-    public String persistTtsAudio(String temporaryUrl, Long userId, Long characterId) {
+    public com.carol.backend.dto.TtsPersistenceResult persistTtsAudio(String temporaryUrl, Long userId, Long characterId) {
         log.info("[persistTtsAudio] 开始持久化TTS音频: userId={}, characterId={}, temporaryUrl={}", 
                 userId, characterId, temporaryUrl);
         
@@ -49,6 +49,15 @@ public class TtsAudioPersistenceServiceImpl implements ITtsAudioPersistenceServi
             // 1. 下载临时URL的音频数据
             byte[] audioBytes = downloadAudio(temporaryUrl);
             log.info("[persistTtsAudio] 音频下载成功: size={} bytes", audioBytes.length);
+            
+            // 计算音频时长 (WAV格式: 24000Hz, 16bit, 单声道)
+            // 44字节头信息
+            // 每秒字节数 = 24000 * 16 / 8 * 1 = 48000
+            int duration = 0;
+            if (audioBytes.length > 44) {
+                duration = (int) Math.ceil((audioBytes.length - 44) / 48000.0);
+            }
+            log.info("[persistTtsAudio] 计算音频时长: {}秒", duration);
             
             // 2. 生成OSS对象键
             String objectKey = generateOssObjectKey(userId, characterId);
@@ -59,7 +68,10 @@ public class TtsAudioPersistenceServiceImpl implements ITtsAudioPersistenceServi
             log.info("[persistTtsAudio] TTS音频上传OSS成功: userId={}, characterId={}, ossUrl={}", 
                     userId, characterId, ossUrl);
             
-            return ossUrl;
+            return com.carol.backend.dto.TtsPersistenceResult.builder()
+                    .audioUrl(ossUrl)
+                    .duration(duration)
+                    .build();
             
         } catch (Exception e) {
             log.error("[persistTtsAudio] TTS音频持久化失败: userId={}, characterId={}, temporaryUrl={}, error={}", 

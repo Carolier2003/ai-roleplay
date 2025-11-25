@@ -25,8 +25,8 @@
             class="relative rounded-2xl shadow-sm border text-base leading-relaxed break-words transition-all duration-300"
             :class="[
               message.isUser 
-                ? (hasAudioUrl ? 'bg-transparent border-none shadow-none p-0' : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-transparent rounded-br-none shadow-md shadow-indigo-500/20 px-4 py-3 overflow-hidden')
-                : (hasAudioUrl ? 'bg-transparent border-none shadow-none p-0' : `backdrop-blur-sm text-gray-800 border-white/50 rounded-bl-none shadow-sm hover:shadow-md px-4 py-3 ${themeClasses} overflow-hidden`),
+                ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-transparent rounded-br-none shadow-md shadow-indigo-500/20 px-4 py-3 overflow-hidden'
+                : `backdrop-blur-sm text-gray-800 border-white/50 rounded-bl-none shadow-sm hover:shadow-md px-4 py-3 ${themeClasses} overflow-hidden`,
               message.streaming ? 'border-indigo-300 ring-2 ring-indigo-100' : ''
             ]"
           >
@@ -36,15 +36,16 @@
             :duration="voiceDuration"
             :is-playing="isPlaying"
             :is-user="message.isUser"
+            :transparent="true"
             @click="playVoiceMessage"
-            class="mb-2 m-1"
+            class="mb-2 -mx-2"
           />
           
           <!-- 文字消息内容 -->
           <div 
             v-if="shouldShowTextContent" 
             class="markdown-body"
-            :class="{ 'pt-2 border-t border-white/20': hasAudioUrl && message.isUser, 'pt-2 border-t border-gray-100': hasAudioUrl && !message.isUser }"
+            :class="{ 'pt-2 border-t border-white/20': hasAudioUrl && message.isUser, 'pt-2 border-t border-gray-200/50': hasAudioUrl && !message.isUser }"
           >
             <div v-html="safeContent"></div>
             <span v-if="message.streaming" class="inline-block w-2 h-4 bg-indigo-500 ml-1 align-middle animate-pulse"></span>

@@ -1,5 +1,7 @@
 package com.carol.backend.service;
 
+import com.carol.backend.dto.TtsPersistenceResult;
+
 /**
  * TTS音频持久化服务接口
  * 
@@ -11,15 +13,13 @@ package com.carol.backend.service;
 public interface ITtsAudioPersistenceService {
     
     /**
-     * 从临时URL下载音频并上传到OSS
-     * 
-     * @param temporaryUrl 阿里云TTS返回的临时URL
+     * 持久化TTS音频
+     * @param temporaryUrl 临时URL
      * @param userId 用户ID
-     * @param characterId 角色ID（可选）
-     * @return OSS永久URL
-     * @throws RuntimeException 如果下载或上传失败
+     * @param characterId 角色ID
+     * @return 持久化结果（包含URL和时长）
      */
-    String persistTtsAudio(String temporaryUrl, Long userId, Long characterId);
+    TtsPersistenceResult persistTtsAudio(String temporaryUrl, Long userId, Long characterId);
     
     /**
      * 从临时URL下载音频并上传到OSS（简化版本）
@@ -29,7 +29,7 @@ public interface ITtsAudioPersistenceService {
      * @return OSS永久URL
      * @throws RuntimeException 如果下载或上传失败
      */
-    default String persistTtsAudio(String temporaryUrl, Long userId) {
+    default TtsPersistenceResult persistTtsAudio(String temporaryUrl, Long userId) {
         return persistTtsAudio(temporaryUrl, userId, null);
     }
 }

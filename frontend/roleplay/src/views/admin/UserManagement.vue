@@ -103,12 +103,12 @@
                   {{ formatDate(user.lastLoginAt) }}
                 </td>
                 <td class="px-6 py-4 text-right">
-                  <div class="flex justify-end items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-2 group-hover:translate-x-0">
+                  <div class="flex justify-end items-center gap-2">
                     <button 
                       v-if="user.role !== 'ADMIN'"
                       @click="promoteUser(user)"
                       class="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                      title="设为管理员"
+                      v-tooltip="'设为管理员'"
                     >
                       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -117,11 +117,11 @@
                     <button 
                       v-else
                       @click="demoteUser(user)"
-                      class="p-1.5 text-purple-600 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-                      title="取消管理员"
+                      class="p-1.5 text-purple-600 hover:text-white hover:bg-purple-600 rounded-lg transition-colors"
+                      v-tooltip="'取消管理员'"
                     >
                       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </button>
                     
@@ -131,7 +131,7 @@
                       v-if="user.status === 1"
                       @click="banUser(user)"
                       class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      title="禁用用户"
+                      v-tooltip="'封禁用户'"
                     >
                       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -141,7 +141,7 @@
                       v-else
                       @click="unbanUser(user)"
                       class="p-1.5 text-red-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                      title="启用用户"
+                      v-tooltip="'启用用户'"
                     >
                       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -171,32 +171,12 @@
       </div>
 
       <!-- Pagination -->
-      <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex justify-between items-center">
-        <div class="text-sm text-gray-500">
-          显示第 <span class="font-medium text-gray-900">{{ (currentPage - 1) * pageSize + 1 }}</span> 到 <span class="font-medium text-gray-900">{{ Math.min(currentPage * pageSize, total) }}</span> 条，共 <span class="font-medium text-gray-900">{{ total }}</span> 条记录
-        </div>
-        <div class="flex gap-2">
-          <button 
-            :disabled="currentPage === 1"
-            @click="changePage(currentPage - 1)"
-            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
-          >
-            上一页
-          </button>
-          <div class="flex items-center gap-1 px-2">
-            <span class="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-md">{{ currentPage }}</span>
-            <span class="text-sm text-gray-400">/</span>
-            <span class="text-sm text-gray-600 px-2">{{ totalPages }}</span>
-          </div>
-          <button 
-            :disabled="currentPage === totalPages"
-            @click="changePage(currentPage + 1)"
-            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
-          >
-            下一页
-          </button>
-        </div>
-      </div>
+      <Pagination 
+        v-model:current="currentPage"
+        v-model:page-size="pageSize"
+        :total="total"
+        @change="fetchUsers"
+      />
     </div>
   </div>
 </template>
@@ -205,6 +185,7 @@
 import { ref, onMounted } from 'vue'
 import { adminApi, type User } from '@/api/admin'
 import { useToast } from '@/composables/useToast'
+import Pagination from '@/components/common/Pagination.vue'
 
 const toast = useToast()
 const users = ref<User[]>([])
@@ -230,11 +211,6 @@ const fetchUsers = async () => {
     console.error('获取用户列表失败:', error)
     toast.error('获取用户列表失败')
   }
-}
-
-const changePage = (page: number) => {
-  currentPage.value = page
-  fetchUsers()
 }
 
 const formatDate = (dateStr: string) => {

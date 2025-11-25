@@ -1,11 +1,13 @@
 <template>
   <div 
-    class="relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-[20px] transition-all duration-300 cursor-pointer select-none group border"
+    class="relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-[20px] transition-all duration-300 cursor-pointer select-none group"
     :class="[
-      isUser 
-        ? 'bg-gradient-to-br from-indigo-500/90 to-violet-600/90 border-white/20 text-white shadow-lg shadow-indigo-500/20' 
-        : 'bg-white/60 backdrop-blur-md border-white/40 text-gray-800 shadow-sm hover:shadow-md hover:bg-white/80',
-      isPlaying && !isUser ? 'ring-2 ring-indigo-200 bg-white/80' : ''
+      transparent 
+        ? '' 
+        : (isUser 
+            ? 'bg-gradient-to-br from-indigo-500/90 to-violet-600/90 border border-white/20 text-white shadow-lg shadow-indigo-500/20' 
+            : 'bg-white/60 backdrop-blur-md border border-white/40 text-gray-800 shadow-sm hover:shadow-md hover:bg-white/80'),
+      !transparent && isPlaying && !isUser ? 'ring-2 ring-indigo-200 bg-white/80' : ''
     ]"
     :style="{ width: `${playerWidth}px` }"
     @click="handleClick"
@@ -85,11 +87,13 @@ interface Props {
   duration: number
   isPlaying?: boolean
   isUser?: boolean
+  transparent?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isPlaying: false,
-  isUser: false
+  isUser: false,
+  transparent: false
 })
 
 const emit = defineEmits<{
