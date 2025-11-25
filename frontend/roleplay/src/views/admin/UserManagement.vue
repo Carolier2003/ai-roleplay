@@ -171,32 +171,12 @@
       </div>
 
       <!-- Pagination -->
-      <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex justify-between items-center">
-        <div class="text-sm text-gray-500">
-          显示第 <span class="font-medium text-gray-900">{{ (currentPage - 1) * pageSize + 1 }}</span> 到 <span class="font-medium text-gray-900">{{ Math.min(currentPage * pageSize, total) }}</span> 条，共 <span class="font-medium text-gray-900">{{ total }}</span> 条记录
-        </div>
-        <div class="flex gap-2">
-          <button 
-            :disabled="currentPage === 1"
-            @click="changePage(currentPage - 1)"
-            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
-          >
-            上一页
-          </button>
-          <div class="flex items-center gap-1 px-2">
-            <span class="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-md">{{ currentPage }}</span>
-            <span class="text-sm text-gray-400">/</span>
-            <span class="text-sm text-gray-600 px-2">{{ totalPages }}</span>
-          </div>
-          <button 
-            :disabled="currentPage === totalPages"
-            @click="changePage(currentPage + 1)"
-            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
-          >
-            下一页
-          </button>
-        </div>
-      </div>
+      <Pagination 
+        v-model:current="currentPage"
+        v-model:page-size="pageSize"
+        :total="total"
+        @change="fetchUsers"
+      />
     </div>
   </div>
 </template>
@@ -205,6 +185,7 @@
 import { ref, onMounted } from 'vue'
 import { adminApi, type User } from '@/api/admin'
 import { useToast } from '@/composables/useToast'
+import Pagination from '@/components/common/Pagination.vue'
 
 const toast = useToast()
 const users = ref<User[]>([])
@@ -230,11 +211,6 @@ const fetchUsers = async () => {
     console.error('获取用户列表失败:', error)
     toast.error('获取用户列表失败')
   }
-}
-
-const changePage = (page: number) => {
-  currentPage.value = page
-  fetchUsers()
 }
 
 const formatDate = (dateStr: string) => {
