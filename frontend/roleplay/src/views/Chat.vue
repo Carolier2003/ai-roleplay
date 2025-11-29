@@ -213,7 +213,8 @@ const sendPendingMessage = async () => {
 
 // 监听器
 watch(() => props.characterId, async (newCharacterId, oldCharacterId) => {
-  if (newCharacterId && newCharacterId !== oldCharacterId) {
+  // ✅ 修复：允许 ID=0
+  if (newCharacterId !== undefined && newCharacterId !== null && newCharacterId !== oldCharacterId) {
     chatStore.setCurrentCharacter(newCharacterId)
     
     if (authStore.isLoggedIn) {
@@ -300,7 +301,8 @@ onMounted(async () => {
   }
   
   let characterId: number | null = null
-  if (props.characterId) {
+  // ✅ 修复：允许 ID=0
+  if (props.characterId !== undefined && props.characterId !== null) {
     characterId = props.characterId
   } else if (route.params.characterId) {
     characterId = Number(route.params.characterId)
@@ -311,7 +313,10 @@ onMounted(async () => {
   
   // 如果当前没有选中角色，或者选中的角色不存在，则默认选中第一个
   if (chatStore.characters.length > 0) {
-    const currentId = props.characterId || Number(route.params.characterId)
+    // ✅ 修复：允许 ID=0
+    const currentId = (props.characterId !== undefined && props.characterId !== null) 
+      ? props.characterId 
+      : Number(route.params.characterId)
     const exists = chatStore.characters.find(c => c.id === currentId)
     
     if (!exists) {

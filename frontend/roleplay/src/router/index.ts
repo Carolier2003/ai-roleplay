@@ -10,9 +10,12 @@ const router = createRouter({
       path: '/',
       redirect: () => {
         const lastCharacterId = localStorage.getItem('LAST_CHARACTER_ID')
-        const id = Number(lastCharacterId)
-        if (id && !isNaN(id)) {
-          return `/chat/${id}`
+        // ✅ 修复：正确处理 ID=0 的情况
+        if (lastCharacterId !== null) {
+          const id = Number(lastCharacterId)
+          if (!isNaN(id)) {
+            return `/chat/${id}`
+          }
         }
         return '/chat/1'
       }
@@ -67,9 +70,12 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       redirect: () => {
         const lastCharacterId = localStorage.getItem('LAST_CHARACTER_ID')
-        const id = Number(lastCharacterId)
-        if (id && !isNaN(id)) {
-          return `/chat/${id}`
+        // ✅ 修复：正确处理 ID=0 的情况
+        if (lastCharacterId !== null) {
+          const id = Number(lastCharacterId)
+          if (!isNaN(id)) {
+            return `/chat/${id}`
+          }
         }
         return '/chat/1'
       }
@@ -80,7 +86,8 @@ const router = createRouter({
 // 获取最后访问的角色ID
 const getLastCharacterId = (): number => {
   const lastCharacterId = localStorage.getItem('LAST_CHARACTER_ID')
-  return lastCharacterId ? Number(lastCharacterId) : 1
+  // ✅ 修复：允许返回 0
+  return lastCharacterId !== null ? Number(lastCharacterId) : 1
 }
 
 // 保存最后访问的角色ID

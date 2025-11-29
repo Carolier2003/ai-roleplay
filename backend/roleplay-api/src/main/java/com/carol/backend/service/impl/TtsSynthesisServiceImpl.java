@@ -147,6 +147,14 @@ public class TtsSynthesisServiceImpl implements ITtsSynthesisService {
     @Override
     public String getRecommendedVoiceForCharacter(Long characterId) {
         log.debug("[getRecommendedVoiceForCharacter] 获取角色推荐音色: characterId={}", characterId);
+        
+        // ✅ ID=0 是通用AI助手（类似ChatGPT），使用默认音色
+        if (characterId == null || characterId == 0L) {
+            String defaultVoice = config.getDefaultVoice();
+            log.debug("[getRecommendedVoiceForCharacter] 通用AI助手，返回默认音色: {}", defaultVoice);
+            return defaultVoice;
+        }
+        
         return config.getCharacterVoice(characterId);
     }
     

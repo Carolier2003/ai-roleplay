@@ -118,6 +118,13 @@ export const useChatStore = defineStore('chat', () => {
     localStorage.setItem('LAST_CHARACTER_ID', characterId.toString())
     console.log('[ChatStore] 保存最后访问的角色ID:', characterId)
 
+    // ✅ ID=0 是通用AI助手（类似ChatGPT），自动关闭 RAG
+    // 因为通用AI不需要角色知识库，只有角色扮演才需要
+    if (characterId === 0) {
+      enableRag.value = false
+      console.log('[ChatStore] 切换到AI助手，自动关闭RAG')
+    }
+
     // 清除未读消息
     const character = characters.value.find(c => c.id === characterId)
     if (character) {
@@ -302,6 +309,27 @@ export const useChatStore = defineStore('chat', () => {
         theme: getCharacterTheme(char.name) // 分配主题色
       }))
 
+      // ✅ 注入虚拟角色 "AI 助手" (ID=0)
+      const aiAssistant: Character = {
+        id: 0,
+        name: 'AI 助手',
+        avatar: 'http://oss.kon-carol.xyz/airole0.png',
+        unread: 0,
+        description: '一个通用的 AI 助手，可以回答您的任何问题。',
+        backgroundStory: '我是您的智能助手，随时为您服务。',
+        personalityTraits: '乐于助人, 智能, 友好',
+        speakingStyle: '简洁, 准确',
+        expertiseArea: '通用知识',
+        voiceStyle: 'default',
+        status: 1,
+        displayName: 'AI 助手',
+        complete: true,
+        theme: 'blue'
+      }
+
+      // 将 AI 助手添加到列表最前面
+      characters.value.unshift(aiAssistant)
+
       console.log('[ChatStore] 角色列表加载成功:', characterList.length, '个角色')
       console.log('[ChatStore] 处理后的角色数据:', characters.value)
     } catch (error) {
@@ -382,13 +410,11 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
-  // 切换RAG功能 (已移除，默认始终开启)
-  /*
+  // 切换RAG功能
   const toggleRag = () => {
     enableRag.value = !enableRag.value
     console.log('[ChatStore] RAG功能已', enableRag.value ? '启用' : '禁用')
   }
-  */
 
   return {
     // 状态
@@ -422,6 +448,6 @@ export const useChatStore = defineStore('chat', () => {
     loadMessages,
     clearCurrentCharacterMessages,
     clearAllMessages,
-    // toggleRag       // RAG切换方法 (已移除)
+    toggleRag          // RAG切换方法
   }
 })

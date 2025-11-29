@@ -129,7 +129,8 @@ public class ChatTtsIntegrationServiceImpl implements IChatTtsIntegrationService
         String voice = ttsConfig.getDefaultVoice();
         String model = ttsConfig.getDefaultModel();
         
-        if (characterId != null) {
+        // ✅ ID=0 是通用AI助手（类似ChatGPT），不是角色扮演，使用默认配置
+        if (characterId != null && characterId != 0L) {
             try {
                 // 获取角色推荐音色
                 voice = ttsSynthesisService.getRecommendedVoiceForCharacter(characterId);
@@ -141,6 +142,8 @@ public class ChatTtsIntegrationServiceImpl implements IChatTtsIntegrationService
                 log.warn("[buildTtsRequest] 获取角色音色配置失败，使用默认配置: characterId={}, error={}", 
                         characterId, e.getMessage());
             }
+        } else if (characterId == 0L) {
+            log.debug("[buildTtsRequest] 通用AI助手，使用默认音色: {}", voice);
         }
         
         return TtsSynthesisRequest.builder()
@@ -161,6 +164,12 @@ public class ChatTtsIntegrationServiceImpl implements IChatTtsIntegrationService
     private String selectOptimalModelForCharacter(Long characterId, String languageType) {
         // 默认使用qwen3-tts-flash（支持更多音色和语言）
         String defaultModel = "qwen3-tts-flash";
+        
+        // ✅ ID=0 是通用AI助手（类似ChatGPT），不是角色，直接使用默认模型
+        if (characterId == null || characterId == 0L) {
+            log.debug("[selectOptimalModelForCharacter] 通用AI助手，使用默认模型: {}", defaultModel);
+            return defaultModel;
+        }
         
         try {
             Character character = characterService.getCharacterById(characterId);

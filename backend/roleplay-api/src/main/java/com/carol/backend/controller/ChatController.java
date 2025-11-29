@@ -143,14 +143,23 @@ public class ChatController {
                 response = handleCharacterChat(request, conversationId);
                 
                 // 获取角色信息用于响应
-                Character character = characterService.getCharacterById(request.getCharacterId());
-                String characterVoice = ttsSynthesisService.getRecommendedVoiceForCharacter(request.getCharacterId());
-                characterInfo = ChatResponse.CharacterInfo.builder()
-                    .id(character.getId())
-                    .name(character.getName())
-                    .avatar(character.getAvatarUrl())
-                    .voice(characterVoice)
-                    .build();
+                if (request.getCharacterId() == 0L) {
+                    characterInfo = ChatResponse.CharacterInfo.builder()
+                        .id(0L)
+                        .name("AI 助手")
+                        .avatar("http://oss.kon-carol.xyz/airole0.png")
+                        .voice("default")
+                        .build();
+                } else {
+                    Character character = characterService.getCharacterById(request.getCharacterId());
+                    String characterVoice = ttsSynthesisService.getRecommendedVoiceForCharacter(request.getCharacterId());
+                    characterInfo = ChatResponse.CharacterInfo.builder()
+                        .id(character.getId())
+                        .name(character.getName())
+                        .avatar(character.getAvatarUrl())
+                        .voice(characterVoice)
+                        .build();
+                }
             } else {
                 // 普通对话 - 同步历史记录到messageWindowChatMemory
                 syncHistoryToMessageWindowChatMemory(conversationId);
@@ -395,44 +404,72 @@ public class ChatController {
      * 处理角色扮演对话
      * 集成RAG知识检索，提供更智能的角色扮演体验
      */
+    /**
+     * 处理角色扮演对话
+     * 集成RAG知识检索，提供更智能的角色扮演体验
+     */
     private String handleCharacterChat(ChatRequest request, String conversationId) {
         log.info("[handleCharacterChat] 处理角色扮演对话: characterId={}, conversationId={}, enableRag={}",
                 request.getCharacterId(), conversationId, request.getEnableRag());
         
         try {
-            // 1. 获取角色信息
-            Character character = characterService.getCharacterById(request.getCharacterId());
-            
-            // 2. 检查角色是否可用
-            if (!characterService.isCharacterAvailable(request.getCharacterId())) {
-                throw new RuntimeException("角色 " + character.getName() + " 当前不可用，请稍后再试");
-            }
-            
-            // 3. 根据enableRag标志决定是否使用RAG知识检索
+            Character character;
             Message systemMessage;
-            if (Boolean.TRUE.equals(request.getEnableRag())) {
-                // 启用RAG：检索知识并使用增强提示词
-                List<CharacterKnowledge> relevantKnowledge = ragService.searchRelevantKnowledge(
-                    request.getCharacterId(),
-                    request.getMessage(),
-                    5  // 检索top5相关知识
-                );
 
-                log.info("[handleCharacterChat] RAG模式：检索到 {} 个相关知识条目", relevantKnowledge.size());
-
-                // 生成包含RAG知识的增强系统提示词
-                systemMessage = promptTemplateService.createCharacterSystemMessageWithRAG(
-                    character,
-                    relevantKnowledge,
-                    Boolean.TRUE.equals(request.getEnableTts())
+            // ✅ 特殊处理 ID=0 的普通助手角色
+            if (request.getCharacterId() != null && request.getCharacterId() == 0L) {
+                log.info("[handleCharacterChat] 使用普通助手模式 (ID=0)");
+                
+                // ✅ 强制关闭RAG - AI助手不需要角色知识库
+                if (Boolean.TRUE.equals(request.getEnableRag())) {
+                    log.info("[handleCharacterChat] AI助手不使用RAG，强制关闭: characterId=0");
+                    request.setEnableRag(false);
+                }
+                
+                // 创建虚拟角色对象
+                character = new Character();
+                character.setId(0L);
+                character.setName("AI 助手");
+                character.setAvatarUrl("http://oss.kon-carol.xyz/airole0.png");
+                
+                // 直接使用默认系统提示词，不使用RAG
+                systemMessage = new org.springframework.ai.chat.messages.SystemMessage(
+                    "你是一个乐于助人的 AI 助手。请用简洁、准确的语言回答用户的问题。"
                 );
             } else {
-                // 禁用RAG：直接使用基础角色提示词
-                log.info("[handleCharacterChat] 基础模式：不使用RAG知识检索");
-                systemMessage = promptTemplateService.createCharacterSystemMessage(
-                    character,
-                    Boolean.TRUE.equals(request.getEnableTts())
-                );
+                // 1. 获取角色信息
+                character = characterService.getCharacterById(request.getCharacterId());
+                
+                // 2. 检查角色是否可用
+                if (!characterService.isCharacterAvailable(request.getCharacterId())) {
+                    throw new RuntimeException("角色 " + character.getName() + " 当前不可用，请稍后再试");
+                }
+                
+                // 3. 根据enableRag标志决定是否使用RAG知识检索
+                if (Boolean.TRUE.equals(request.getEnableRag())) {
+                    // 启用RAG：检索知识并使用增强提示词
+                    List<CharacterKnowledge> relevantKnowledge = ragService.searchRelevantKnowledge(
+                        request.getCharacterId(),
+                        request.getMessage(),
+                        5  // 检索top5相关知识
+                    );
+
+                    log.info("[handleCharacterChat] RAG模式：检索到 {} 个相关知识条目", relevantKnowledge.size());
+
+                    // 生成包含RAG知识的增强系统提示词
+                    systemMessage = promptTemplateService.createCharacterSystemMessageWithRAG(
+                        character,
+                        relevantKnowledge,
+                        Boolean.TRUE.equals(request.getEnableTts())
+                    );
+                } else {
+                    // 禁用RAG：直接使用基础角色提示词
+                    log.info("[handleCharacterChat] 基础模式：不使用RAG知识检索");
+                    systemMessage = promptTemplateService.createCharacterSystemMessage(
+                        character,
+                        Boolean.TRUE.equals(request.getEnableTts())
+                    );
+                }
             }
 
             // 4. 同步历史记录到messageWindowChatMemory（确保MessageChatMemoryAdvisor能读取到）
@@ -444,7 +481,6 @@ public class ChatController {
             // 6. 使用Prompt进行对话
             Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
 
-            // 7. 保存用户消息到自定义存储和messageWindowChatMemory
             // 7. 保存用户消息到自定义存储和messageWindowChatMemory
             customMessageStorageService.saveMessage(conversationId, userMessage, true, request.getAudioUrl(), request.getVoiceDuration());
             // 同时保存到messageWindowChatMemory，确保MessageChatMemoryAdvisor能读取到
@@ -484,43 +520,67 @@ public class ChatController {
         
         return Flux.defer(() -> {
             try {
-                // 1. 获取角色信息
-                Character character = characterService.getCharacterById(request.getCharacterId());
-                
-                // 2. 检查角色是否可用
-                if (!characterService.isCharacterAvailable(request.getCharacterId())) {
-                    log.warn("角色不可用: characterId={}, characterName={}", request.getCharacterId(), character.getName());
-                    return Flux.just(
-                        "data: {\"error\": \"角色 " + character.getName() + " 当前不可用\"}\n\n",
-                        "data: [DONE]\n\n"
-                    );
-                }
-                
-                // 3. 根据enableRag标志决定是否使用RAG知识检索
+                Character character;
                 Message systemMessage;
-                if (Boolean.TRUE.equals(request.getEnableRag())) {
-                    // 启用RAG：检索知识并使用增强提示词
-                    List<CharacterKnowledge> relevantKnowledge = ragService.searchRelevantKnowledge(
-                        request.getCharacterId(),
-                        request.getMessage(),
-                        5  // 检索top5相关知识
-                    );
 
-                    log.info("[handleCharacterStreamChat] RAG模式：检索到 {} 个相关知识条目", relevantKnowledge.size());
-
-                    // 生成包含RAG知识的增强系统提示词
-                    systemMessage = promptTemplateService.createCharacterSystemMessageWithRAG(
-                        character,
-                        relevantKnowledge,
-                        Boolean.TRUE.equals(request.getEnableTts())
+                // ✅ 特殊处理 ID=0 的普通助手角色
+                if (request.getCharacterId() != null && request.getCharacterId() == 0L) {
+                    log.info("[handleCharacterStreamChat] 使用普通助手模式 (ID=0)");
+                    
+                    // ✅ 强制关闭RAG - AI助手不需要角色知识库
+                    if (Boolean.TRUE.equals(request.getEnableRag())) {
+                        log.info("[handleCharacterStreamChat] AI助手不使用RAG，强制关闭: characterId=0");
+                        request.setEnableRag(false);
+                    }
+                    
+                    // 创建虚拟角色对象
+                    character = new Character();
+                    character.setId(0L);
+                    character.setName("AI 助手");
+                    character.setAvatarUrl("http://oss.kon-carol.xyz/airole0.png");
+                    
+                    // 直接使用默认系统提示词，不使用RAG
+                    systemMessage = new org.springframework.ai.chat.messages.SystemMessage(
+                        "你是一个乐于助人的 AI 助手。请用简洁、准确的语言回答用户的问题。"
                     );
                 } else {
-                    // 禁用RAG：直接使用基础角色提示词
-                    log.info("[handleCharacterStreamChat] 基础模式：不使用RAG知识检索");
-                    systemMessage = promptTemplateService.createCharacterSystemMessage(
-                        character,
-                        Boolean.TRUE.equals(request.getEnableTts())
-                    );
+                    // 1. 获取角色信息
+                    character = characterService.getCharacterById(request.getCharacterId());
+                    
+                    // 2. 检查角色是否可用
+                    if (!characterService.isCharacterAvailable(request.getCharacterId())) {
+                        log.warn("角色不可用: characterId={}, characterName={}", request.getCharacterId(), character.getName());
+                        return Flux.just(
+                            "data: {\"error\": \"角色 " + character.getName() + " 当前不可用\"}\n\n",
+                            "data: [DONE]\n\n"
+                        );
+                    }
+                    
+                    // 3. 根据enableRag标志决定是否使用RAG知识检索
+                    if (Boolean.TRUE.equals(request.getEnableRag())) {
+                        // 启用RAG：检索知识并使用增强提示词
+                        List<CharacterKnowledge> relevantKnowledge = ragService.searchRelevantKnowledge(
+                            request.getCharacterId(),
+                            request.getMessage(),
+                            5  // 检索top5相关知识
+                        );
+
+                        log.info("[handleCharacterStreamChat] RAG模式：检索到 {} 个相关知识条目", relevantKnowledge.size());
+
+                        // 生成包含RAG知识的增强系统提示词
+                        systemMessage = promptTemplateService.createCharacterSystemMessageWithRAG(
+                            character,
+                            relevantKnowledge,
+                            Boolean.TRUE.equals(request.getEnableTts())
+                        );
+                    } else {
+                        // 禁用RAG：直接使用基础角色提示词
+                        log.info("[handleCharacterStreamChat] 基础模式：不使用RAG知识检索");
+                        systemMessage = promptTemplateService.createCharacterSystemMessage(
+                            character,
+                            Boolean.TRUE.equals(request.getEnableTts())
+                        );
+                    }
                 }
 
                 // 4. 同步历史记录到messageWindowChatMemory（确保MessageChatMemoryAdvisor能读取到）

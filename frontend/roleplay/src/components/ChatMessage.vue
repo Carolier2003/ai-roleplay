@@ -30,9 +30,16 @@
               message.streaming ? 'border-indigo-300 ring-2 ring-indigo-100' : ''
             ]"
           >
+          <!-- 正在生成语音的加载动画 -->
+          <VoiceLoadingIndicator 
+            v-if="isGeneratingVoice"
+            :is-user="message.isUser"
+            class="-mx-2"
+          />
+          
           <!-- 语音消息显示波形 -->
           <VoiceWaveform 
-            v-if="hasAudioUrl"
+            v-else-if="hasAudioUrl"
             :duration="voiceDuration"
             :is-playing="isPlaying"
             :is-user="message.isUser"
@@ -61,6 +68,7 @@ import { computed, ref, watch, watchEffect, onUnmounted } from 'vue'
 import { useChatStore, type ChatMessage } from '@/stores/chat'
 import { marked } from 'marked'
 import VoiceWaveform from './VoiceWaveform.vue'
+import VoiceLoadingIndicator from './VoiceLoadingIndicator.vue'
 
 interface Props {
   message: ChatMessage
@@ -181,6 +189,8 @@ const safeContent = computed(() => {
   
   try {
     content = preprocessMarkdown(content)
+    // 去除末尾的空白字符，防止出现多余的换行
+    content = content.trimEnd()
     let htmlContent = marked.parse(content) as string
     return htmlContent
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
@@ -293,12 +303,30 @@ onUnmounted(() => {
 
 const hasAudioUrl = computed(() => !!props.message.audioUrl)
 
+// 检测是否正在生成语音（显示加载动画）
+const isGeneratingVoice = computed(() => {
+  const content = props.message.content.trim()
+  // 匹配 "🎵 正在生成语音..." 或类似的加载文本
+  return content.includes('正在生成语音') || content.includes('生成中')
+})
+
 const shouldShowTextContent = computed(() => {
-  if (props.message.isUser) return true
+  // 如果正在生成语音，不显示文本内容
+  if (isGeneratingVoice.value) return false
+  
   const content = props.message.content.trim()
   if (!content) return false
+
+  // 检查是否为纯语音消息格式（如 "🎵 3""）
   const voiceOnlyPattern = /^🎵\s*\d+"?\s*$/
-  if (voiceOnlyPattern.test(content)) return false
+  if (voiceOnlyPattern.test(content)) {
+    // 如果有音频URL，则隐藏文本（优先显示波形）
+    // 如果没有音频URL，则显示文本作为回退（避免空气泡）
+    return !hasAudioUrl.value
+  }
+
+  // 其他情况（普通文本或混合内容），总是显示文本
+  // 注意：即使用户消息也需要经过上面的pattern检查
   return true
 })
 </script>

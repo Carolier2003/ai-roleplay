@@ -314,8 +314,8 @@ const handleSend = async () => {
   const content = inputText.value.trim()
   if (!content) return
   
-  // 检查是否选择了角色
-  if (!chatStore.currentCharacterId) {
+  // 检查是否选择了角色 (允许 ID=0)
+  if (chatStore.currentCharacterId === null || chatStore.currentCharacterId === undefined) {
     message.warning('请先选择一个角色')
     return
   }
@@ -795,7 +795,7 @@ const toggleVoiceMessageMode = () => {
 }
 
 const startVoiceMessageRecording = async () => {
-  if (!props.currentCharacterId) {
+  if (props.currentCharacterId === undefined || props.currentCharacterId === null) {
     message.warning('请先选择角色')
     return
   }
@@ -935,23 +935,26 @@ const processVoiceMessage = async (audioBlob: Blob) => {
       return
     }
     
-    // 发送语音消息：显示为语音信息标识，包含时长
-    const voiceMessageContent = `🎵 ${voiceMessageDuration.value}"`
-    inputText.value = voiceMessageContent
+    // 发送语音消息：显示识别的文字内容
+    inputText.value = recognizedText
     
+    // 创建本地音频URL作为回退（确保立即显示）
+    const localAudioUrl = URL.createObjectURL(wavBlob)
+
     // 添加用户语音消息到聊天记录
     const userMessage = chatStore.addMessage({
       characterId: chatStore.currentCharacterId || 0,
-      content: voiceMessageContent,
+      content: recognizedText, // ✅ 显示识别出的文字，而不是占位符
       isUser: true,
       isVoiceMessage: true,
-      voiceDuration: Math.round(voiceMessageDuration.value) || 0
+      voiceDuration: Math.round(voiceMessageDuration.value) || 0,
+      audioUrl: response.audioUrl || localAudioUrl // ✅ 优先使用后端URL，否则使用本地URL
     })
     
     // 调用后端API更新语音时长
     try {
       const updateRequest: UpdateVoiceDurationRequest = {
-        messageContent: voiceMessageContent,
+        messageContent: recognizedText, // ✅ 使用识别的文字内容
         voiceDuration: Math.round(voiceMessageDuration.value) || 0,
         characterId: chatStore.currentCharacterId || 0
       }
