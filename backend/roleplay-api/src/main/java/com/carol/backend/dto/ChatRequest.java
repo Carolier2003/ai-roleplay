@@ -54,4 +54,12 @@ public class ChatRequest {
      */
     private Integer voiceDuration;
 
+    /**
+     * 会话ID（可选）
+     * - 用于 Qwen 多会话管理
+     * - 如果为空且 characterId=0，后端会使用默认会话
+     * - 角色对话时忽略此字段
+     */
+    private String conversationId;
+
 }

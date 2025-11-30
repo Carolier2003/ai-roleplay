@@ -151,7 +151,7 @@ public class TtsSynthesisServiceImpl implements ITtsSynthesisService {
         // ✅ ID=0 是通用AI助手（类似ChatGPT），使用默认音色
         if (characterId == null || characterId == 0L) {
             String defaultVoice = config.getDefaultVoice();
-            log.debug("[getRecommendedVoiceForCharacter] 通用AI助手，返回默认音色: {}", defaultVoice);
+            log.debug("[getRecommendedVoiceForCharacter] Qwen助手，返回默认音色: {}", defaultVoice);
             return defaultVoice;
         }
         

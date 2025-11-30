@@ -143,7 +143,7 @@ public class ChatTtsIntegrationServiceImpl implements IChatTtsIntegrationService
                         characterId, e.getMessage());
             }
         } else if (characterId == 0L) {
-            log.debug("[buildTtsRequest] 通用AI助手，使用默认音色: {}", voice);
+            log.debug("[buildTtsRequest] Qwen助手，使用默认音色: {}", voice);
         }
         
         return TtsSynthesisRequest.builder()
@@ -167,7 +167,7 @@ public class ChatTtsIntegrationServiceImpl implements IChatTtsIntegrationService
         
         // ✅ ID=0 是通用AI助手（类似ChatGPT），不是角色，直接使用默认模型
         if (characterId == null || characterId == 0L) {
-            log.debug("[selectOptimalModelForCharacter] 通用AI助手，使用默认模型: {}", defaultModel);
+            log.debug("[selectOptimalModelForCharacter] Qwen助手，使用默认模型: {}", defaultModel);
             return defaultModel;
         }
         

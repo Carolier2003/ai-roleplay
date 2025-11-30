@@ -309,26 +309,27 @@ export const useChatStore = defineStore('chat', () => {
         theme: getCharacterTheme(char.name) // 分配主题色
       }))
 
-      // ✅ 注入虚拟角色 "AI 助手" (ID=0)
-      const aiAssistant: Character = {
+      // ✅ 注入虚拟"Qwen"角色（ID=0，通用AI对话模式）
+      const virtualAssistant: Character = {
         id: 0,
-        name: 'AI 助手',
+        name: 'Qwen',
         avatar: 'http://oss.kon-carol.xyz/airole0.png',
+        avatarUrl: 'http://oss.kon-carol.xyz/airole0.png',
         unread: 0,
-        description: '一个通用的 AI 助手，可以回答您的任何问题。',
+        description: '通用 AI 助手，可以回答各种问题',
         backgroundStory: '我是您的智能助手，随时为您服务。',
         personalityTraits: '乐于助人, 智能, 友好',
         speakingStyle: '简洁, 准确',
         expertiseArea: '通用知识',
         voiceStyle: 'default',
         status: 1,
-        displayName: 'AI 助手',
+        displayName: 'Qwen',
         complete: true,
         theme: 'blue'
       }
 
-      // 将 AI 助手添加到列表最前面
-      characters.value.unshift(aiAssistant)
+      // 将 Qwen 添加到列表最前面
+      characters.value.unshift(virtualAssistant)
 
       console.log('[ChatStore] 角色列表加载成功:', characterList.length, '个角色')
       console.log('[ChatStore] 处理后的角色数据:', characters.value)

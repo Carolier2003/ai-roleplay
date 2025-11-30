@@ -146,7 +146,7 @@ public class ChatController {
                 if (request.getCharacterId() == 0L) {
                     characterInfo = ChatResponse.CharacterInfo.builder()
                         .id(0L)
-                        .name("AI 助手")
+                        .name("Qwen")
                         .avatar("http://oss.kon-carol.xyz/airole0.png")
                         .voice("default")
                         .build();
@@ -429,7 +429,7 @@ public class ChatController {
                 // 创建虚拟角色对象
                 character = new Character();
                 character.setId(0L);
-                character.setName("AI 助手");
+                character.setName("Qwen");
                 character.setAvatarUrl("http://oss.kon-carol.xyz/airole0.png");
                 
                 // 直接使用默认系统提示词，不使用RAG
@@ -525,7 +525,7 @@ public class ChatController {
 
                 // ✅ 特殊处理 ID=0 的普通助手角色
                 if (request.getCharacterId() != null && request.getCharacterId() == 0L) {
-                    log.info("[handleCharacterStreamChat] 使用普通助手模式 (ID=0)");
+                    log.info("[handleCharacterStreamChat] 使用Qwen助手模式 (ID=0)");
                     
                     // ✅ 强制关闭RAG - AI助手不需要角色知识库
                     if (Boolean.TRUE.equals(request.getEnableRag())) {
@@ -536,7 +536,7 @@ public class ChatController {
                     // 创建虚拟角色对象
                     character = new Character();
                     character.setId(0L);
-                    character.setName("AI 助手");
+                    character.setName("Qwen");
                     character.setAvatarUrl("http://oss.kon-carol.xyz/airole0.png");
                     
                     // 直接使用默认系统提示词，不使用RAG
@@ -787,15 +787,24 @@ public class ChatController {
         String safeUserId = userId != null ? userId.toString() : "anonymous";
         Long characterId = request.getCharacterId();
         
-        if (characterId != null) {
+        // 角色对话：使用角色ID
+        if (characterId != null && characterId != 0L) {
             String conversationId = String.format("user_%s_char_%d", safeUserId, characterId);
             log.debug("[generateConversationId] 生成角色对话ID: {}", conversationId);
             return conversationId;
-        } else {
-            String conversationId = String.format("user_%s_general", safeUserId);
-            log.debug("[generateConversationId] 生成通用对话ID: {}", conversationId);
+        }
+        
+        // Qwen 会话：使用 conversationId（如果提供）
+        if (characterId != null && characterId == 0L && request.getConversationId() != null && !request.getConversationId().trim().isEmpty()) {
+            String conversationId = String.format("user_%s_qwen_%s", safeUserId, request.getConversationId());
+            log.debug("[generateConversationId] 生成Qwen会话ID: {}", conversationId);
             return conversationId;
         }
+        
+        // 兼容旧版：通用对话或没有 conversationId 的 Qwen
+        String conversationId = String.format("user_%s_general", safeUserId);
+        log.debug("[generateConversationId] 生成通用对话ID: {}", conversationId);
+        return conversationId;
     }
 
     /**

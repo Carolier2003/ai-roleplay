@@ -403,14 +403,33 @@ public class ConversationHistoryServiceImpl implements IConversationHistoryServi
     }
     
     /**
-     * 生成会话ID - 与ChatController保持一致
+     * 生成会话ID - 支持 Qwen 多会话
+     * 
+     * @param characterId 角色ID（null 或 0 表示 Qwen）
+     * @param userId 用户ID
+     * @param conversationId Qwen 会话ID（可选）
+     * @return 完整的会话ID
+     */
+    private String generateConversationId(Long characterId, Long userId, String conversationId) {
+        // 角色对话：使用角色ID
+        if (characterId != null && characterId != 0L) {
+            return String.format("user_%d_char_%d", userId, characterId);
+        }
+        
+        // Qwen 会话：使用 conversationId
+        if (conversationId != null && !conversationId.trim().isEmpty()) {
+            return String.format("user_%d_qwen_%s", userId, conversationId);
+        }
+        
+        // 兼容旧版：如果没有 conversationId，使用 general（向后兼容）
+        return String.format("user_%d_general", userId);
+    }
+    
+    /**
+     * 生成会话ID - 兼容旧方法签名
      */
     private String generateConversationId(Long characterId, Long userId) {
-        if (characterId != null) {
-            return String.format("user_%d_char_%d", userId, characterId);
-        } else {
-            return String.format("user_%d_general", userId);
-        }
+        return generateConversationId(characterId, userId, null);
     }
     
     /**
