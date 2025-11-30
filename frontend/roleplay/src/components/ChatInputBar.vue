@@ -363,7 +363,9 @@ const handleSend = async () => {
       message: content,  // ✅ 使用 message 字段匹配后端
       enableTts: enableTtsForThisMessage,   // ✅ 根据输入模式决定是否启用TTS
       enableRag: chatStore.enableRag,  // ✅ 传递RAG开关状态
-      languageType: "Chinese"  // ✅ 设置语言类型
+      languageType: "Chinese",  // ✅ 设置语言类型
+      // ✅ 如果是 Qwen (ID=0)，传递 conversationId
+      conversationId: chatStore.currentCharacterId === 0 ? (chatStore.currentQwenConversationId || undefined) : undefined
       // ✅ 不需要传递 userId，后端从 JWT token 中自动获取
     }
     

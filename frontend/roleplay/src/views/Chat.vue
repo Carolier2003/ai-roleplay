@@ -219,6 +219,11 @@ watch(() => props.characterId, async (newCharacterId, oldCharacterId) => {
     
     if (authStore.isLoggedIn) {
       try {
+        // 如果是 Qwen (ID=0) 且会话列表为空，先加载会话列表
+        if (newCharacterId === 0 && chatStore.qwenConversations.length === 0) {
+           await chatStore.loadQwenConversations()
+        }
+
         await chatStore.loadMessages(newCharacterId)
         nextTick(() => {
           scrollToBottom()

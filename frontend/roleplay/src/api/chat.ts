@@ -34,6 +34,7 @@ export interface SendMessageRequest {
   languageType?: string // ✅ 可选，语言类型
   audioUrl?: string    // ✅ 可选，音频URL
   voiceDuration?: number // ✅ 可选，语音时长
+  conversationId?: string // ✅ 可选，Qwen会话ID
   // ✅ 不需要 userId，后端从 JWT token 中获取
 }
 
@@ -336,11 +337,16 @@ export interface ChatHistoryResponse {
 /**
  * 获取对话历史 - 新接口，适配Spring AI
  */
-export const getChatHistory = async (characterId: number): Promise<ChatHistoryResponse> => {
-  console.log('[chatApi] 获取对话历史:', { characterId })
+export const getChatHistory = async (characterId: number, conversationId?: string): Promise<ChatHistoryResponse> => {
+  console.log('[chatApi] 获取对话历史:', { characterId, conversationId })
+
+  const params: any = { characterId }
+  if (conversationId) {
+    params.conversationId = conversationId
+  }
 
   const response = await axios.get('/api/chat/history', {
-    params: { characterId }
+    params
   })
 
   // 直接返回后端数据，不包装在code中

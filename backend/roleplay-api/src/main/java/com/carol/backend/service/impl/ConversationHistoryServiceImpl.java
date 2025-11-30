@@ -42,8 +42,8 @@ public class ConversationHistoryServiceImpl implements IConversationHistoryServi
     private static final int MAX_HISTORY_DAYS = 30;
     
     @Override
-    public ChatHistoryResponse getChatHistory(Long characterId, Long userId) {
-        String conversationId = generateConversationId(characterId, userId);
+    public ChatHistoryResponse getChatHistory(Long characterId, Long userId, String conversationIdParam) {
+        String conversationId = generateConversationId(characterId, userId, conversationIdParam);
         
         log.info("[getChatHistory] 查询聊天历史: conversationId={}", conversationId);
         

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, nextTick } from 'vue'
 import { getCharacterList, getChatHistory, clearCurrentCharacterChat, clearAllChats, type ChatHistoryResponse } from '@/api/chat'
+import { qwenAPI, type QwenConversationInfo } from '@/api/qwen'
 
 export interface Character {
   id: number  // ✅ 使用 number 类型，不要传字符串
@@ -53,6 +54,10 @@ export const useChatStore = defineStore('chat', () => {
   const streamingId = ref<string | null>(null)
   // RAG开关状态（默认开启）
   const enableRag = ref<boolean>(true)
+
+  // Qwen 多会话状态
+  const qwenConversations = ref<QwenConversationInfo[]>([])
+  const currentQwenConversationId = ref<string | null>(null)
 
   // ✅优化 自动滚动 - 滚动到底部的方法
   const scrollToBottom = (smooth = true, force = false) => {
@@ -350,7 +355,15 @@ export const useChatStore = defineStore('chat', () => {
   const loadMessages = async (characterId: number) => {
     try {
       console.log('[ChatStore] 开始加载聊天历史:', characterId)
-      const historyResponse: ChatHistoryResponse = await getChatHistory(characterId)
+
+      // 如果是 Qwen (ID=0)，传入 conversationId
+      let conversationId: string | undefined = undefined
+      if (characterId === 0 && currentQwenConversationId.value) {
+        conversationId = currentQwenConversationId.value
+        console.log('[ChatStore] 加载 Qwen 会话历史:', conversationId)
+      }
+
+      const historyResponse: ChatHistoryResponse = await getChatHistory(characterId, conversationId)
 
       // 清除当前角色的旧消息
       messageList.value = messageList.value.filter(m => m.characterId !== characterId)
@@ -417,6 +430,103 @@ export const useChatStore = defineStore('chat', () => {
     console.log('[ChatStore] RAG功能已', enableRag.value ? '启用' : '禁用')
   }
 
+  // ==================== Qwen 会话管理 ====================
+
+  // 加载 Qwen 会话列表
+  const loadQwenConversations = async () => {
+    try {
+      const response = await qwenAPI.listConversations()
+      const list = response.data
+      qwenConversations.value = list
+
+      // 如果没有当前会话但有列表，默认选中第一个
+      if (!currentQwenConversationId.value && list.length > 0) {
+        currentQwenConversationId.value = list[0].conversationId
+      }
+      // 如果列表为空，创建一个新会话
+      else if (list.length === 0) {
+        await createQwenConversation()
+      }
+    } catch (error) {
+      console.error('[ChatStore] 加载 Qwen 会话列表失败:', error)
+    }
+  }
+
+  // 创建新 Qwen 会话
+  const createQwenConversation = async () => {
+    try {
+      const response = await qwenAPI.createConversation()
+      const res = response.data
+      const newConv: QwenConversationInfo = {
+        conversationId: res.conversationId,
+        title: res.title || '新对话',
+        lastMessage: '',
+        lastActiveTime: res.createdAt,
+        createdAt: res.createdAt,
+        messageCount: 0
+      }
+      qwenConversations.value.unshift(newConv)
+      currentQwenConversationId.value = res.conversationId
+
+      // 清空当前消息列表
+      if (currentCharacterId.value === 0) {
+        messageList.value = []
+      }
+
+      return res.conversationId
+    } catch (error) {
+      console.error('[ChatStore] 创建 Qwen 会话失败:', error)
+      throw error
+    }
+  }
+
+  // 切换 Qwen 会话
+  const switchQwenConversation = async (conversationId: string) => {
+    if (currentQwenConversationId.value === conversationId) return
+
+    currentQwenConversationId.value = conversationId
+
+    // 如果当前是 Qwen 角色，重新加载消息
+    if (currentCharacterId.value === 0) {
+      await loadMessages(0)
+    }
+  }
+
+  // 删除 Qwen 会话
+  const deleteQwenConversation = async (conversationId: string) => {
+    try {
+      await qwenAPI.deleteConversation(conversationId)
+      qwenConversations.value = qwenConversations.value.filter(c => c.conversationId !== conversationId)
+
+      // 如果删除的是当前会话，切换到第一个
+      if (currentQwenConversationId.value === conversationId) {
+        if (qwenConversations.value.length > 0) {
+          await switchQwenConversation(qwenConversations.value[0].conversationId)
+        } else {
+          // 如果删光了，创建一个新的
+          await createQwenConversation()
+        }
+      }
+    } catch (error) {
+      console.error('[ChatStore] 删除 Qwen 会话失败:', error)
+      throw error
+    }
+  }
+
+  // 重命名 Qwen 会话
+  const renameQwenConversation = async (conversationId: string, title: string) => {
+    try {
+      await qwenAPI.renameConversation(conversationId, title)
+      const conv = qwenConversations.value.find(c => c.conversationId === conversationId)
+      if (conv) {
+        conv.title = title
+      }
+    } catch (error) {
+      console.error('[ChatStore] 重命名 Qwen 会话失败:', error)
+      throw error
+    }
+  }
+
   return {
     // 状态
     currentCharacterId,
@@ -449,6 +559,15 @@ export const useChatStore = defineStore('chat', () => {
     loadMessages,
     clearCurrentCharacterMessages,
     clearAllMessages,
-    toggleRag          // RAG切换方法
+    toggleRag,          // RAG切换方法
+
+    // Qwen 会话相关
+    qwenConversations,
+    currentQwenConversationId,
+    loadQwenConversations,
+    createQwenConversation,
+    switchQwenConversation,
+    deleteQwenConversation,
+    renameQwenConversation
   }
 })

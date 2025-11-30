@@ -17,6 +17,10 @@ import com.carol.backend.service.ITtsSynthesisService;
 import com.carol.backend.service.IGuestChatLimitService;
 import com.carol.backend.service.CustomMessageStorageService;
 import com.carol.backend.service.ITtsAudioPersistenceService;
+import com.carol.backend.service.QwenConversationService;
+import com.carol.backend.dto.QwenConversationResponse;
+import com.carol.backend.dto.QwenConversationInfo;
+import com.carol.backend.dto.RenameConversationRequest;
 import com.carol.backend.dto.ChatHistoryResponse;
 import com.carol.backend.dto.ConversationMessageVO;
 import com.carol.backend.util.SecurityUtils;
@@ -71,6 +75,7 @@ public class ChatController {
     private final IGuestChatLimitService guestChatLimitService;
     private final CustomMessageStorageService customMessageStorageService;
     private final ITtsAudioPersistenceService ttsAudioPersistenceService;
+    private final QwenConversationService qwenConversationService;
 
     private static final int DEFAULT_MAX_MESSAGES = 100;
     
@@ -87,7 +92,8 @@ public class ChatController {
                          ITtsSynthesisService ttsSynthesisService,
                          IGuestChatLimitService guestChatLimitService,
                          CustomMessageStorageService customMessageStorageService,
-                         ITtsAudioPersistenceService ttsAudioPersistenceService) {
+                         ITtsAudioPersistenceService ttsAudioPersistenceService,
+                         QwenConversationService qwenConversationService) {
 
         this.characterService = characterService;
         this.promptTemplateService = promptTemplateService;
@@ -99,6 +105,7 @@ public class ChatController {
         this.ttsSynthesisService = ttsSynthesisService;
         this.customMessageStorageService = customMessageStorageService;
         this.ttsAudioPersistenceService = ttsAudioPersistenceService;
+        this.qwenConversationService = qwenConversationService;
 
         // 初始化ChatClient，配置默认系统提示和顾问
         this.chatClient = chatClientBuilder
@@ -420,6 +427,15 @@ public class ChatController {
             if (request.getCharacterId() != null && request.getCharacterId() == 0L) {
                 log.info("[handleCharacterChat] 使用普通助手模式 (ID=0)");
                 
+                // ✅ 更新 Qwen 会话元数据（如果有 conversationId）
+                if (request.getConversationId() != null && !request.getConversationId().trim().isEmpty()) {
+                    Long userId = SecurityUtils.getCurrentUserId();
+                    // 更新最后活跃时间
+                    qwenConversationService.updateLastActiveTime(userId, request.getConversationId());
+                    // 自动生成标题（仅首次）
+                    qwenConversationService.generateTitle(userId, request.getConversationId(), request.getMessage());
+                }
+                
                 // ✅ 强制关闭RAG - AI助手不需要角色知识库
                 if (Boolean.TRUE.equals(request.getEnableRag())) {
                     log.info("[handleCharacterChat] AI助手不使用RAG，强制关闭: characterId=0");
@@ -526,6 +542,15 @@ public class ChatController {
                 // ✅ 特殊处理 ID=0 的普通助手角色
                 if (request.getCharacterId() != null && request.getCharacterId() == 0L) {
                     log.info("[handleCharacterStreamChat] 使用Qwen助手模式 (ID=0)");
+                    
+                    // ✅ 更新 Qwen 会话元数据（如果有 conversationId）
+                    if (request.getConversationId() != null && !request.getConversationId().trim().isEmpty()) {
+                        Long userId = SecurityUtils.getCurrentUserId();
+                        // 更新最后活跃时间
+                        qwenConversationService.updateLastActiveTime(userId, request.getConversationId());
+                        // 自动生成标题（仅首次）
+                        qwenConversationService.generateTitle(userId, request.getConversationId(), request.getMessage());
+                    }
                     
                     // ✅ 强制关闭RAG - AI助手不需要角色知识库
                     if (Boolean.TRUE.equals(request.getEnableRag())) {
@@ -812,9 +837,12 @@ public class ChatController {
      * @param characterId 角色ID，可选参数。如果不提供则查询所有角色的历史记录
      */
     @GetMapping("/history")
-    public ChatHistoryResponse getChatHistoryNew(@RequestParam(required = false) Long characterId) {
+    public ChatHistoryResponse getChatHistoryNew(
+            @RequestParam(required = false) Long characterId,
+            @RequestParam(required = false) String conversationId) {
         Long userId = SecurityUtils.getCurrentUserId();
-        log.info("[getChatHistoryNew] 获取聊天历史: userId={}, characterId={}", userId, characterId);
+        log.info("[getChatHistoryNew] 获取聊天历史: userId={}, characterId={}, conversationId={}", 
+                userId, characterId, conversationId);
         
         if (userId == null) {
             log.warn("[getChatHistoryNew] 用户未登录");
@@ -823,9 +851,9 @@ public class ChatController {
         
         try {
             ChatHistoryResponse response;
-            if (characterId != null) {
-                // 查询指定角色的历史记录
-                response = conversationHistoryService.getChatHistory(characterId, userId);
+            if (characterId != null || conversationId != null) {
+                // 查询指定角色或会话的历史记录
+                response = conversationHistoryService.getChatHistory(characterId, userId, conversationId);
             } else {
                 // 查询所有角色的历史记录
                 response = conversationHistoryService.getAllChatHistory(userId);
@@ -1101,5 +1129,60 @@ public class ChatController {
     private void clearSyncCache(String conversationId) {
         syncedConversations.remove(conversationId);
         log.debug("[syncHistory] 清除同步缓存: conversationId={}", conversationId);
+    }
+    
+    // ==================== Qwen 会话管理 API ====================
+    
+    /**
+     * 创建新的 Qwen 会话
+     */
+    @PostMapping("/qwen/conversations")
+    public QwenConversationResponse createQwenConversation() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        log.info("[createQwenConversation] 创建新会话: userId={}", userId);
+        return qwenConversationService.createConversation(userId);
+    }
+    
+    /**
+     * 列出用户的所有 Qwen 会话
+     */
+    @GetMapping("/qwen/conversations")
+    public List<QwenConversationInfo> listQwenConversations() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        log.info("[listQwenConversations] 列出会话: userId={}", userId);
+        return qwenConversationService.listConversations(userId);
+    }
+    
+    /**
+     * 获取会话详情
+     */
+    @GetMapping("/qwen/conversations/{conversationId}")
+    public QwenConversationInfo getQwenConversation(@PathVariable String conversationId) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        log.info("[getQwenConversation] 获取会话详情: userId={}, conversationId={}", userId, conversationId);
+        return qwenConversationService.getConversationInfo(userId, conversationId);
+    }
+    
+    /**
+     * 删除 Qwen 会话
+     */
+    @DeleteMapping("/qwen/conversations/{conversationId}")
+    public void deleteQwenConversation(@PathVariable String conversationId) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        log.info("[deleteQwenConversation] 删除会话: userId={}, conversationId={}", userId, conversationId);
+        qwenConversationService.deleteConversation(userId, conversationId);
+    }
+    
+    /**
+     * 重命名 Qwen 会话
+     */
+    @PatchMapping("/qwen/conversations/{conversationId}")
+    public void renameQwenConversation(
+            @PathVariable String conversationId,
+            @Valid @RequestBody RenameConversationRequest request) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        log.info("[renameQwenConversation] 重命名会话: userId={}, conversationId={}, newTitle={}", 
+                userId, conversationId, request.getTitle());
+        qwenConversationService.renameConversation(userId, conversationId, request.getTitle());
     }
 }

@@ -18,7 +18,7 @@ public interface IConversationHistoryService {
     /**
      * 获取聊天历史 - 优先从Redis读取
      */
-    ChatHistoryResponse getChatHistory(Long characterId, Long userId);
+    ChatHistoryResponse getChatHistory(Long characterId, Long userId, String conversationId);
     
     /**
      * 获取所有角色的聊天历史 - 从Redis读取所有会话
