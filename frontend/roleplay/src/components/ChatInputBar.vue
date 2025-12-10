@@ -578,6 +578,14 @@ const handleSend = async () => {
         isTerminated.value = false
         currentAIMessageId.value = null
 
+        // ✅ 如果是 Qwen 对话，刷新对话列表以获取更新的标题
+        if (chatStore.currentCharacterId === 0) {
+          console.log('[ChatInputBar] Qwen 对话完成，刷新对话列表')
+          chatStore.loadQwenConversations().catch(err => {
+            console.error('[ChatInputBar] 刷新 Qwen 对话列表失败:', err)
+          })
+        }
+
         // 滚动到底部
         nextTick(() => {
           const chatContainer = document.querySelector('.chat-messages')

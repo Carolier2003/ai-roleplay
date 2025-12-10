@@ -123,9 +123,13 @@ public class QwenConversationServiceImpl implements QwenConversationService {
 
     @Override
     public void generateTitle(Long userId, String conversationId, String firstMessage) {
-        // Extract first 20 characters as title
-        String title = firstMessage.length() > 20 ? firstMessage.substring(0, 20) + "..." : firstMessage;
-        renameConversation(userId, conversationId, title);
+        QwenConversationInfo info = getConversationInfo(userId, conversationId);
+        if (info != null && "新对话".equals(info.getTitle())) {
+            // Only generate title if it's still the default "新对话"
+            String title = firstMessage.length() > 20 ? firstMessage.substring(0, 20) + "..." : firstMessage;
+            renameConversation(userId, conversationId, title);
+            log.info("[generateTitle] Auto-generated title for conversation {}: {}", conversationId, title);
+        }
     }
 
     private void saveConversationInfo(Long userId, QwenConversationInfo info) {

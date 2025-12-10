@@ -123,7 +123,11 @@
       <!-- 消息列表区域 -->
       <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scroll-smooth messages-container" ref="messagesContainer">
         <div v-if="currentMessages.length === 0" class="h-full flex flex-col items-center justify-center text-gray-400 space-y-4">
-          <div class="text-6xl opacity-50">💬</div>
+          <div class="w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg mb-6 transform hover:scale-105 transition-transform duration-300">
+            <svg viewBox="0 0 24 24" class="w-12 h-12 text-white" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          </div>
           <div class="text-center">
             <h3 class="text-lg font-medium text-gray-700 mb-2">开始与{{ currentCharacter?.name || '角色' }}对话</h3>
             <p class="text-sm text-gray-500">发送消息开始你们的对话吧！</p>
